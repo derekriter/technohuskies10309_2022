@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Team10309/Team10309.iml" filepath="$PROJECT_DIR$/Team10309/Team10309.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Team10309/src/main/java/org/firstinspires/firstinspires.iml" filepath="$PROJECT_DIR$/Team10309/src/main/java/org/firstinspires/firstinspires.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Team10309/src/main/java/org/firstinspires/ftc/ftc.iml" filepath="$PROJECT_DIR$/Team10309/src/main/java/org/firstinspires/ftc/ftc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Team10309/src/main/java/java.iml" filepath="$PROJECT_DIR$/Team10309/src/main/java/java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Team10309/src/main/main.iml" filepath="$PROJECT_DIR$/Team10309/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Team10309/src/main/java/org/org.iml" filepath="$PROJECT_DIR$/Team10309/src/main/java/org/org.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Team10309/src/src.iml" filepath="$PROJECT_DIR$/Team10309/src/src.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Team10309/src/main/java/org/firstinspires/ftc/team10309/team10309.iml" filepath="$PROJECT_DIR$/Team10309/src/main/java/org/firstinspires/ftc/team10309/team10309.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/technohuskies10309_2022.iml" filepath="$PROJECT_DIR$/.idea/technohuskies10309_2022.iml" />
+    </modules>
+  </component>
+</project>
