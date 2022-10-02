@@ -12,22 +12,31 @@ public abstract class RobotInfo {
     /**
      * The circumference of the odometer wheels
      */
-    public final static int odometerCirc = 0;
+    public final static float odometerCirc = 0;
+    /**
+     * The distance of the left and right odometer wheels from the center of the robot (on the x
+     * axis)
+     */
+    public final static float odometerDist = 0;
+    /**
+     * The circumference of the circle from the left to the right odometer wheels
+     */
+    public final static float robotCirc = (float) (2 * Math.PI) * odometerDist;
 
     /**
      * The name of the front left wheel
      */
-    public final static String flMotorName = "frontLeft";
+    public final static String flMotorName = "front left";
     /**
      * The name of the front right wheel
      */
-    public final static String frMotorName = "frontRight";
+    public final static String frMotorName = "front right";
     /**
      * The name of the back left wheel
      */
-    public final static String blMotorName = "backLeft";
+    public final static String blMotorName = "back left";
     /**
      * The name of the back right wheel
      */
-    public final static String brMotorName = "backRight";
+    public final static String brMotorName = "back right";
 }

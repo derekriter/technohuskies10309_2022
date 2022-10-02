@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team10309.API;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -21,7 +22,7 @@ public class Robot {
     /**
      * The op mode the robot is running
      */
-    private final OpMode opMode;
+    private final LinearOpMode opMode;
 
     /**
      *An object representing the front left motor
@@ -40,7 +41,7 @@ public class Robot {
      */
     private final DcMotor brMotor;
 
-    public Robot(OpMode opMode) {
+    public Robot(LinearOpMode opMode) {
         this.opMode = opMode;
         this.position = new Vec2(0, 0);
         this.rotation = 0;
@@ -52,6 +53,11 @@ public class Robot {
 
         this.flMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         this.blMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        this.flMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.frMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.blMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.brMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /**
@@ -97,7 +103,40 @@ public class Robot {
      *                 check
      * @param degBack The amount of degrees the back wheel has turned since the last check
      */
-    private void handleOdometry(double degLeft, double degRight, double degBack) {}
+    private void handleOdometry(float degLeft, float degRight, float degBack) {
+        if(degLeft == 0 && degRight == 0 && degBack == 0) return;
+
+        if((degLeft > 0 && degRight > 0) || (degLeft < 0 && degRight < 0)) {
+            //robot moved forwards or backwards
+
+            float dist = calcDist(Math.max(degLeft, degRight), RobotInfo.odometerCirc);
+            //change position by dist
+        }
+
+        if((degLeft > 0 && degRight < 0) || (degLeft < 0 && degRight > 0)) {
+            //robot turned
+            float factor = (degLeft > 0) ? Math.max(degLeft, Math.abs(degRight)) :
+                    -Math.max(Math.abs(degLeft), degRight);
+
+            float deg = 360 / RobotInfo.robotCirc * factor;
+            this.rotation += deg;
+        }
+        else if(degBack != 0) {
+            //robot strafed
+
+            float dist = calcDist(degBack, RobotInfo.odometerCirc);
+            //change position by dist
+        }
+    }
+    /**
+     * A function to find the distance a wheel moved based off of it's rotation
+     * @param deg the amount of degrees the wheel has turned
+     * @param circ the circumference of the wheel
+     * @return the distance the wheel has moved in inches
+     */
+    private float calcDist(float deg, float circ) {
+        return deg / 360 * circ;
+    }
 
     /**
      * A function containing the PID algorithm
@@ -108,5 +147,5 @@ public class Robot {
      * @param Kd The Kd modifier value
      * @return The resulting value of the PID algorithm
      */
-    private double PID(double target, double current, float Kp, float Ki, float Kd) {return 0;}
+    private float PID(double target, double current, float Kp, float Ki, float Kd) {return 0;}
 }
