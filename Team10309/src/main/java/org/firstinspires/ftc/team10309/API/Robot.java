@@ -24,47 +24,22 @@ public class Robot {
      */
     private final LinearOpMode opMode;
 
-    /**
-     *An object representing the front left motor
-     */
-    private final DcMotor flMotor;
-    /**
-     * An object representing the front right motor
-     */
-    private final DcMotor frMotor;
-    /**
-     * An object representing the back left motor
-     */
-    private final DcMotor blMotor;
-    /**
-     * An object representing the back right motor
-     */
-    private final DcMotor brMotor;
+    private final RobotHardware hardware;
 
     public Robot(LinearOpMode opMode) {
         this.opMode = opMode;
         this.position = new Vec2(0, 0);
         this.rotation = 0;
 
-        this.flMotor = this.opMode.hardwareMap.get(DcMotor.class, RobotInfo.flMotorName);
-        this.frMotor = this.opMode.hardwareMap.get(DcMotor.class, RobotInfo.frMotorName);
-        this.blMotor = this.opMode.hardwareMap.get(DcMotor.class, RobotInfo.blMotorName);
-        this.brMotor = this.opMode.hardwareMap.get(DcMotor.class, RobotInfo.brMotorName);
-
-        this.flMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        this.blMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        this.flMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.frMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.blMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.brMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.hardware = new RobotHardware(this.opMode);
     }
 
     /**
      * A function to be called every frame of the program, to handle tasks
      */
     public void update() {
-        this.handleOdometry(0, 0, 0);
+        this.handleOdometry(0, 0);
+        this.handleGyroscope(0);
     }
 
     /**
@@ -72,10 +47,10 @@ public class Robot {
      * @param inches the distance to move the robot
      */
     public void drive(float inches) {
-        this.flMotor.setPower(1);
-        this.frMotor.setPower(1);
-        this.blMotor.setPower(1);
-        this.brMotor.setPower(1);
+        this.hardware.getFLMotor().setPower(1);
+        this.hardware.getFRMotor().setPower(1);
+        this.hardware.getBLMotor().setPower(1);
+        this.hardware.getBRMotor().setPower(1);
     }
     /**
      * A function to move the robot left and right
@@ -97,45 +72,31 @@ public class Robot {
 
     /**
      * A function to handle the rotation of the odometer wheels, and update the robot's
-     * position and rotation accordingly
-     * @param degLeft The amount of degrees the left odometer wheel has turned since the last check
-     * @param degRight The amount of degrees the right odometer wheel has turned since the last
-     *                 check
-     * @param degBack The amount of degrees the back wheel has turned since the last check
+     * position accordingly
+     * @param drive The amount of degrees the drive odometer wheel has turned since the last check
+     * @param strafe The amount of degrees the strafe odometer wheel has turned since the last check
      */
-    private void handleOdometry(float degLeft, float degRight, float degBack) {
-        if(degLeft == 0 && degRight == 0 && degBack == 0) return;
+    private void handleOdometry(float drive, float strafe) {
+        if(drive == 0 && strafe == 0) return;
 
-        if((degLeft > 0 && degRight > 0) || (degLeft < 0 && degRight < 0)) {
-            //robot moved forwards or backwards
+        float driveDist = calcDist(drive);
+        float strafeDist = calcDist(strafe);
+    }
 
-            float dist = calcDist(Math.max(degLeft, degRight), RobotInfo.odometerCirc);
-            //change position by dist
-        }
+    /**
+     * Updates the robot's rotation based off of the gyro's angle
+     * @param angle The gyro's angle
+     */
+    private void handleGyroscope(float angle) {
 
-        if((degLeft > 0 && degRight < 0) || (degLeft < 0 && degRight > 0)) {
-            //robot turned
-            float factor = (degLeft > 0) ? Math.max(degLeft, Math.abs(degRight)) :
-                    -Math.max(Math.abs(degLeft), degRight);
-
-            float deg = 360 / RobotInfo.robotCirc * factor;
-            this.rotation += deg;
-        }
-        else if(degBack != 0) {
-            //robot strafed
-
-            float dist = calcDist(degBack, RobotInfo.odometerCirc);
-            //change position by dist
-        }
     }
     /**
      * A function to find the distance a wheel moved based off of it's rotation
      * @param deg the amount of degrees the wheel has turned
-     * @param circ the circumference of the wheel
      * @return the distance the wheel has moved in inches
      */
-    private float calcDist(float deg, float circ) {
-        return deg / 360 * circ;
+    private float calcDist(float deg) {
+        return deg / 360 * RobotInfo.odometerCirc;
     }
 
     /**
