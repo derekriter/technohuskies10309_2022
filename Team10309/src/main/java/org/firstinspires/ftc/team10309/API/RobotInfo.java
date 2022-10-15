@@ -6,22 +6,9 @@ package org.firstinspires.ftc.team10309.API;
 public abstract class RobotInfo {
 
     /**
-     * The number of ticks in full rotation of the odometer wheels
+     * The number of pulses in each full revolution of the odometer wheels
      */
-    public final static int odometerTicks = 0;
-    /**
-     * The circumference of the odometer wheels
-     */
-    public final static float odometerCirc = 0;
-    /**
-     * The distance of the left and right odometer wheels from the center of the robot (on the x
-     * axis)
-     */
-    public final static float odometerDist = 0;
-    /**
-     * The circumference of the circle from the left to the right odometer wheels
-     */
-    public final static float robotCirc = (float) (2 * Math.PI) * odometerDist;
+    public final int odometerPPR = 360;
 
     /**
      * The name of the front left wheel

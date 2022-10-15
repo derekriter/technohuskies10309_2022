@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 /**
  * A class representing the robot, all of its data, and its capabilities
  */
-public class Robot {
+public class Robot implements Runnable {
 
     /**
      * A 2D Vector representing the robots position
@@ -24,7 +24,15 @@ public class Robot {
      */
     private final LinearOpMode opMode;
 
+    /**
+     * The hardware of this robot instance
+     */
     private final RobotHardware hardware;
+
+    /**
+     * The thread running the update loop
+     */
+    private Thread loop;
 
     public Robot(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -34,12 +42,12 @@ public class Robot {
         this.hardware = new RobotHardware(this.opMode);
     }
 
-    /**
-     * A function to be called every frame of the program, to handle tasks
-     */
-    public void update() {
-        this.handleOdometry(0, 0);
-        this.handleGyroscope(0);
+    public void startUpdateLoop() {
+        this.loop = new Thread(this);
+        this.loop.start();
+    }
+    public void exitUpdateLoop() {
+        this.loop.interrupt();
     }
 
     /**
@@ -71,32 +79,18 @@ public class Robot {
     public void gotoTile(float x, float y) {}
 
     /**
-     * A function to handle the rotation of the odometer wheels, and update the robot's
-     * position accordingly
-     * @param drive The amount of degrees the drive odometer wheel has turned since the last check
-     * @param strafe The amount of degrees the strafe odometer wheel has turned since the last check
+     * DON'T USE THIS OUTSIDE OF API
      */
-    private void handleOdometry(float drive, float strafe) {
-        if(drive == 0 && strafe == 0) return;
-
-        float driveDist = calcDist(drive);
-        float strafeDist = calcDist(strafe);
-    }
-
-    /**
-     * Updates the robot's rotation based off of the gyro's angle
-     * @param angle The gyro's angle
-     */
-    private void handleGyroscope(float angle) {
-
+    public void run() {
+        while(this.opMode.opModeIsActive()) {
+            this.update();
+        }
     }
     /**
-     * A function to find the distance a wheel moved based off of it's rotation
-     * @param deg the amount of degrees the wheel has turned
-     * @return the distance the wheel has moved in inches
+     * A function to be called every frame of the program, to handle tasks
      */
-    private float calcDist(float deg) {
-        return deg / 360 * RobotInfo.odometerCirc;
+    private void update() {
+
     }
 
     /**
