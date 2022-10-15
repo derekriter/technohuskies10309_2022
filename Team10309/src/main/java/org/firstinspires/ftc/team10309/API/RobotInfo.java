@@ -39,4 +39,13 @@ public abstract class RobotInfo {
      * The name of the back right wheel
      */
     public final static String brMotorName = "back right";
+
+    /**
+     * The name of the odometer wheel responsible for measuring the forward and backward movement
+     */
+    public final static String dOdometerName = "DOdometer";
+    /**
+     * The name of the odometer wheel responsible for measuring the left and right movement
+     */
+    public final static String sOdometerName = "SOdometer";
 }

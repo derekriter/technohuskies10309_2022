@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team10309.API;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -28,6 +29,15 @@ public class RobotHardware {
      */
     private DcMotor brMotor;
 
+    /**
+     * Represents the drive odometer wheel
+     */
+    private AnalogInput dOdometer;
+    /**
+     * Represents the strafe odometer wheel
+     */
+    private AnalogInput sOdometer;
+
     //Constructors for AutoOp and TeleOp
 
     //TeleOp
@@ -46,6 +56,9 @@ public class RobotHardware {
     public DcMotor getBLMotor() {return this.blMotor;}
     public DcMotor getBRMotor() {return this.brMotor;}
 
+    public AnalogInput getDOdometer() {return this.dOdometer;}
+    public AnalogInput getSOdometer() {return this.sOdometer;}
+
     /**
      * Called to init all the values of the motors. Made a seperate function, so I don't have to
      * write it twice, once for each constructor
@@ -56,6 +69,9 @@ public class RobotHardware {
         this.frMotor = hardwareMap.get(DcMotor.class, RobotInfo.frMotorName);
         this.blMotor = hardwareMap.get(DcMotor.class, RobotInfo.blMotorName);
         this.brMotor = hardwareMap.get(DcMotor.class, RobotInfo.brMotorName);
+
+        this.dOdometer = hardwareMap.get(AnalogInput.class, RobotInfo.dOdometerName);
+        this.sOdometer = hardwareMap.get(AnalogInput.class, RobotInfo.sOdometerName);
     }
 
     /**
