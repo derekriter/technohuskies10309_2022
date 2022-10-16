@@ -35,4 +35,9 @@ public abstract class RobotInfo {
      * The name of the odometer wheel responsible for measuring the left and right movement
      */
     public final static String sOdometerName = "SOdometer";
+    
+    /**
+     * The name of the camera
+     */
+    public final static String camera = "CAMERA NAME"; // CHANGE
 }

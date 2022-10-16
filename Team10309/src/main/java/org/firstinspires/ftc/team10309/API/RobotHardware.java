@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+
 /**
  * A class containing the robot's hardware map and configuration. Used for both AutoOp and TeleOp
  */
@@ -37,7 +39,15 @@ public class RobotHardware {
      * Represents the strafe odometer wheel
      */
     private AnalogInput sOdometer;
-
+    
+    /**
+     * Represents the tfodMonitorViewID
+     */
+    private int tfodMonitorViewID;
+    /**
+     * Represents the camera
+     */
+    private CameraName camera;
     //Constructors for AutoOp and TeleOp
 
     //TeleOp
@@ -49,6 +59,8 @@ public class RobotHardware {
     public RobotHardware(LinearOpMode opMode) {
         this.mapHardware(opMode.hardwareMap);
         this.configHardware();
+        this.tfodMonitorViewID = opMode.hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
     }
 
     public DcMotor getFLMotor() {return this.flMotor;}
@@ -58,7 +70,8 @@ public class RobotHardware {
 
     public AnalogInput getDOdometer() {return this.dOdometer;}
     public AnalogInput getSOdometer() {return this.sOdometer;}
-
+    
+    public CameraName getCamera() {return this.camera;}
     /**
      * Called to init all the values of the motors. Made a seperate function, so I don't have to
      * write it twice, once for each constructor
@@ -72,6 +85,7 @@ public class RobotHardware {
 
         this.dOdometer = hardwareMap.get(AnalogInput.class, RobotInfo.dOdometerName);
         this.sOdometer = hardwareMap.get(AnalogInput.class, RobotInfo.sOdometerName);
+        this.camera = hardwareMap.get(CameraName.class, RobotInfo.camera);
     }
 
     /**
@@ -85,5 +99,8 @@ public class RobotHardware {
         this.frMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.blMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.brMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    public int getTfodMonitorViewID() {
+        return this.tfodMonitorViewID;
     }
 }
