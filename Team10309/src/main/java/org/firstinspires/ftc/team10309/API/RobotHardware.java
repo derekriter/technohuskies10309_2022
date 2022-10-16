@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
@@ -30,13 +32,21 @@ public class RobotHardware {
     private DcMotor brMotor;
 
     /**
-     * Represents the drive odometer wheel
+     * Represents channel A of the drive odometer wheel
      */
-    private AnalogInput dOdometer;
+    private DigitalChannelImpl dOdometerA;
     /**
-     * Represents the strafe odometer wheel
+     * Represents channel B of the drive odometer wheel
      */
-    private AnalogInput sOdometer;
+    private DigitalChannelImpl dOdometerB;
+    /**
+     * Represents channel A of the strafe odometer wheel
+     */
+    private DigitalChannelImpl sOdometerA;
+    /**
+     * Represents channel B of the strafe odometer wheel
+     */
+    private DigitalChannelImpl sOdometerB;
 
     //Constructors for AutoOp and TeleOp
 
@@ -56,8 +66,10 @@ public class RobotHardware {
     public DcMotor getBLMotor() {return this.blMotor;}
     public DcMotor getBRMotor() {return this.brMotor;}
 
-    public AnalogInput getDOdometer() {return this.dOdometer;}
-    public AnalogInput getSOdometer() {return this.sOdometer;}
+    public DigitalChannelImpl getDOdometerA() {return this.dOdometerA;}
+    public DigitalChannelImpl getDOdometerB() {return this.dOdometerB;}
+    public DigitalChannelImpl getSOdometerA() {return this.sOdometerA;}
+    public DigitalChannelImpl getSOdometerB() {return this.sOdometerB;}
 
     /**
      * Called to init all the values of the motors. Made a seperate function, so I don't have to
@@ -70,8 +82,10 @@ public class RobotHardware {
         this.blMotor = hardwareMap.get(DcMotor.class, RobotInfo.blMotorName);
         this.brMotor = hardwareMap.get(DcMotor.class, RobotInfo.brMotorName);
 
-        this.dOdometer = hardwareMap.get(AnalogInput.class, RobotInfo.dOdometerName);
-        this.sOdometer = hardwareMap.get(AnalogInput.class, RobotInfo.sOdometerName);
+        this.dOdometerA = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.dOdometerAName);
+        this.dOdometerB = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.dOdometerBName);
+        this.sOdometerA = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.sOdometerAName);
+        this.sOdometerB = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.sOdometerBName);
     }
 
     /**
@@ -85,5 +99,10 @@ public class RobotHardware {
         this.frMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.blMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.brMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        this.dOdometerA.setMode(DigitalChannel.Mode.INPUT);
+        this.dOdometerB.setMode(DigitalChannel.Mode.INPUT);
+        this.sOdometerA.setMode(DigitalChannel.Mode.INPUT);
+        this.sOdometerB.setMode(DigitalChannel.Mode.INPUT);
     }
 }

@@ -17,8 +17,11 @@ public class ExampleAutoOp extends LinearOpMode {
         this.robot = new Robot(this);
 
         waitForStart();
+        this.robot.startUpdateLoop();
 
         //running
         this.robot.drive(3);
+
+        this.robot.exitUpdateLoop();
     }
 }

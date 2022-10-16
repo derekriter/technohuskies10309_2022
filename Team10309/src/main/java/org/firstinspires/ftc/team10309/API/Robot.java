@@ -42,10 +42,17 @@ public class Robot implements Runnable {
         this.hardware = new RobotHardware(this.opMode);
     }
 
+    /**
+     * Starts the update loop for the program
+     */
     public void startUpdateLoop() {
         this.loop = new Thread(this);
         this.loop.start();
     }
+
+    /**
+     * Stops the update loop
+     */
     public void exitUpdateLoop() {
         this.loop.interrupt();
     }
@@ -90,7 +97,13 @@ public class Robot implements Runnable {
      * A function to be called every frame of the program, to handle tasks
      */
     private void update() {
+        updateOdometry();
+    }
 
+    private void updateOdometry() {
+        this.opMode.telemetry.addData("S ODO", this.hardware.getSOdometerA().getState() ?
+                "HIGH" : "LOW");
+        this.opMode.telemetry.update();
     }
 
     /**

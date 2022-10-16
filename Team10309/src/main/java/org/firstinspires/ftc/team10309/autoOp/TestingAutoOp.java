@@ -20,7 +20,7 @@ public class TestingAutoOp extends LinearOpMode {
         this.robot.startUpdateLoop();
 
         //main program
-        sleep(5000);
+        while(opModeIsActive()) {}
 
         //exiting
         this.robot.exitUpdateLoop();

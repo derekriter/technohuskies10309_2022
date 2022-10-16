@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.team10309.API;
 
 /**
- * API ONLY! Holds constant information about the robot
+ * Holds constant information about the robot
  */
 public abstract class RobotInfo {
-
-    /**
-     * The number of pulses in each full revolution of the odometer wheels
-     */
-    public final int odometerPPR = 360;
 
     /**
      * The name of the front left wheel
@@ -28,11 +23,23 @@ public abstract class RobotInfo {
     public final static String brMotorName = "back right";
 
     /**
-     * The name of the odometer wheel responsible for measuring the forward and backward movement
+     * The name of channel A of the odometer wheel responsible for measuring the forward and
+     * backward movement
      */
-    public final static String dOdometerName = "DOdometer";
+    public final static String dOdometerAName = "DOdometerA";
     /**
-     * The name of the odometer wheel responsible for measuring the left and right movement
+     * The name of channel B of the odometer wheel responsible for measuring the forward and
+     * backward movement
      */
-    public final static String sOdometerName = "SOdometer";
+    public final static String dOdometerBName = "DOdometerB";
+    /**
+     * The name of channel A of the odometer wheel responsible for measuring the left and
+     * right movement
+     */
+    public final static String sOdometerAName = "SOdometerA";
+    /**
+     * The name of channel B of the odometer wheel responsible for measuring the left and
+     * right movement
+     */
+    public final static String sOdometerBName = "SOdometerB";
 }
