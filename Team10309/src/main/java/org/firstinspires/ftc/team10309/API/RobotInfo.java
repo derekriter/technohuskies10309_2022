@@ -6,6 +6,11 @@ package org.firstinspires.ftc.team10309.API;
 public abstract class RobotInfo {
 
     /**
+     * The number of ticks in each full revolution for the odometer wheels
+     */
+    public final static int ticksPerRevolution = 360;
+
+    /**
      * The name of the front left wheel
      */
     public final static String flMotorName = "front left";

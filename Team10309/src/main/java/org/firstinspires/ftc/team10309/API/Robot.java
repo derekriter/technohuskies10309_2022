@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.team10309.API;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /**
  * A class representing the robot, all of its data, and its capabilities
@@ -28,6 +25,10 @@ public class Robot implements Runnable {
      * The hardware of this robot instance
      */
     private final RobotHardware hardware;
+    /**
+     * Used for decoding encoder values into degrees
+     */
+    private final RotaryDecoder decoder;
 
     /**
      * The thread running the update loop
@@ -40,6 +41,7 @@ public class Robot implements Runnable {
         this.rotation = 0;
 
         this.hardware = new RobotHardware(this.opMode);
+        this.decoder = new RotaryDecoder();
     }
 
     /**
@@ -101,8 +103,10 @@ public class Robot implements Runnable {
     }
 
     private void updateOdometry() {
-        this.opMode.telemetry.addData("S ODO", this.hardware.getSOdometerA().getState() ?
-                "HIGH" : "LOW");
+        float driveDeg = this.decoder.decodeToDeg(this.hardware.getDOdometerA().getState(),
+                this.hardware.getDOdometerB().getState(), RotaryDecoder.OdoType.DRIVE);
+
+        this.opMode.telemetry.addData("Drive Deg", driveDeg);
         this.opMode.telemetry.update();
     }
 
