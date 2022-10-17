@@ -8,7 +8,7 @@ public abstract class RobotInfo {
     /**
      * The number of ticks in each full revolution for the odometer wheels
      */
-    public final static int ticksPerRevolution = 360;
+    public final static int ticksPerRevolution = 180;
 
     /**
      * The name of the front left wheel

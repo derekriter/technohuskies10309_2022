@@ -100,14 +100,21 @@ public class Robot implements Runnable {
      */
     private void update() {
         updateOdometry();
+        updateGyro();
     }
 
     private void updateOdometry() {
-        float driveDeg = this.decoder.decodeToDeg(this.hardware.getDOdometerA().getState(),
-                this.hardware.getDOdometerB().getState(), RotaryDecoder.OdoType.DRIVE);
+        float strafeDeg = this.decoder.decodeToDeg(this.hardware.getSOdometerA().getState(),
+                this.hardware.getSOdometerB().getState(), RotaryDecoder.OdoType.STRAFE, this.opMode);
 
-        this.opMode.telemetry.addData("Drive Deg", driveDeg);
+        this.opMode.telemetry.addData("Strafe Deg", strafeDeg);
+        this.opMode.telemetry.addData("Strafe A", this.hardware.getSOdometerA().getState());
+        this.opMode.telemetry.addData("Strafe B", this.hardware.getSOdometerB().getState());
+
         this.opMode.telemetry.update();
+    }
+    private void updateGyro() {
+
     }
 
     /**
