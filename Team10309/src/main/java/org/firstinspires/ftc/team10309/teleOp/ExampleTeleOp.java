@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.team10309.API.RobotHardware;
 import org.firstinspires.ftc.team10309.API.RobotInfo;
 
-@TeleOp(name="Example TeleOp", group="Examples")
+@TeleOp(name="Example TeleOp")
 public class ExampleTeleOp extends OpMode {
 
     private RobotHardware hardware;

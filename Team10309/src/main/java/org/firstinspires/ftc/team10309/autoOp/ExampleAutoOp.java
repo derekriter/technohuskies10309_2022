@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.team10309.API.Robot;
 
-@Autonomous(name="Example AutoOp", group="Examples")
+@Autonomous(name="Example AutoOp")
 public class ExampleAutoOp extends LinearOpMode {
 
     private Robot robot;
@@ -17,8 +17,12 @@ public class ExampleAutoOp extends LinearOpMode {
         this.robot = new Robot(this);
 
         waitForStart();
+        this.robot.startUpdateLoop();
 
         //running
-        this.robot.drive(3);
+        //>> PUT AUTO OP CODE HERE <<
+
+        //end program
+        this.robot.exitUpdateLoop();
     }
 }

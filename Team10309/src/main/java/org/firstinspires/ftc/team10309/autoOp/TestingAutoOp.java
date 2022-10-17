@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team10309.API.Robot;
 
-@Autonomous(name="Testing AutoOp", group="Testing")
+@Autonomous(name="Testing AutoOp")
 public class TestingAutoOp extends LinearOpMode {
 
     private Robot robot;
@@ -20,7 +20,7 @@ public class TestingAutoOp extends LinearOpMode {
         this.robot.startUpdateLoop();
 
         //main program
-        sleep(5000);
+        while(opModeIsActive()) {}
 
         //exiting
         this.robot.exitUpdateLoop();

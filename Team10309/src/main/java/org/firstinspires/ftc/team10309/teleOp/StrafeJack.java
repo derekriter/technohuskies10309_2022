@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.team10309.API.RobotHardware;
 
-@TeleOp(name="StrafeJack", group="Examples")
+@TeleOp(name="StrafeJack")
 public class StrafeJack extends OpMode {
 
     private RobotHardware hardware;
