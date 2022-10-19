@@ -2,10 +2,11 @@ package org.firstinspires.ftc.team10309.API;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
 /**
  * A class containing the robot's hardware map and configuration. Used for both AutoOp and TeleOp
@@ -28,6 +29,7 @@ public class RobotHardware {
      * Represents the back right motor
      */
     private DcMotor brMotor;
+    private DcMotor lift;
 
     //Constructors for AutoOp and TeleOp
 
@@ -46,6 +48,7 @@ public class RobotHardware {
     public DcMotor getFRMotor() {return this.frMotor;}
     public DcMotor getBLMotor() {return this.blMotor;}
     public DcMotor getBRMotor() {return this.brMotor;}
+    public DcMotor getLift() {return this.lift;}
 
     /**
      * Called to init all the values mappings
@@ -56,14 +59,15 @@ public class RobotHardware {
         this.frMotor = hardwareMap.get(DcMotor.class, RobotInfo.frMotorName);
         this.blMotor = hardwareMap.get(DcMotor.class, RobotInfo.blMotorName);
         this.brMotor = hardwareMap.get(DcMotor.class, RobotInfo.brMotorName);
+        this.lift = hardwareMap.get(DcMotor.class, RobotInfo.brMotorName);
     }
 
     /**
      * Applies settings to the hardware (ex. setting the motor direction)
      */
     private void configHardware() {
-        this.flMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         this.blMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.brMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.flMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.frMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

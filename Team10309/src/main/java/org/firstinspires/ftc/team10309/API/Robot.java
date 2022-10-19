@@ -3,6 +3,9 @@ package org.firstinspires.ftc.team10309.API;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.team10309.API.info.FieldInfo;
+import org.firstinspires.ftc.team10309.API.info.RobotInfo;
+
 /**
  * A class representing the robot, all of its data, and its capabilities
  */
@@ -21,43 +24,39 @@ public class Robot implements Runnable {
      * The op mode the robot is running
      */
     private final LinearOpMode opMode;
-
     /**
      * The hardware of this robot instance
      */
     private final RobotHardware hardware;
-
     /**
      * The thread running the update loop
      */
     private Thread loop;
 
-    public Robot(LinearOpMode opMode) {
+    public Robot(LinearOpMode opMode, float tileX, float tileY, float startRotation) {
         this.opMode = opMode;
-        this.position = new Vec2(0, 0);
-        this.rotation = 0;
+        this.position = new Vec2(tileX * FieldInfo.tileSize, tileY * FieldInfo.tileSize);
+        this.rotation = startRotation;
         this.hardware = new RobotHardware(this.opMode);
 
-        this.calibrateEncoders();
-        this.calibrateGyro();
+        this.resetEncoders();
+        this.resetGyro();
     }
 
     /**
-     * Recalibrates the encoders in the motors, and sets the robots position to (0, 0)
+     * Recalibrates the encoders in the motors
      */
-    private void calibrateEncoders() {
+    private void resetEncoders() {
         this.hardware.getFLMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.hardware.getFRMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.hardware.getBLMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.hardware.getBRMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        this.position = new Vec2(0, 0);
     }
     /**
      * Recalibrates the gyro, and sets the robot's rotation value back to zero. Called during in
      * the constructor during init
      */
-    private void calibrateGyro() {
+    private void resetGyro() {
         this.rotation = 0;
     }
 
@@ -68,50 +67,33 @@ public class Robot implements Runnable {
      */
     public void drive(float inches, float speed) {
         float clampedSpeed = Math.max(Math.min(speed, 1), -1);
-        int ticks = calculateTicks(inches, RobotInfo.driveTPR, RobotInfo.driveDiameter);
-        calibrateEncoders();
+        int ticks = this.calculateTicks(inches, RobotInfo.driveTPR, RobotInfo.driveDiameter);
+        this.opMode.telemetry.addData("Ticks", ticks);
+        this.opMode.telemetry.update();
+        try {
+            Thread.sleep(1000);
+        }
+        catch(Exception e) {e.printStackTrace();}
 
-        DcMotor fl = this.hardware.getFLMotor();
-        DcMotor fr = this.hardware.getFLMotor();
-        DcMotor bl = this.hardware.getFLMotor();
-        DcMotor br = this.hardware.getFLMotor();
+        this.resetEncoders();
 
-        fl.setTargetPosition(ticks);
-        fr.setTargetPosition(ticks);
-        bl.setTargetPosition(ticks);
-        br.setTargetPosition(ticks);
+        this.hardware.getFLMotor().setTargetPosition(ticks);
+        this.hardware.getFRMotor().setTargetPosition(ticks);
+        this.hardware.getBLMotor().setTargetPosition(ticks);
+        this.hardware.getBRMotor().setTargetPosition(ticks);
 
-        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        fl.setPower(clampedSpeed);
-        fr.setPower(clampedSpeed);
-        bl.setPower(clampedSpeed);
-        br.setPower(clampedSpeed);
+        this.hardware.getFLMotor().setPower(clampedSpeed);
+        this.hardware.getFRMotor().setPower(clampedSpeed);
+        this.hardware.getBLMotor().setPower(clampedSpeed);
+        this.hardware.getBRMotor().setPower(clampedSpeed);
+
+        this.waitForMotors();
     }
-    /**
-     * A function to move the robot left and right
-     * @param inches the distance to move the robot
-     */
-    public void strafe(float inches) {
-
-    }
-    /**
-     * A function to turn the robot
-     * @param degrees the amount of degrees to turn
-     */
-    public void turn(float degrees) {
-
-    }
-    /**
-     * A function to move the robot to a designated tile on the playing field. (0, 0) is at the
-     * blue terminal on the blue side
-     * @param x the x position of the tile
-     * @param y the y position of the tile
-     */
-    public void gotoTile(float x, float y) {}
 
     /**
      * Starts the update loop
@@ -126,6 +108,7 @@ public class Robot implements Runnable {
     public void exitUpdateLoop() {
         this.loop.interrupt();
     }
+
     /**
      * DON'T USE THIS OUTSIDE OF API
      */
@@ -150,25 +133,19 @@ public class Robot implements Runnable {
     }
 
     /**
-     * A function containing the PID algorithm
-     * @param target The target value for the PID algorithm to try to match
-     * @param current The current value for the PID algorithm to move towards the target
-     * @param Kp The Kp modifier value
-     * @param Ki The Ki modifier value
-     * @param Kd The Kd modifier value
-     * @return The resulting value of the PID algorithm
-     */
-    private float PID(double target, double current, float Kp, float Ki, float Kd) {return 0;}
-    /**
      * Forces the program to wait until the motors are done moving
      */
     private void waitForMotors() {
         while(
-                this.hardware.getFLMotor().isBusy()
-                || this.hardware.getFRMotor().isBusy()
-                || this.hardware.getBLMotor().isBusy()
-                || this.hardware.getBRMotor().isBusy()
-        ) {}
+            this.hardware.getFLMotor().isBusy()
+            || this.hardware.getFRMotor().isBusy()
+            || this.hardware.getBLMotor().isBusy()
+            || this.hardware.getBRMotor().isBusy()
+        ) {
+            this.opMode.telemetry.addData("FL Encoder Pos",
+                    this.hardware.getFLMotor().getCurrentPosition());
+            this.opMode.telemetry.update();
+        }
     }
     /**
      * Calculates the number of ticks needed to travel the specified distance
@@ -178,6 +155,9 @@ public class Robot implements Runnable {
      * @return the number of ticks needed
      */
     private int calculateTicks(float targetDist, int tpr, float diameter) {
-        return (int) (targetDist / tpr * diameter);
+        this.opMode.telemetry.addData("targetDist", targetDist);
+        this.opMode.telemetry.addData("tpr", tpr);
+        this.opMode.telemetry.addData("diameter", diameter);
+        return (int) (targetDist / ((diameter * Math.PI))) * tpr;
     }
 }
