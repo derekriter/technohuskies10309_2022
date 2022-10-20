@@ -14,7 +14,7 @@ public class ExampleAutoOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //init
-        this.robot = new Robot(this, 0, 0, 0);
+        this.robot = new Robot(this, 0, 0, false);
 
         waitForStart();
         this.robot.startUpdateLoop();

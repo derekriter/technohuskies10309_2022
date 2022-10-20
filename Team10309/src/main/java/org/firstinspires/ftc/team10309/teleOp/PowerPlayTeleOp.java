@@ -12,7 +12,7 @@ public class PowerPlayTeleOp extends OpMode {
 
     @Override
     public void init() {
-        this.hardware = new RobotHardware(this);
+        this.hardware = new RobotHardware(this, true);
     }
 
     @Override

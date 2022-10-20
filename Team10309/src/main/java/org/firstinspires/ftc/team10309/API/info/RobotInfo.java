@@ -26,12 +26,22 @@ public abstract class RobotInfo {
      */
     public final static String liftName = "lift";
 
+    public final static String imuName = "imu";
+
     /**
      * The number of ticks per revolution on the drive motors
      */
-    public final static int driveTPR = 1120;
+    public final static int protoDriveTPR = 1120;
     /**
      * The diameter in inches of the drive wheels
      */
-    public final static float driveDiameter = 4;
+    public final static float protoDriveDiameter = 4;
+    /**
+     * The number of ticks per revolution on the drive motors
+     */
+    public final static int finalDriveTPR = 1120;
+    /**
+     * The diameter in inches of the drive wheels
+     */
+    public final static float finalDriveDiameter = 4;
 }

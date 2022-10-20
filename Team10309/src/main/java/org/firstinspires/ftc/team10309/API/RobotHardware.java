@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team10309.API;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +13,11 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
  * A class containing the robot's hardware map and configuration. Used for both AutoOp and TeleOp
  */
 public class RobotHardware {
+
+    /**
+     * Stores whether is configuration is for robobobo or the final robot
+     */
+    private boolean isFinal;
 
     /**
      * Represents the front left motor
@@ -29,17 +35,33 @@ public class RobotHardware {
      * Represents the back right motor
      */
     private DcMotor brMotor;
+    /**
+     * The lift slider motor
+     */
     private DcMotor lift;
+
+    /**
+     * The IMU (Inertia Measurement Unit) sensor in the control hub
+     */
+    private BNO055IMU imu;
+    /**
+     * The parameters and data for the IMU
+     */
+    public BNO055IMU.Parameters imuParams;
 
     //Constructors for AutoOp and TeleOp
 
     //TeleOp
-    public RobotHardware(OpMode opMode) {
+    public RobotHardware(OpMode opMode, boolean isFinal) {
+        this.isFinal = isFinal;
+
         this.mapHardware(opMode.hardwareMap);
         this.configHardware();
     }
     //AutoOp
-    public RobotHardware(LinearOpMode opMode) {
+    public RobotHardware(LinearOpMode opMode, boolean isFinal) {
+        this.isFinal = isFinal;
+
         this.mapHardware(opMode.hardwareMap);
         this.configHardware();
     }
@@ -50,6 +72,8 @@ public class RobotHardware {
     public DcMotor getBRMotor() {return this.brMotor;}
     public DcMotor getLift() {return this.lift;}
 
+    public BNO055IMU getIMU() {return this.imu;}
+
     /**
      * Called to init all the values mappings
      * @param hardwareMap The hardware map of the inputed opmode
@@ -59,19 +83,34 @@ public class RobotHardware {
         this.frMotor = hardwareMap.get(DcMotor.class, RobotInfo.frMotorName);
         this.blMotor = hardwareMap.get(DcMotor.class, RobotInfo.blMotorName);
         this.brMotor = hardwareMap.get(DcMotor.class, RobotInfo.brMotorName);
-        this.lift = hardwareMap.get(DcMotor.class, RobotInfo.brMotorName);
+
+        this.imu = hardwareMap.get(BNO055IMU.class, RobotInfo.imuName);
+        this.imuParams = new BNO055IMU.Parameters();
+
+        if(this.isFinal) {
+            this.lift = hardwareMap.get(DcMotor.class, RobotInfo.brMotorName);
+        }
     }
 
     /**
      * Applies settings to the hardware (ex. setting the motor direction)
      */
     private void configHardware() {
-        this.blMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        this.brMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        if(isFinal) {
+            this.blMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            this.brMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
+        else {
+            this.flMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            this.blMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
 
         this.flMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.frMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.blMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.brMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        this.imuParams.mode = BNO055IMU.SensorMode.IMU;
+        this.imu.initialize(this.imuParams);
     }
 }

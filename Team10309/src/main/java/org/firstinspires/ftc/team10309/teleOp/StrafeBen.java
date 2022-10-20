@@ -16,7 +16,7 @@ public class StrafeBen extends OpMode {
     double max;
     @Override
     public void init() {
-        this.hardware = new RobotHardware(this);
+        this.hardware = new RobotHardware(this, false);
 
     }
 
