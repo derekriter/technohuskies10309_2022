@@ -39,6 +39,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.internal.camera.names.WebcamNameImpl;
+import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
 import java.util.List;
 
@@ -58,12 +59,9 @@ public class SleeveDetect {
     private final Telemetry telemetry;
     private WebcamName camera;
     private RobotHardware rh;
-    private HardwareMap hw;
-    private OpMode om;
-    public SleeveDetect(Telemetry telemetry, OpMode om, RobotHardware rh) {
+    public SleeveDetect(Telemetry telemetry, WebcamName camera, RobotHardware rh) {
         this.telemetry = telemetry;
-        this.om = om;
-        this.rh = rh;
+        this.camera = camera;
     }
     public void init() {
         initVuforia();
@@ -133,7 +131,7 @@ public class SleeveDetect {
     private void initVuforia() {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         parameters.vuforiaLicenseKey = RobotInfo.VUFORIA_KEY;
-        parameters.cameraName = om.hardwareMap.get(WebcamNameImpl.class, "webcam");
+        parameters.cameraName = camera;
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
     

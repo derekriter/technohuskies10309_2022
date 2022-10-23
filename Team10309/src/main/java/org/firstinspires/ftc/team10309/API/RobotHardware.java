@@ -62,7 +62,9 @@ public class RobotHardware {
      * The parameters and data for the IMU
      */
     public BNO055IMU.Parameters imuParams;
-
+    
+    public WebcamName camera;
+    private HardwareMap hw;
     //Constructors for AutoOp and TeleOp
 
     //TeleOp
@@ -88,7 +90,7 @@ public class RobotHardware {
 
     public Servo getClawRotater() {return this.clawRotater;}
     public Servo getClaw() {return this.claw;}
-
+    public WebcamName getCamera() {return this.camera;}
     public BNO055IMU getIMU() {return this.imu;}
 
     /**
@@ -113,7 +115,6 @@ public class RobotHardware {
 //        this.dOdometer = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.dOdometerName);
 //        this.sOdometer = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.sOdometerName);
         this.camera = hardwareMap.get(WebcamName.class, RobotInfo.camera);
-        this.hardwareMap = hardwareMap;
     }
 
     /**
@@ -138,7 +139,7 @@ public class RobotHardware {
         this.imu.initialize(this.imuParams);
     }
     public int getTfodMonitorViewID() {
-        return this.hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", this.hardwareMap.appContext.getPackageName());
+        return this.hw.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", this.hw.appContext.getPackageName());
     }
 }
