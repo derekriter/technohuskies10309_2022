@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
@@ -41,6 +42,15 @@ public class RobotHardware {
     private DcMotor lift;
 
     /**
+     * The servo that rotates the claw on the lift
+     */
+    private Servo clawRotater;
+    /**
+     * The servo that controls the claw
+     */
+    private Servo claw;
+
+    /**
      * The IMU (Inertia Measurement Unit) sensor in the control hub
      */
     private BNO055IMU imu;
@@ -72,6 +82,9 @@ public class RobotHardware {
     public DcMotor getBRMotor() {return this.brMotor;}
     public DcMotor getLift() {return this.lift;}
 
+    public Servo getClawRotater() {return this.clawRotater;}
+    public Servo getClaw() {return this.claw;}
+
     public BNO055IMU getIMU() {return this.imu;}
 
     /**
@@ -89,6 +102,8 @@ public class RobotHardware {
 
         if(this.isFinal) {
             this.lift = hardwareMap.get(DcMotor.class, RobotInfo.liftName);
+            this.clawRotater = hardwareMap.get(Servo.class, RobotInfo.clawRotaterName);
+            this.claw = hardwareMap.get(Servo.class, RobotInfo.clawName);
         }
     }
 
