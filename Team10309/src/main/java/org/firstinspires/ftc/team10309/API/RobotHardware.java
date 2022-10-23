@@ -5,9 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 /**
  * A class containing the robot's hardware map and configuration. Used for both AutoOp and TeleOp
@@ -34,22 +36,15 @@ public class RobotHardware {
     /**
      * Represents the drive odometer wheel
      */
-    private AnalogInput dOdometer;
+    private DigitalChannelImpl dOdometer;
     /**
      * Represents the strafe odometer wheel
      */
-    private AnalogInput sOdometer;
+    private DigitalChannelImpl sOdometer;
     
-    /**
-     * Represents the tfodMonitorViewID
-     */
-    private int tfodMonitorViewID;
-    /**
-     * Represents the camera
-     */
-    private CameraName camera;
+    private WebcamName camera;
     //Constructors for AutoOp and TeleOp
-
+    public HardwareMap hardwareMap;
     //TeleOp
     public RobotHardware(OpMode opMode) {
         this.mapHardware(opMode.hardwareMap);
@@ -59,8 +54,6 @@ public class RobotHardware {
     public RobotHardware(LinearOpMode opMode) {
         this.mapHardware(opMode.hardwareMap);
         this.configHardware();
-        this.tfodMonitorViewID = opMode.hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
     }
 
     public DcMotor getFLMotor() {return this.flMotor;}
@@ -68,10 +61,10 @@ public class RobotHardware {
     public DcMotor getBLMotor() {return this.blMotor;}
     public DcMotor getBRMotor() {return this.brMotor;}
 
-    public AnalogInput getDOdometer() {return this.dOdometer;}
-    public AnalogInput getSOdometer() {return this.sOdometer;}
+    public DigitalChannelImpl getDOdometer() {return this.dOdometer;}
+    public DigitalChannelImpl getSOdometer() {return this.sOdometer;}
     
-    public CameraName getCamera() {return this.camera;}
+    public WebcamName getCamera() {return this.camera;}
     /**
      * Called to init all the values of the motors. Made a seperate function, so I don't have to
      * write it twice, once for each constructor
@@ -82,10 +75,11 @@ public class RobotHardware {
         this.frMotor = hardwareMap.get(DcMotor.class, RobotInfo.frMotorName);
         this.blMotor = hardwareMap.get(DcMotor.class, RobotInfo.blMotorName);
         this.brMotor = hardwareMap.get(DcMotor.class, RobotInfo.brMotorName);
-
-        this.dOdometer = hardwareMap.get(AnalogInput.class, RobotInfo.dOdometerName);
-        this.sOdometer = hardwareMap.get(AnalogInput.class, RobotInfo.sOdometerName);
-        this.camera = hardwareMap.get(CameraName.class, RobotInfo.camera);
+//
+//        this.dOdometer = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.dOdometerName);
+//        this.sOdometer = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.sOdometerName);
+        this.camera = hardwareMap.get(WebcamName.class, RobotInfo.camera);
+        this.hardwareMap = hardwareMap;
     }
 
     /**
@@ -101,6 +95,7 @@ public class RobotHardware {
         this.brMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public int getTfodMonitorViewID() {
-        return this.tfodMonitorViewID;
+        return this.hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", this.hardwareMap.appContext.getPackageName());
     }
 }
