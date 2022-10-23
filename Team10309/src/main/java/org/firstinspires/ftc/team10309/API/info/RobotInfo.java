@@ -25,7 +25,18 @@ public abstract class RobotInfo {
      * The name of the lift motor
      */
     public final static String liftName = "lift";
+    /**
+     * The name of the servo that rotates the claw on the lift
+     */
+    public final static String clawRotaterName = "clawRotater";
+    /**
+     * The claw servo
+     */
+    public final static String clawName = "claw";
 
+    /**
+     * The name of the IMU in the control hub
+     */
     public final static String imuName = "imu";
 
     /**
