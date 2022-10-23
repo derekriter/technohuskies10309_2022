@@ -88,7 +88,7 @@ public class RobotHardware {
         this.imuParams = new BNO055IMU.Parameters();
 
         if(this.isFinal) {
-            this.lift = hardwareMap.get(DcMotor.class, RobotInfo.brMotorName);
+            this.lift = hardwareMap.get(DcMotor.class, RobotInfo.liftName);
         }
     }
 

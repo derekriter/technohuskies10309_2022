@@ -39,7 +39,7 @@ public abstract class RobotInfo {
     /**
      * The number of ticks per revolution on the drive motors
      */
-    public final static int finalDriveTPR = 1120;
+    public final static int finalDriveTPR = 560;
     /**
      * The diameter in inches of the drive wheels
      */
