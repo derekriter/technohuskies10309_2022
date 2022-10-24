@@ -56,12 +56,9 @@ public class Robot implements Runnable {
      */
     private boolean isFinal;
 
-    public Robot(LinearOpMode opMode, float tileX, float tileY,
-                 boolean isFinal) {
+    public Robot(LinearOpMode opMode) {
         this.opMode = opMode;
-        this.position = new Vec2(tileX * FieldInfo.tileSize, tileY * FieldInfo.tileSize);
         this.hardware = new RobotHardware(this.opMode, isFinal);
-        this.isFinal = isFinal;
 
         this.resetEncoders();
         this.resetGyro();
@@ -217,7 +214,8 @@ public class Robot implements Runnable {
     public SleeveDetect sleeveDetect;
     
     public void initDetect() {
-        sleeveDetect = new SleeveDetect(this.opMode.telemetry, this.opMode, this.hardware);
+        sleeveDetect = new SleeveDetect(this.opMode.telemetry, this.hardware.getCamera(),
+                this.hardware);
         sleeveDetect.init();
     }
     public SleeveDetect.SignalState scanSleeve() {

@@ -62,6 +62,7 @@ public class SleeveDetect {
     public SleeveDetect(Telemetry telemetry, WebcamName camera, RobotHardware rh) {
         this.telemetry = telemetry;
         this.camera = camera;
+        this.rh = rh;
     }
     public void init() {
         initVuforia();

@@ -70,14 +70,14 @@ public class RobotHardware {
     //TeleOp
     public RobotHardware(OpMode opMode, boolean isFinal) {
         this.isFinal = isFinal;
-
+        this.hw = opMode.hardwareMap;
         this.mapHardware(opMode.hardwareMap);
         this.configHardware();
     }
     //AutoOp
     public RobotHardware(LinearOpMode opMode, boolean isFinal) {
         this.isFinal = isFinal;
-
+        this.hw = opMode.hardwareMap;
         this.mapHardware(opMode.hardwareMap);
         this.configHardware();
     }
