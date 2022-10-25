@@ -18,28 +18,14 @@
             waitForStart();
 
 
-           //strafe right 2 inches
-            robot.strafe(2,0.7f);
-            robot.drive(23,0.8f);
-            robot.strafe(-26,0.7f);
-            robot.drive(25,0.8f);
-            robot.strafe(21,0.7f);
+
+            robot.strafe(23,.7f);
+            robot.drive(32,.8f);
             //open claw
-            robot.strafe(2,0.7f);
-            //close claw
-            robot.strafe(22,0.7f);
-            //move arm up 34 inches
-            //open claw
-
-
-
-
-
-
-
-
-
-
+            robot.drive(2,.6f);
+            // close claw
+            //  move the robot to the pole and
+            //  place the cone on the pole.
 
 
         }
