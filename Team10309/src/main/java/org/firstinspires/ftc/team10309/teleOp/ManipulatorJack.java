@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team10309.teleOp;
 
+import static java.lang.System.in;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,37 +12,38 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
 public class ManipulatorJack extends OpMode {
 
     private RobotHardware hardware;
-    double left;
-    double right;
-    double drive;
-    double turn;
-    double max;
-
 
     @Override
     public void init() {
-        this.hardware = new RobotHardware(this, false);
+        this.hardware = new RobotHardware(this, true); //MEANT TO BE TRUE!!!
         this.hardware.getLift().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-
     @Override
     public void loop() {
 
-        boolean Raise = this.gamepad2.y;
-        boolean Lower = this.gamepad2.a;
-        boolean Grab = this.gamepad2.right_bumper;
-        boolean Release = this.gamepad2.left_bumper;
+        boolean Ground = gamepad2.a;
+        boolean Small = gamepad2.b;
+        boolean Middle = gamepad2.x;
+        boolean High = gamepad2.y;
         double Liftpos = this.hardware.getLift().getCurrentPosition();
 
         telemetry.addData("Liftpos", Liftpos);
         telemetry.update();
 
-        if(Raise){
-            this.hardware.getLift().setPower(-0.5);
+        if(Ground){
+            this.hardware.getLift().setTargetPosition(0);   //0 inches
         }
 
-        if(Lower){
-            this.hardware.getLift().setPower(0.5);
+        if(Small){
+            this.hardware.getLift().setTargetPosition(3846);    // 10 inches
+        }
+
+        if(Middle){
+            this.hardware.getLift().setTargetPosition(7692);    //20 inches
+        }
+
+        if(High){
+            this.hardware.getLift().setTargetPosition(11538);   //30 inches
         }
     }
 }
