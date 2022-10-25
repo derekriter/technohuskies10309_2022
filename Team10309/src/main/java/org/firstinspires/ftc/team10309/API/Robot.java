@@ -18,26 +18,7 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
  * A class representing the robot, all of its data, and its capabilities
  */
 public class Robot implements Runnable {
-    private static final String TFOD_MODEL_FILE = "/storage/emulated/0/FIRST/tflitemodels" +
-            "/sleeves.tflite"; // MAKE SURE THIS FILE ACTUALLY EXISTS!!!!!!!!!, can change to
-    // just the file name if using the manage page *according to javadoc of tfod
-    // .loadModelFromFile().
-    private static final String[] LABELS = {
-            "Blue Triangle",
-            "Red Square",
-            "Green Circle"
-    };
-    
-    private static final String VUFORIA_KEY =
-            "AXxOC5T/////AAABmSJC57yqQENwiMY04jFbMZpnfnBAf5owbyLoU53bsaoA0LpmGf8ud2gFJoOQ7ss6mmjI5vaZ2qUqUAUuKOaiP9zXMrNKsOLSi/5K///mA6hn70YKnuCSNEIS/amvBAnwgX0r9syIb9IjfcLtobMqn5Pbqea10aBH8blAjip9pNnsXeHhybkyoyMiajtOzKx79SCcwAgyvXZOikLqNPz4u1JKpwdPGj3vvTRgVhCc2Wswv13U+Wyp0ti889pKmoazuT6ByUoCl0WEuZKf9I+HZUGaa8MSjNyMMw38Zee9KfwkCYfFmBI6N7XLOp7M6DF5oeNblQMR77jvHj8+yqCTFczzvAWlX+uzXLZTdHnbhwPm";
-    
-    private static VuforiaLocalizer vuforia;
-    
-    private static TFObjectDetector tfod;
-    /**
-     * A 2D Vector representing the robots position
-     */
-    private Vec2 position;
+   
 
     /**
      * The op mode the robot is running
@@ -225,4 +206,8 @@ public class Robot implements Runnable {
         return ss;
     }
     
+    public SleeveDetect.SignalState initAndScan() {
+        initDetect();
+        return scanSleeve();
+    }
 }

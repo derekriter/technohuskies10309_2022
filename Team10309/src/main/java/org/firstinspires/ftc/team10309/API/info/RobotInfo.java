@@ -56,7 +56,7 @@ public abstract class RobotInfo {
      */
     public final static float finalDriveDiameter = 4;
     
-    public final static String camera = "webcam"; // CHANGE
+    public final static String camera = "webcam";
     
     public final static String pathToModel = "/storage/emulated/0/FIRST/tflitemodels" +
             "/sleevesV2.tflite";
