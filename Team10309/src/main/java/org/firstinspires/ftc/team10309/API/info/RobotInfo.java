@@ -55,4 +55,17 @@ public abstract class RobotInfo {
      * The diameter in inches of the drive wheels
      */
     public final static float finalDriveDiameter = 4;
+    
+    public final static String camera = "webcam";
+    
+    public final static String pathToModel = "/storage/emulated/0/FIRST/tflitemodels" +
+            "/sleevesV2.tflite";
+    
+    public static final String VUFORIA_KEY =
+            "AXxOC5T/////AAABmSJC57yqQENwiMY04jFbMZpnfnBAf5owbyLoU53bsaoA0LpmGf8ud2gFJoOQ7ss6mmjI5vaZ2qUqUAUuKOaiP9zXMrNKsOLSi/5K///mA6hn70YKnuCSNEIS/amvBAnwgX0r9syIb9IjfcLtobMqn5Pbqea10aBH8blAjip9pNnsXeHhybkyoyMiajtOzKx79SCcwAgyvXZOikLqNPz4u1JKpwdPGj3vvTRgVhCc2Wswv13U+Wyp0ti889pKmoazuT6ByUoCl0WEuZKf9I+HZUGaa8MSjNyMMw38Zee9KfwkCYfFmBI6N7XLOp7M6DF5oeNblQMR77jvHj8+yqCTFczzvAWlX+uzXLZTdHnbhwPm";
+    public static final String[] model_labels = {
+            "Blue Triangle",
+            "Green Circle",
+            "Red Square"
+    };
 }

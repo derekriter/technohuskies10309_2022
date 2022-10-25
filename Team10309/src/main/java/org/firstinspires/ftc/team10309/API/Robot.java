@@ -2,6 +2,9 @@ package org.firstinspires.ftc.team10309.API;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -15,11 +18,7 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
  * A class representing the robot, all of its data, and its capabilities
  */
 public class Robot implements Runnable {
-
-    /**
-     * A 2D Vector representing the robots position
-     */
-    private Vec2 position;
+   
 
     /**
      * The op mode the robot is running
@@ -38,12 +37,9 @@ public class Robot implements Runnable {
      */
     private boolean isFinal;
 
-    public Robot(LinearOpMode opMode, float tileX, float tileY,
-                 boolean isFinal) {
+    public Robot(LinearOpMode opMode) {
         this.opMode = opMode;
-        this.position = new Vec2(tileX * FieldInfo.tileSize, tileY * FieldInfo.tileSize);
         this.hardware = new RobotHardware(this.opMode, isFinal);
-        this.isFinal = isFinal;
 
         this.resetEncoders();
         this.resetGyro();
@@ -192,5 +188,26 @@ public class Robot implements Runnable {
         float diameter = this.isFinal ? RobotInfo.finalDriveDiameter : RobotInfo.protoDriveDiameter;
 
         return Math.round((targetDist / (float) (diameter * Math.PI)) * tpr);
+    }
+    private float PID(double target, double current, float Kp, float Ki, float Kd) {return 0;}
+    
+    
+    public SleeveDetect sleeveDetect;
+    
+    public void initDetect() {
+        sleeveDetect = new SleeveDetect(this.opMode.telemetry, this.hardware.getCamera(),
+                this.hardware);
+        sleeveDetect.init();
+    }
+    public SleeveDetect.SignalState scanSleeve() {
+        
+        SleeveDetect.SignalState ss = sleeveDetect.scan();
+        
+        return ss;
+    }
+    
+    public SleeveDetect.SignalState initAndScan() {
+        initDetect();
+        return scanSleeve();
     }
 }
