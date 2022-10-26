@@ -18,7 +18,7 @@
             waitForStart();
 
 
-            robot.turn(90,07f);
+
             robot.strafe(23,.7f);
             robot.drive(32,.7f);
             //open claw
