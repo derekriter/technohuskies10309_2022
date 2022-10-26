@@ -17,8 +17,15 @@
 
             waitForStart();
 
-
-
+                Robot robot = new Robot(this);
+                robot.initDetect();
+                telemetry.addLine("Press Start");
+                telemetry.update();
+                waitForStart();
+                telemetry.addLine(robot.scanSleeve().name());
+                telemetry.update();
+                Thread.sleep(1000);
+            robot.turn(-90,.7f,1f);
             robot.strafe(21,.7f);
             robot.drive(32,.7f);
             //open claw
