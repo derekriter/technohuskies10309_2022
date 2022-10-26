@@ -3,16 +3,16 @@ package org.firstinspires.ftc.team10309.API;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.team10309.API.info.FieldInfo;
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
+
+import java.util.stream.DoubleStream;
 
 /**
  * A class representing the robot, all of its data, and its capabilities
@@ -124,10 +124,111 @@ public class Robot implements Runnable {
      * @param degrees the number of degrees to turn the robot (+: clockwise, -: counterclockwise)
      * @param speed the speed to turn at (min: 0, max: 1)
      */
-    public void turn(float degrees, float speed) {
+    private Orientation angles;
+    public void turn(float degrees, float speed, double precision) {
         resetGyro();
-        Orientation orientation = this.hardware.getIMU().getAngularOrientation(
+        this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    
+        this.hardware.getFLMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.hardware.getFRMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.hardware.getBRMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.hardware.getBLMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    
+//        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+//        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+//        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+//        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        // See which motors should be backwards, which should be forwards.
+        // More compatible: make an array of each motor in an order in specified in a comment.
+        // Then negate each motor accordingly.
+        angles = this.hardware.getIMU().getAngularOrientation(
                         AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+        turn(degrees, speed, precision, 0.1, 1/500, 1/50,
+                new double[] {angles.thirdAngle-degrees,
+                        angles.thirdAngle-degrees});
+    }
+    
+    /**
+     * Helper method for public void turn.
+     * ROBOBOBO: LEFT 2 NEGATE
+     * Final: ???
+     */
+    private void turn(double degrees, double speed, double precision, double Kp,
+                                double Ki,
+                               double Kd,
+                               double[] trend) {
+        if (!opMode.opModeIsActive()) {
+            return;
+        }
+        // angles.thirdAngle = detected angle
+        // degrees = target angle
+    
+        // "base case"
+        // trend is misleading, it should be sumOfErrors or something. trend is just for abriviation.
+        angles = this.hardware.getIMU().getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ,
+                AngleUnit.DEGREES);
+        double angle = angles.thirdAngle;
+        //angle = degrees > 0 ? (angle > 0 ? angle : angle + 360) : (angle < 0 ? angle :
+        //     angle - 360);
+        if (degrees > 0 && angle < 0) {
+            angle = angle + 360;
+        }
+        if (degrees < 0 && angle > 0) {
+            angle = angle - 360;
+        }
+    
+        double err = angle - degrees;
+        if (Math.abs(err) <= precision) {
+            this.hardware.getFLMotor().setPower(0);
+            this.hardware.getFRMotor().setPower(0);
+            this.hardware.getBRMotor().setPower(0);
+            this.hardware.getBLMotor().setPower(0);
+            // left side reverse on bobo
+            // right side reverse on frank
+//            frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+//            backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+//            backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+//            frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        // see above coment on direction setting... (in prev. turn method and here)
+            return;
+        }
+    
+        // logic - dont forget to multiply double final = -(p + i + d); bc we want to cancel out the final (var) error
+        double proportional = err * Kp;
+        double integral = DoubleStream.of(trend).sum() * Ki;
+        double derivative = (err - trend[trend.length - 1]) * Kd;
+        double total = -(proportional + integral + derivative) * speed;
+        // #nestedterneries r awesum.
+        double basePower = 0.05;
+        if (total > 0) {
+            total = total < basePower ? total + basePower : total;
+        }
+        if (total < 0) {
+            total = total > basePower ? total - basePower : total;
+        }
+    
+        // ROBOBOBO: LEFT 2 NEGATE
+        // Final: ???
+        hardware.getFRMotor().setPower(total);
+        hardware.getFLMotor().setPower(-total);
+        hardware.getBLMotor().setPower(-total);
+        hardware.getBRMotor().setPower(total);
+    
+        this.opMode.telemetry.addData("Angle: ", "" + angles.firstAngle);
+        this.opMode.telemetry.addData("Second Angle: ", "" + angles.secondAngle);
+        this.opMode.telemetry.addData("Third Angle: ", "" + angles.thirdAngle);
+        this.opMode.telemetry.addData("I: ",  + integral + "D: " + derivative + "T: " + total);
+        this.opMode.telemetry.update();
+    
+        // recursive updates
+        double[] trendI = new double[trend.length + 1];
+        for (int i = 0; i < trend.length; i++) trendI[i] = trend[i];
+        trendI[trendI.length - 1] = err;
+    
+        turn(degrees, speed, precision, Kp, Ki, Kd, trendI);
     }
 
     /**
@@ -189,7 +290,6 @@ public class Robot implements Runnable {
 
         return Math.round((targetDist / (float) (diameter * Math.PI)) * tpr);
     }
-    private float PID(double target, double current, float Kp, float Ki, float Kd) {return 0;}
     
     
     public SleeveDetect sleeveDetect;
