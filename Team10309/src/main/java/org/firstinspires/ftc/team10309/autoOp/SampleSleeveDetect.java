@@ -9,7 +9,7 @@ import org.firstinspires.ftc.team10309.API.Robot;
 public class SampleSleeveDetect extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(this);
+        Robot robot = new Robot(this, false);
         robot.initDetect();
         telemetry.addLine("Press Start");
         telemetry.update();

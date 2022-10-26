@@ -142,4 +142,29 @@ public class RobotHardware {
         return this.hw.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", this.hw.appContext.getPackageName());
     }
+
+    /**
+     * Recalibrates the encoders in the motors
+     */
+    public void resetEncoders() {
+        this.flMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.frMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.blMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.brMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    /**
+     * Recalibrates the imu
+     */
+    public void resetIMU() {
+        this.imuParams = new BNO055IMU.Parameters();
+        this.imuParams.mode = BNO055IMU.SensorMode.IMU;
+        this.getIMU().initialize(this.imuParams);
+    }
+
+    /**
+     * Recalibrates the lift
+     */
+    public void resetLift() {
+        this.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
 }
