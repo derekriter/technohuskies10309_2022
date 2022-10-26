@@ -18,11 +18,11 @@
             waitForStart();
 
 
-
+            robot.turn(90,07f);
             robot.strafe(23,.7f);
-            robot.drive(32,.8f);
+            robot.drive(32,.7f);
             //open claw
-            robot.drive(2,.6f);
+            robot.drive(2,.7f);
             // close claw
             //  move the robot to the pole and
             //  place the cone on the pole.
