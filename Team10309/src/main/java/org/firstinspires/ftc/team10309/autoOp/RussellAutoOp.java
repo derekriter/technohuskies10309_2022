@@ -19,13 +19,13 @@
 
 
 
-            robot.strafe(23,.7f);
+            robot.strafe(21,.7f);
             robot.drive(32,.7f);
             //open claw
             robot.drive(2,.7f);
-            // close claw
             //  move the robot to the pole and
             //  place the cone on the pole.
+            robot.strafe(2,.7f);
 
 
         }
