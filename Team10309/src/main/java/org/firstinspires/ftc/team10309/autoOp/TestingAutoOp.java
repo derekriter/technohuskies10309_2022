@@ -13,15 +13,11 @@ public class TestingAutoOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //init
-        this.robot = new Robot(this);
+        this.robot = new Robot(this, false);
 
         waitForStart();
-        this.robot.startUpdateLoop();
 
         //main program
-        this.robot.strafe(12, 0.5f);
-
-        //exiting
-        this.robot.exitUpdateLoop();
+//        this.robot.turn(90, 0.5f);
     }
 }

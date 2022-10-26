@@ -15,7 +15,7 @@ public class SamplePIDTurn extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //init
-        this.robot = new Robot(this);
+        this.robot = new Robot(this, false);
         
         waitForStart();
         
