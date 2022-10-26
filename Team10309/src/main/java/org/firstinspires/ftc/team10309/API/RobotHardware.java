@@ -5,10 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 /**
  * A class containing the robot's hardware map and configuration. Used for both AutoOp and TeleOp
@@ -58,20 +62,22 @@ public class RobotHardware {
      * The parameters and data for the IMU
      */
     public BNO055IMU.Parameters imuParams;
-
+    
+    public WebcamName camera;
+    private HardwareMap hw;
     //Constructors for AutoOp and TeleOp
 
     //TeleOp
     public RobotHardware(OpMode opMode, boolean isFinal) {
         this.isFinal = isFinal;
-
+        this.hw = opMode.hardwareMap;
         this.mapHardware(opMode.hardwareMap);
         this.configHardware();
     }
     //AutoOp
     public RobotHardware(LinearOpMode opMode, boolean isFinal) {
         this.isFinal = isFinal;
-
+        this.hw = opMode.hardwareMap;
         this.mapHardware(opMode.hardwareMap);
         this.configHardware();
     }
@@ -84,7 +90,7 @@ public class RobotHardware {
 
     public Servo getClawRotater() {return this.clawRotater;}
     public Servo getClaw() {return this.claw;}
-
+    public WebcamName getCamera() {return this.camera;}
     public BNO055IMU getIMU() {return this.imu;}
 
     /**
@@ -105,6 +111,10 @@ public class RobotHardware {
             this.clawRotater = hardwareMap.get(Servo.class, RobotInfo.clawRotaterName);
             this.claw = hardwareMap.get(Servo.class, RobotInfo.clawName);
         }
+//
+//        this.dOdometer = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.dOdometerName);
+//        this.sOdometer = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.sOdometerName);
+        this.camera = hardwareMap.get(WebcamName.class, RobotInfo.camera);
     }
 
     /**
@@ -127,5 +137,9 @@ public class RobotHardware {
 
         this.imuParams.mode = BNO055IMU.SensorMode.IMU;
         this.imu.initialize(this.imuParams);
+    }
+    public int getTfodMonitorViewID() {
+        return this.hw.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", this.hw.appContext.getPackageName());
     }
 }
