@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team10309.teleOp;
 
+import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,28 +16,77 @@ public class ManipulaterBen extends OpMode {
     double drive;
     double turn;
     double max;
+
     @Override
     public void init() {
-        this.hardware = new RobotHardware(this, false);
+        // isFinal true for robot false for robobobo
+        this.hardware = new RobotHardware(this, true);
         this.hardware.getLift().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     @Override
     public void loop() {
-        boolean raise = gamepad2.y;
-        boolean lower = gamepad2.a;
-        boolean grab = gamepad2.right_bumper;
+        boolean ArmPosR = gamepad2.dpad_right;
+        boolean ArmPosL = gamepad2.dpad_left;
+        boolean ArmPosC = gamepad2.dpad_up;
+        boolean  grab = gamepad2.right_bumper;
         boolean release = gamepad2.left_bumper;
-        double liftPos =  this.hardware.getLift().getCurrentPosition();
+        double liftPos = this.hardware.getLift().getCurrentPosition();
         telemetry.addData("liftpos", liftPos);
         telemetry.update();
 
-        if(raise) {
-            this.hardware.getLift().setPower(-0.5);
+        this.hardware.getClawRotater().setPosition(.4);
+
+        if (ArmPosC) {
+            this.hardware.getLift().setTargetPosition(-1154);
+            this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            this.hardware.getLift().setPower(-1);
+
+            while(this.hardware.getLift().isBusy()) {}
+
+            this.hardware.getClawRotater().setPosition(.5);
+
+            while(this.hardware.getClawRotater().getPosition() != 0.5) {}
+
+            this.hardware.getLift().setTargetPosition(0);
+            this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            this.hardware.getLift().setPower(-1);
         }
-        if(lower) {
-            this.hardware.getLift().setPower(0.5);
+        if (ArmPosL) {
+            this.hardware.getLift().setTargetPosition(-1154);
+            this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            this.hardware.getLift().setPower(-1);
+
+            while(this.hardware.getLift().isBusy()) {}
+
+            this.hardware.getClawRotater().setPosition(0.05);
+
+            while(this.hardware.getClawRotater().getPosition() != 0.05) {}
+
+            this.hardware.getLift().setTargetPosition(0);
+            this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            this.hardware.getLift().setPower(-1);
+        }
+        if (ArmPosR) {
+            this.hardware.getLift().setTargetPosition(-1154);
+            this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            this.hardware.getLift().setPower(-1);
+
+            while(this.hardware.getLift().isBusy()) {}
+
+            this.hardware.getClawRotater().setPosition(1);
+
+            while(this.hardware.getClawRotater().getPosition() != 1) {}
+
+            this.hardware.getLift().setTargetPosition(0);
+            this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            this.hardware.getLift().setPower(-1);
+        }
+        if (grab) {
+            this.hardware.getClaw().setPosition(0.15);
+        }
+        if (release) {
+            this.hardware.getClaw().setPosition(0.4);
         }
     }
 }
-
