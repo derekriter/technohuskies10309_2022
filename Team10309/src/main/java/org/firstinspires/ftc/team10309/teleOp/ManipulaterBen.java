@@ -27,8 +27,8 @@ public class ManipulaterBen extends OpMode {
     @Override
     public void loop() {
         boolean ArmPosR = gamepad2.dpad_right;
-        boolean ArmPosL = gamepad2.dpad_left;
         boolean ArmPosC = gamepad2.dpad_up;
+        boolean ArmPosL = gamepad2.dpad_left;
         boolean  grab = gamepad2.right_bumper;
         boolean release = gamepad2.left_bumper;
         double liftPos = this.hardware.getLift().getCurrentPosition();
@@ -40,7 +40,7 @@ public class ManipulaterBen extends OpMode {
         if (ArmPosC) {
             this.hardware.getLift().setTargetPosition(-1154);
             this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            this.hardware.getLift().setPower(-1);
+            this.hardware.getLift().setPower(-.25);
 
             while(this.hardware.getLift().isBusy()) {}
 
@@ -50,37 +50,36 @@ public class ManipulaterBen extends OpMode {
 
             this.hardware.getLift().setTargetPosition(0);
             this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            this.hardware.getLift().setPower(-1);
+            this.hardware.getLift().setPower(.25);
         }
         if (ArmPosL) {
             this.hardware.getLift().setTargetPosition(-1154);
             this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            this.hardware.getLift().setPower(-1);
+            this.hardware.getLift().setPower(-.25);
 
             while(this.hardware.getLift().isBusy()) {}
 
             this.hardware.getClawRotater().setPosition(0.05);
 
             while(this.hardware.getClawRotater().getPosition() != 0.05) {}
-
             this.hardware.getLift().setTargetPosition(0);
             this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            this.hardware.getLift().setPower(-1);
+            this.hardware.getLift().setPower(.25);
         }
         if (ArmPosR) {
             this.hardware.getLift().setTargetPosition(-1154);
             this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            this.hardware.getLift().setPower(-1);
+            this.hardware.getLift().setPower(-.25);
 
             while(this.hardware.getLift().isBusy()) {}
 
-            this.hardware.getClawRotater().setPosition(1);
+            this.hardware.getClawRotater().setPosition(.8);
 
-            while(this.hardware.getClawRotater().getPosition() != 1) {}
+            while(this.hardware.getClawRotater().getPosition() != .8) {}
 
             this.hardware.getLift().setTargetPosition(0);
             this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            this.hardware.getLift().setPower(-1);
+            this.hardware.getLift().setPower(.25);
         }
         if (grab) {
             this.hardware.getClaw().setPosition(0.15);
