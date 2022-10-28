@@ -223,10 +223,13 @@ public class Robot {
      */
     private void waitForMotors() {
         while(
-            this.hardware.getFLMotor().isBusy()
-            || this.hardware.getFRMotor().isBusy()
-            || this.hardware.getBLMotor().isBusy()
-            || this.hardware.getBRMotor().isBusy()
+            (
+                this.hardware.getFLMotor().isBusy()
+                || this.hardware.getFRMotor().isBusy()
+                || this.hardware.getBLMotor().isBusy()
+                || this.hardware.getBRMotor().isBusy()
+            )
+            && this.opMode.opModeIsActive()
         ) {}
     }
     /**

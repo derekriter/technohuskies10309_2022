@@ -72,6 +72,9 @@ public class SbTbAutoOP extends LinearOpMode {
         this.clawController.setClawRotation(ClawController.ClawRotation.SIDE);
         this.clawController.setClawState(ClawController.ClawState.OPEN);
 
+        this.clawController.setClawRotation(ClawController.ClawRotation.FRONT);
+        this.clawController.setLiftPosition(ClawController.LiftPosition.GROUND);
+
         //park in area indicated by the signal
         if(sleeveState == SleeveDetect.SignalState.RED_SQUARE) {
             this.robot.driveTiles(0.5f, speed);
