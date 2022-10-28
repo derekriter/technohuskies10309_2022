@@ -111,9 +111,7 @@ public class RobotHardware {
             this.clawRotater = hardwareMap.get(Servo.class, RobotInfo.clawRotaterName);
             this.claw = hardwareMap.get(Servo.class, RobotInfo.clawName);
         }
-//
-//        this.dOdometer = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.dOdometerName);
-//        this.sOdometer = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.sOdometerName);
+
         this.camera = hardwareMap.get(WebcamName.class, RobotInfo.camera);
     }
 

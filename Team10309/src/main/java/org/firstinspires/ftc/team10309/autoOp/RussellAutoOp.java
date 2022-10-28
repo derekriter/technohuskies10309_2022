@@ -15,11 +15,11 @@
         @Override
         public void runOpMode() throws InterruptedException {
             //init
-            this.robot = new Robot(this);
+            this.robot = new Robot(this, true);
 
             waitForStart();
 
-                Robot robot = new Robot(this);
+                Robot robot = new Robot(this, true);
                 robot.initDetect();
                 telemetry.addLine("Press Start");
                 telemetry.update();

@@ -11,9 +11,9 @@ public class ClawController {
         HIGH
     }
     public enum ClawRotation {
-        LEFT,
-        MIDDLE,
-        RIGHT
+        FRONT,
+        SIDE,
+        BACK
     }
     public enum ClawState {
         OPEN,
@@ -37,9 +37,9 @@ public class ClawController {
         this.hardware.getLift().setPower(1);
     }
     public void setClawRotation(ClawRotation rotation) {
-        if(rotation == ClawRotation.LEFT) this.hardware.getClawRotater().setPosition(0);
-        if(rotation == ClawRotation.MIDDLE) this.hardware.getClawRotater().setPosition(0.5);
-        if(rotation == ClawRotation.RIGHT) this.hardware.getClawRotater().setPosition(1);
+        if(rotation == ClawRotation.FRONT) this.hardware.getClawRotater().setPosition(0);
+        if(rotation == ClawRotation.SIDE) this.hardware.getClawRotater().setPosition(0.5);
+        if(rotation == ClawRotation.BACK) this.hardware.getClawRotater().setPosition(1);
     }
     public void setClawState(ClawState state) {
         if(state == ClawState.OPEN) this.hardware.getClaw().setPosition(0.4);

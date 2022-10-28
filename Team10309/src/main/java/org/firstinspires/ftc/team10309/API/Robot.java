@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.team10309.API.info.FieldInfo;
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
 import java.util.stream.DoubleStream;
@@ -23,10 +24,6 @@ public class Robot {
      * The hardware of this robot instance
      */
     private final RobotHardware hardware;
-    /**
-     * The thread running the update loop
-     */
-    private Thread loop;
     /**
      * Whether this is the final robot or robobobo
      */
@@ -98,11 +95,24 @@ public class Robot {
 
         this.waitForMotors();
     }
+
     /**
-     * rotates to robot
-     * @param degrees the number of degrees to turn the robot (+: clockwise, -: counterclockwise)
-     * @param speed the speed to turn at (min: 0, max: 1)
+     * Drives the number of tiles
+     * @param tiles the number of tiles
+     * @param speed the speed (0 - 1)
      */
+    public void driveTiles(float tiles, float speed) {
+        this.drive(tiles * FieldInfo.tileSize, speed);
+    }
+    /**
+     * strafes the number of tiles
+     * @param tiles the number of tiles
+     * @param speed the speed (0 - 1)
+     */
+    public void strafeTiles(float tiles, float speed) {
+        this.strafe(tiles * FieldInfo.tileSize, speed);
+    }
+
     private Orientation angles;
     public void turn(float degrees, float speed, double precision) {
         this.hardware.resetIMU();
@@ -136,9 +146,7 @@ public class Robot {
      * Final: ???
      */
     private void turn(double degrees, double speed, double precision, double Kp,
-                                double Ki,
-                               double Kd,
-                               double[] trend) {
+                        double Ki, double Kd, double[] trend) {
         if (!opMode.opModeIsActive()) {
             return;
         }
@@ -251,4 +259,10 @@ public class Robot {
         initDetect();
         return scanSleeve();
     }
+
+    /**
+     * Returns the internally stored RobotHardware
+     * @return RobotHardware for robot instance
+     */
+    public RobotHardware getHardware() {return this.hardware;}
 }
