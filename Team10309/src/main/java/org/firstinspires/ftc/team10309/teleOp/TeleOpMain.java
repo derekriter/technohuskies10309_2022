@@ -9,6 +9,7 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team10309.API.RobotHardware;
 
@@ -21,6 +22,15 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
         public void init() {
             this.hardware = new RobotHardware(this, true); //MEANT TO BE TRUE!!!
             this.hardware.getLift().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            this.hardware.getLift().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            this.hardware.getClaw().setDirection(Servo.Direction.REVERSE);
+        }
+
+        private void prepareLiftForRotate(int position, double speed){
+            int adjustLiftForArmRotate = -200;
+            this.hardware.getLift().setTargetPosition(-position + adjustLiftForArmRotate);
+            this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            this.hardware.getLift().setPower(-speed);
         }
 
         @Override
@@ -35,54 +45,51 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
             boolean  grab = gamepad2.right_bumper;
             boolean release = gamepad2.left_bumper;
             double liftPos = this.hardware.getLift().getCurrentPosition();
+            double needForLiftSpeed = 0.45;
+
             telemetry.addData("liftpos", liftPos);
+            telemetry.addData("Claw Position", this.hardware.getClaw().getPosition());
             telemetry.update();
 
             // Arm
-            this.hardware.getClawRotater().setPosition(.4);
+            int currentPosition = this.hardware.getLift().getCurrentPosition();
             if (ArmPosC) {
-                this.hardware.getLift().setTargetPosition(-1154);
-                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                this.hardware.getLift().setPower(-.25);
+                prepareLiftForRotate(currentPosition, needForLiftSpeed);
 
                 while(this.hardware.getLift().isBusy()) {}
 
-                this.hardware.getClawRotater().setPosition(.5);
+                while(this.hardware.getClawRotater().getPosition() != 0.4) {
+                    this.hardware.getClawRotater().setPosition(.4);
+                }
 
-//                while(this.hardware.getClawRotater().getPosition() != 0.5) {}
-//                this.hardware.getLift().setTargetPosition(0);
-//                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                this.hardware.getLift().setPower(.25);
+                this.hardware.getLift().setTargetPosition(currentPosition);
+                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                this.hardware.getLift().setPower(needForLiftSpeed);
             }
             if (ArmPosL) {
-                this.hardware.getLift().setTargetPosition(-1154);
-                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                this.hardware.getLift().setPower(-.25);
+                prepareLiftForRotate(currentPosition, needForLiftSpeed);
 
                 while(this.hardware.getLift().isBusy()) {}
 
-                this.hardware.getClawRotater().setPosition(0.05);
-
-                //Comment out lowering Lift
-//                while(this.hardware.getClawRotater().getPosition() != 0.05) {}
-//                this.hardware.getLift().setTargetPosition(0);
-//                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                this.hardware.getLift().setPower(.25);
+                while(this.hardware.getClawRotater().getPosition() != 0.05) {
+                    this.hardware.getClawRotater().setPosition(0.05);
+                }
+                this.hardware.getLift().setTargetPosition(currentPosition);
+                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                this.hardware.getLift().setPower(needForLiftSpeed);
             }
             if (ArmPosR) {
-                this.hardware.getLift().setTargetPosition(-1154);
-                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                this.hardware.getLift().setPower(-.25);
+                prepareLiftForRotate(currentPosition, needForLiftSpeed);
 
                 while(this.hardware.getLift().isBusy()) {}
 
-                this.hardware.getClawRotater().setPosition(.8);
+                while(this.hardware.getClawRotater().getPosition() != .8) {
+                    this.hardware.getClawRotater().setPosition(.8);
+                }
 
-                //Comment out lowering lift
-//                while(this.hardware.getClawRotater().getPosition() != .8) {}
-//                this.hardware.getLift().setTargetPosition(0);
-//                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                this.hardware.getLift().setPower(.25);
+                this.hardware.getLift().setTargetPosition(currentPosition);
+                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                this.hardware.getLift().setPower(needForLiftSpeed);
             }
 
             //Claw
@@ -95,11 +102,11 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
 
             // elevator
             if(Raise){
-                this.hardware.getLift().setPower(-0.25);
-            }
-
-            if(Lower){
-                this.hardware.getLift().setPower(0.25);
+                this.hardware.getLift().setPower(-needForLiftSpeed);
+            } else if(Lower){
+                this.hardware.getLift().setPower(needForLiftSpeed);
+            } else {
+                this.hardware.getLift().setPower(0);
             }
 
             // Drive Code

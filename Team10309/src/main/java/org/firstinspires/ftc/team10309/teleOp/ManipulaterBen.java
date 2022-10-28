@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team10309.teleOp;
 
-import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -44,9 +43,9 @@ public class ManipulaterBen extends OpMode {
 
             while(this.hardware.getLift().isBusy()) {}
 
-            this.hardware.getClawRotater().setPosition(.5);
-
-            while(this.hardware.getClawRotater().getPosition() != 0.5) {}
+            while(this.hardware.getClawRotater().getPosition() != 0.4) {
+                this.hardware.getClawRotater().setPosition(.4);
+            }
 
             this.hardware.getLift().setTargetPosition(0);
             this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -59,9 +58,9 @@ public class ManipulaterBen extends OpMode {
 
             while(this.hardware.getLift().isBusy()) {}
 
-            this.hardware.getClawRotater().setPosition(0.05);
-
-            while(this.hardware.getClawRotater().getPosition() != 0.05) {}
+            while(this.hardware.getClawRotater().getPosition() != 0.05) {
+                this.hardware.getClawRotater().setPosition(0.05);
+            }
             this.hardware.getLift().setTargetPosition(0);
             this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
             this.hardware.getLift().setPower(.25);
