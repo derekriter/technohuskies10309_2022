@@ -17,6 +17,9 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
     public class TeleOpMain extends OpMode {
 
         public RobotHardware hardware;
+        //diameter = 34.4mm
+        // -11781 top ticks
+
 
         @Override
         public void init() {
@@ -27,8 +30,8 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
         }
 
         private void prepareLiftForRotate(int position, double speed){
-            int adjustLiftForArmRotate = -200;
-            this.hardware.getLift().setTargetPosition(-position + adjustLiftForArmRotate);
+            int adjustLiftForArmRotate = -2800;
+            this.hardware.getLift().setTargetPosition(position + adjustLiftForArmRotate);
             this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
             this.hardware.getLift().setPower(-speed);
         }
@@ -53,43 +56,52 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
 
             // Arm
             int currentPosition = this.hardware.getLift().getCurrentPosition();
-            if (ArmPosC) {
-                prepareLiftForRotate(currentPosition, needForLiftSpeed);
+//            if (ArmPosC) {
+//                prepareLiftForRotate(currentPosition, needForLiftSpeed);
+//
+//                while(this.hardware.getLift().isBusy() && opModeIsActive()) {}
 
-                while(this.hardware.getLift().isBusy()) {}
+//                while(this.hardware.getClawRotater().getPosition() != 0.4) {
+//                    this.hardware.getClawRotater().setPosition(.4);
+//                }
 
-                while(this.hardware.getClawRotater().getPosition() != 0.4) {
-                    this.hardware.getClawRotater().setPosition(.4);
-                }
+//                this.hardware.getLift().setTargetPosition(currentPosition);
+//                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                this.hardware.getLift().setPower(needForLiftSpeed);
 
-                this.hardware.getLift().setTargetPosition(currentPosition);
-                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                this.hardware.getLift().setPower(needForLiftSpeed);
-            }
+//                while(this.hardware.getLift().isBusy() && opModeIsActive()) {}
+//                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            }
             if (ArmPosL) {
-                prepareLiftForRotate(currentPosition, needForLiftSpeed);
+//                prepareLiftForRotate(currentPosition, needForLiftSpeed);
 
-                while(this.hardware.getLift().isBusy()) {}
+//                while(this.hardware.getLift().isBusy() && opModeIsActive()) {}
 
                 while(this.hardware.getClawRotater().getPosition() != 0.05) {
                     this.hardware.getClawRotater().setPosition(0.05);
                 }
-                this.hardware.getLift().setTargetPosition(currentPosition);
-                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                this.hardware.getLift().setPower(needForLiftSpeed);
+//                this.hardware.getLift().setTargetPosition(currentPosition);
+//                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                this.hardware.getLift().setPower(needForLiftSpeed);
+//
+////                while(this.hardware.getLift().isBusy() && opModeIsActive()) {}
+//                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
             if (ArmPosR) {
-                prepareLiftForRotate(currentPosition, needForLiftSpeed);
+//                prepareLiftForRotate(currentPosition, needForLiftSpeed);
+//
+//                while(this.hardware.getLift().isBusy() && opModeIsActive()) {}
 
-                while(this.hardware.getLift().isBusy()) {}
-
-                while(this.hardware.getClawRotater().getPosition() != .8) {
-                    this.hardware.getClawRotater().setPosition(.8);
+                while(this.hardware.getClawRotater().getPosition() != .76) {
+                    this.hardware.getClawRotater().setPosition(.76);
                 }
 
-                this.hardware.getLift().setTargetPosition(currentPosition);
-                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                this.hardware.getLift().setPower(needForLiftSpeed);
+//                this.hardware.getLift().setTargetPosition(currentPosition);
+//                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                this.hardware.getLift().setPower(needForLiftSpeed);
+//
+//                while(this.hardware.getLift().isBusy() && OpMode) {}
+//                this.hardware.getLift().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
             //Claw
