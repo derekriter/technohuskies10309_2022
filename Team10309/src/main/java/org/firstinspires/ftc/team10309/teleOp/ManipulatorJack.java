@@ -21,29 +21,21 @@ public class ManipulatorJack extends OpMode {
     @Override
     public void loop() {
 
-        boolean Ground = gamepad2.a;
-        boolean Small = gamepad2.b;
-        boolean Middle = gamepad2.x;
-        boolean High = gamepad2.y;
+
+        boolean Raise = this.gamepad2.y;
+        boolean Lower = this.gamepad2.a;
         double Liftpos = this.hardware.getLift().getCurrentPosition();
+
+        if(Raise){
+            this.hardware.getLift().setPower(-0.45);
+        }
+
+        if(Lower){
+            this.hardware.getLift().setPower(0.45);
+        }
 
         telemetry.addData("Liftpos", Liftpos);
         telemetry.update();
-
-        if(Ground){
-            this.hardware.getLift().setTargetPosition(0);   //0 inches
-        }
-
-        if(Small){
-            this.hardware.getLift().setTargetPosition(3846);    // 10 inches
-        }
-
-        if(Middle){
-            this.hardware.getLift().setTargetPosition(7692);    //20 inches
-        }
-
-        if(High){
-            this.hardware.getLift().setTargetPosition(11538);   //30 inches
         }
     }
-}
+
