@@ -5,13 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 /**
@@ -64,20 +63,18 @@ public class RobotHardware {
     public BNO055IMU.Parameters imuParams;
     
     public WebcamName camera;
+    private TouchSensor liftBottom;
+
     private HardwareMap hw;
+    private LinearOpMode opMode;
     //Constructors for AutoOp and TeleOp
 
-    //TeleOp
-    public RobotHardware(OpMode opMode, boolean isFinal) {
-        this.isFinal = isFinal;
-        this.hw = opMode.hardwareMap;
-        this.mapHardware(opMode.hardwareMap);
-        this.configHardware();
-    }
     //AutoOp
     public RobotHardware(LinearOpMode opMode, boolean isFinal) {
         this.isFinal = isFinal;
         this.hw = opMode.hardwareMap;
+        this.opMode = opMode;
+
         this.mapHardware(opMode.hardwareMap);
         this.configHardware();
     }
@@ -90,8 +87,10 @@ public class RobotHardware {
 
     public Servo getClawRotater() {return this.clawRotater;}
     public Servo getClaw() {return this.claw;}
+
     public WebcamName getCamera() {return this.camera;}
     public BNO055IMU getIMU() {return this.imu;}
+    public TouchSensor getLiftBottom() {return this.liftBottom;}
 
     /**
      * Called to init all the values mappings
@@ -110,6 +109,8 @@ public class RobotHardware {
             this.lift = hardwareMap.get(DcMotor.class, RobotInfo.liftName);
             this.clawRotater = hardwareMap.get(Servo.class, RobotInfo.clawRotaterName);
             this.claw = hardwareMap.get(Servo.class, RobotInfo.clawName);
+
+            this.liftBottom = hardwareMap.get(TouchSensor.class, RobotInfo.liftBottomName);
         }
 
         this.camera = hardwareMap.get(WebcamName.class, RobotInfo.camera);
@@ -122,6 +123,8 @@ public class RobotHardware {
         if(isFinal) {
             this.blMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             this.brMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            this.claw.setDirection(Servo.Direction.REVERSE);
+            this.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         else {
             this.flMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -163,6 +166,22 @@ public class RobotHardware {
      * Recalibrates the lift
      */
     public void resetLift() {
+        if(!this.liftBottom.isPressed()) {
+            this.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            this.lift.setPower(0.2);
+        }
+        while(!this.liftBottom.isPressed() && this.opMode.opModeInInit()) {}
+
+        this.lift.setPower(0);
+
+        this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.lift.setTargetPosition(this.lift.getCurrentPosition() - 200);
+        this.lift.setPower(0.2);
+
+        while(this.lift.isBusy() && this.opMode.opModeInInit()) {}
         this.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.lift.setPower(0);
+
+        this.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }

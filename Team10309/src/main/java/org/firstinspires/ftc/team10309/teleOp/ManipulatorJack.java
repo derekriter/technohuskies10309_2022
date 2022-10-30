@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team10309.teleOp;
 
 import static java.lang.System.in;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,17 +10,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.team10309.API.RobotHardware;
 
 @TeleOp(name="ManipulatorJack", group="Examples")
-public class ManipulatorJack extends OpMode {
+public class ManipulatorJack extends LinearOpMode {
 
     private RobotHardware hardware;
 
     @Override
-    public void init() {
+    public void runOpMode() {
         this.hardware = new RobotHardware(this, true); //MEANT TO BE TRUE!!!
         this.hardware.getLift().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        waitForStart();
+
+        while(opModeIsActive()) {
+            customLoop();
+        }
     }
-    @Override
-    public void loop() {
+
+    public void customLoop() {
 
 
         boolean Raise = this.gamepad2.y;

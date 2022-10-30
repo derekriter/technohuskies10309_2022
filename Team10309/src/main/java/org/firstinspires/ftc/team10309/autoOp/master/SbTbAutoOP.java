@@ -23,15 +23,15 @@ public class SbTbAutoOP extends LinearOpMode {
         final float speed = 0.7f;
 
         //init
-        this.robot = new Robot(this, false);
-        this.clawController = new ClawController(this.robot.getHardware());
+        this.robot = new Robot(this, true);
+        this.clawController = new ClawController(this.robot.getHardware(), this);
 
         this.clawController.setClawRotation(ClawController.ClawRotation.BACK);
         this.clawController.setLiftPosition(ClawController.LiftPosition.GROUND);
         this.clawController.setClawState(ClawController.ClawState.OPEN);
 
         //wait for 5 seconds for the driver to insert the preloaded cone
-        wait(5000);
+        Thread.sleep(5000);
 
         this.clawController.setClawState(ClawController.ClawState.CLOSED);
 

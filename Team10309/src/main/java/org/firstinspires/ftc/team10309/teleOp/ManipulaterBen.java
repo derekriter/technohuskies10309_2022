@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team10309.teleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.team10309.API.RobotHardware;
 
 @TeleOp(name="manipulater | Ben")
-public class ManipulaterBen extends OpMode {
+public class ManipulaterBen extends LinearOpMode {
 
     private RobotHardware hardware;
     double left;
@@ -16,15 +17,19 @@ public class ManipulaterBen extends OpMode {
     double turn;
     double max;
 
-    @Override
-    public void init() {
+    public void runOpMode() {
         // isFinal true for robot false for robobobo
         this.hardware = new RobotHardware(this, true);
         this.hardware.getLift().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        waitForStart();
+
+        while(opModeIsActive()) {
+            customLoop();
+        }
     }
 
-    @Override
-    public void loop() {
+    public void customLoop() {
         boolean ArmPosR = gamepad2.dpad_right;
         boolean ArmPosC = gamepad2.dpad_up;
         boolean ArmPosL = gamepad2.dpad_left;

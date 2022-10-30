@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team10309.teleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,22 +13,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team10309.API.RobotHardware;
+import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
-    @TeleOp(name="TeleOpMain", group="Test")
-    public class TeleOpMain extends OpMode {
+@TeleOp(name="TeleOpMain", group="Test")
+    public class TeleOpMain extends LinearOpMode {
 
         public RobotHardware hardware;
         //diameter = 34.4mm
         // -11781 top ticks
-
-
-        @Override
-        public void init() {
-            this.hardware = new RobotHardware(this, true); //MEANT TO BE TRUE!!!
-            this.hardware.getLift().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            this.hardware.getLift().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            this.hardware.getClaw().setDirection(Servo.Direction.REVERSE);
-        }
 
         /**
          * No longe lifting before/after rotate of arm... it's on the "driver"
@@ -38,9 +31,20 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
 //            this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //            this.hardware.getLift().setPower(-speed);
 //        }
-
         @Override
-        public void loop() {
+        public void runOpMode() {
+            this.hardware = new RobotHardware(this, true); //MEANT TO BE TRUE!!!
+
+            this.hardware.resetLift();
+
+            waitForStart();
+
+            while(opModeIsActive()) {
+                customLoop();
+            }
+        }
+
+        public void customLoop() {
 
             boolean Raise = this.gamepad2.y;
             boolean Lower = this.gamepad2.a;
@@ -50,11 +54,11 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
             boolean  grab = gamepad2.right_bumper;
             boolean release = gamepad2.left_bumper;
             double liftPos = this.hardware.getLift().getCurrentPosition();
-            double needForLiftSpeed = 0.45;
+            final double needForLiftSpeed = 0.45;
 
             telemetry.addData("Lift Start Pos", liftPos);
             telemetry.addData("Claw Position", this.hardware.getClaw().getPosition());
-            telemetry.update();
+            telemetry.addData("Lower", Lower);
 
             // Arm
             /**
@@ -116,11 +120,13 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
             //End Claw
 
             // elevator
-            if(Raise){
+            if(Raise && this.hardware.getLift().getCurrentPosition() > RobotInfo.liftTop){
                 this.hardware.getLift().setPower(-needForLiftSpeed);
-            } else if(Lower){
+            }
+            else if(Lower && this.hardware.getLift().getCurrentPosition() < 5){
                 this.hardware.getLift().setPower(needForLiftSpeed);
-            } else {
+            }
+            else {
                 this.hardware.getLift().setPower(0);
             }
             //End elevator
@@ -152,6 +158,7 @@ import org.firstinspires.ftc.team10309.API.RobotHardware;
             telemetry.addData("forward", forward);
             telemetry.addData("turn", turn);
             telemetry.addData("Liftpos", liftPos);
+            telemetry.addData("Lift Bottom", this.hardware.getLiftBottom().isPressed());
             telemetry.update();
         }
     }

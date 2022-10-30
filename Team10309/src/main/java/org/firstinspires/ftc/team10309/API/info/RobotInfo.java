@@ -39,6 +39,8 @@ public abstract class RobotInfo {
      */
     public final static String imuName = "imu";
 
+    public final static String liftBottomName = "liftBottom";
+
     /**
      * The number of ticks per revolution on the drive motors
      */
@@ -68,4 +70,10 @@ public abstract class RobotInfo {
             "Green Circle",
             "Red Square"
     };
+
+    /**
+     * The number of ticks representing the top limit of the lift, assuming that the bottom is
+     * zero, and up is negative
+     */
+    public final static int liftTop = -14572;
 }

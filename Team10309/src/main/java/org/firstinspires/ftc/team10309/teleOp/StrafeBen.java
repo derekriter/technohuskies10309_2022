@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.team10309.teleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.team10309.API.RobotHardware;
 
 @TeleOp(name="Strafe | Ben")
-public class StrafeBen extends OpMode {
+public class StrafeBen extends LinearOpMode {
 
     private RobotHardware hardware;
     double left;
@@ -14,14 +15,19 @@ public class StrafeBen extends OpMode {
     double drive;
     double turn;
     double max;
+
     @Override
-    public void init() {
+    public void runOpMode() {
         this.hardware = new RobotHardware(this, false);
 
+        waitForStart();
+
+        while(opModeIsActive()) {
+            customLoop();
+        }
     }
 
-    @Override
-    public void loop() {
+    public void customLoop() {
 
 
 //        drive = -gamepad1.left_stick_y;
