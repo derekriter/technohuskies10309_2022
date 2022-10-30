@@ -37,6 +37,10 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
             this.hardware.resetLift();
 
+            while(this.hardware.getClawRotater().getPosition() != 0.05) {
+                this.hardware.getClawRotater().setPosition(0.05);
+            }
+
             waitForStart();
 
             while(opModeIsActive()) {
@@ -54,22 +58,13 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
             boolean  grab = gamepad2.right_bumper;
             boolean release = gamepad2.left_bumper;
             double liftPos = this.hardware.getLift().getCurrentPosition();
-            final double needForLiftSpeed = 0.45;
+            final double liftSpeed = 0.65;
 
             telemetry.addData("Lift Start Pos", liftPos);
             telemetry.addData("Claw Position", this.hardware.getClaw().getPosition());
             telemetry.addData("Lower", Lower);
 
             // Arm
-            /**
-             * Leaving just incase we DO want to go to the center
-             *
-             * if (ArmPosC) {
-                while(this.hardware.getClawRotater().getPosition() != 0.4) {
-                    this.hardware.getClawRotater().setPosition(.4);
-                }
-            }
-             **/
             if (ArmPosL) {
                 double leftDestinationPos = 0.05;
                 while(this.hardware.getClawRotater().getPosition() != leftDestinationPos) {
@@ -87,6 +82,11 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 //                        this.hardware.getClawRotater().setPosition(leftDestinationPos);
 //                    }
 //                }
+            }
+            if (ArmPosC && this.hardware.getLift().getCurrentPosition() <= -1100) {
+                while (this.hardware.getClawRotater().getPosition() != 0.4) {
+                    this.hardware.getClawRotater().setPosition(.4);
+                }
             }
             if (ArmPosR) {
                 double rightDestinationPos = .75;
@@ -121,10 +121,11 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
             // elevator
             if(Raise && this.hardware.getLift().getCurrentPosition() > RobotInfo.liftTop){
-                this.hardware.getLift().setPower(-needForLiftSpeed);
+                this.hardware.getLift().setPower(-liftSpeed);
             }
-            else if(Lower && this.hardware.getLift().getCurrentPosition() < 5){
-                this.hardware.getLift().setPower(needForLiftSpeed);
+            else if(Lower && this.hardware.getLift().getCurrentPosition() < 0
+                    && (this.hardware.getClawRotater().getPosition() != 0.4 || this.hardware.getLift().getCurrentPosition() <= -1100)) {
+                this.hardware.getLift().setPower(liftSpeed);
             }
             else {
                 this.hardware.getLift().setPower(0);
@@ -141,7 +142,7 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
             double BRSpeed = forward + strafe - turn;
             double BLSpeed = forward - strafe + turn;
 
-            double largest = 1.0;
+            double largest = 0.5;
             largest=Math.max(largest, Math.abs(FLSpeed));
             largest=Math.max(largest, Math.abs(FRSpeed));
             largest=Math.max(largest, Math.abs(BLSpeed));

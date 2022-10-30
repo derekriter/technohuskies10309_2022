@@ -168,20 +168,20 @@ public class RobotHardware {
     public void resetLift() {
         if(!this.liftBottom.isPressed()) {
             this.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            this.lift.setPower(0.2);
+            this.lift.setPower(0.4);
         }
         while(!this.liftBottom.isPressed() && this.opMode.opModeInInit()) {}
 
         this.lift.setPower(0);
 
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.lift.setTargetPosition(this.lift.getCurrentPosition() - 200);
+        this.lift.setTargetPosition(this.lift.getCurrentPosition() - 50);
         this.lift.setPower(0.2);
 
         while(this.lift.isBusy() && this.opMode.opModeInInit()) {}
-        this.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.lift.setPower(0);
 
+        this.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }

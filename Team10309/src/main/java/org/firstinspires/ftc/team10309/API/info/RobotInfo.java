@@ -75,5 +75,5 @@ public abstract class RobotInfo {
      * The number of ticks representing the top limit of the lift, assuming that the bottom is
      * zero, and up is negative
      */
-    public final static int liftTop = -14572;
+    public final static int liftTop = -14300;
 }
