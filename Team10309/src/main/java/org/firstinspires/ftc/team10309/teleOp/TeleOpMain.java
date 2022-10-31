@@ -1,178 +1,125 @@
 package org.firstinspires.ftc.team10309.teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.team10309.API.RobotHardware;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.team10309.API.RobotHardware;
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
 @TeleOp(name="TeleOpMain", group="Test")
-    public class TeleOpMain extends LinearOpMode {
+public class TeleOpMain extends LinearOpMode {
 
-        public RobotHardware hardware;
-        //diameter = 34.4mm
-        // -11781 top ticks
+    public RobotHardware hardware;
 
-        /**
-         * No longe lifting before/after rotate of arm... it's on the "driver"
-         */
-//        private void prepareLiftForRotate(int position, double speed){
-//            int adjustLiftForArmRotate = -2800;
-//            this.hardware.getLift().setTargetPosition(position + adjustLiftForArmRotate);
-//            this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            this.hardware.getLift().setPower(-speed);
-//        }
-        @Override
-        public void runOpMode() {
-            this.hardware = new RobotHardware(this, true); //MEANT TO BE TRUE!!!
+    private float driveSpeedMultiplier = 0.6f;
+    private boolean decreaseSpeedLast;
+    private boolean increaseSpeedLast;
 
-            this.hardware.resetLift();
+    @Override
+    public void runOpMode() {
+        this.hardware = new RobotHardware(this, true); //MEANT TO BE TRUE!!!
 
-            while(this.hardware.getClawRotator().getPosition() != 0.05) {
-                this.hardware.getClawRotator().setPosition(0.05);
-            }
-
-            waitForStart();
-
-            while(opModeIsActive()) {
-                customLoop();
-            }
+        while(this.hardware.getClawRotator().getPosition() != 0.05) {
+            this.hardware.getClawRotator().setPosition(0.05);
         }
-        int speedCounter = 0;
-        boolean lastLeftTrigger;
-        boolean lastRightTrigger;
-        public void customLoop() {
-            
-            boolean Raise = this.gamepad2.y;
-            boolean Lower = this.gamepad2.a;
-            boolean ArmPosR = gamepad2.dpad_right;
-            boolean ArmPosC = gamepad2.dpad_up;
-            boolean ArmPosL = gamepad2.dpad_left;
-            boolean  grab = gamepad2.right_bumper;
-            boolean release = gamepad2.left_bumper;
-            boolean leftTrigger = !lastLeftTrigger ? (gamepad1.left_trigger > 0.1 ? true : false) : false;
-            boolean rightTrigger = !lastRightTrigger ? (gamepad1.right_trigger > 0.1 ? true : false) : false;
 
-            double liftPos = this.hardware.getLift().getCurrentPosition();
-            final double liftSpeed = 0.65;
+        telemetry.addLine("Init completed");
+        telemetry.update();
 
-            telemetry.addData("Lift Start Pos", liftPos);
-            telemetry.addData("Claw Position", this.hardware.getClaw().getPosition());
-            telemetry.addData("Lower", Lower);
+        waitForStart();
+        this.hardware.resetLift();
 
-            // Arm
-            if (leftTrigger) {
-                if (speedCounter > 0.2) speedCounter -= 0.2;
-            }
-            if (rightTrigger) {
-                if (speedCounter < 1) speedCounter += 0.2;
-            }
-            if (ArmPosL) {
-                double leftDestinationPos = 0.05;
-                while(this.hardware.getClawRotator().getPosition() != leftDestinationPos) {
-                    this.hardware.getClawRotator().setPosition(leftDestinationPos);
-                }
-
-                //Potential Slower Arm Code
-//                double armPos = this.hardware.getClawRotater().getPosition();
-//                double increment = .1;
-//                while(this.hardware.getClawRotater().getPosition() != leftDestinationPos){
-//                    if(armPos > leftDestinationPos){
-//                        armPos -= increment;
-//                        this.hardware.getClawRotater().setPosition(armPos);
-//                    } else {
-//                        this.hardware.getClawRotater().setPosition(leftDestinationPos);
-//                    }
-//                }
-            }
-            if (ArmPosC && this.hardware.getLift().getCurrentPosition() <= -1100) {
-                while (this.hardware.getClawRotator().getPosition() != 0.4) {
-                    this.hardware.getClawRotator().setPosition(.4);
-                }
-            }
-            if (ArmPosR) {
-                double rightDestinationPos = .75;
-                while(this.hardware.getClawRotator().getPosition() != rightDestinationPos) {
-                    this.hardware.getClawRotator().setPosition(rightDestinationPos);
-                }
-
-                //Potential Slower Arm Code,
-                // flaw... if you're moving the arm and try to go the other direction
-                // you could go past the destintation and hit the hub
-//                double armPos = this.hardware.getClawRotater().getPosition();
-//                double increment = .1;
-//                while(this.hardware.getClawRotater().getPosition() != rightDestinationPos){
-//                    if(armPos < rightDestinationPos){
-//                        armPos += increment;
-//                        this.hardware.getClawRotater().setPosition(armPos);
-//                    } else {
-//                        this.hardware.getClawRotater().setPosition(rightDestinationPos);
-//                    }
-//                }
-            }
-            //End Arm
-
-            //Claw
-            if (grab) {
-                this.hardware.getClaw().setPosition(0.15);
-            }
-            if (release) {
-                this.hardware.getClaw().setPosition(0.4);
-            }
-            //End Claw
-
-            // elevator
-            if(Raise && this.hardware.getLift().getCurrentPosition() > RobotInfo.liftTop){
-                this.hardware.getLift().setPower(-liftSpeed);
-            }
-            else if(Lower && this.hardware.getLift().getCurrentPosition() < 0
-                    && (this.hardware.getClawRotator().getPosition() != 0.4 || this.hardware.getLift().getCurrentPosition() <= -1100)) {
-                this.hardware.getLift().setPower(liftSpeed);
-            }
-            else {
-                this.hardware.getLift().setPower(0);
-            }
-            //End elevator
-
-            // Drive Code
-            double strafe = this.gamepad1.left_stick_x;
-            double forward = -this.gamepad1.left_stick_y;
-            double turn = this.gamepad1.right_stick_x;
-
-            double FLSpeed = forward + strafe + turn;
-            double FRSpeed = forward - strafe - turn;
-            double BRSpeed = forward + strafe - turn;
-            double BLSpeed = forward - strafe + turn;
-
-            double largest = 0.5;
-            largest=Math.max(largest, Math.abs(FLSpeed));
-            largest=Math.max(largest, Math.abs(FRSpeed));
-            largest=Math.max(largest, Math.abs(BLSpeed));
-            largest=Math.max(largest, Math.abs(BRSpeed));
-
-            this.hardware.getFLMotor().setPower(FLSpeed*speedCounter);
-            this.hardware.getBRMotor().setPower(BRSpeed*speedCounter);
-            this.hardware.getFRMotor().setPower(FRSpeed*speedCounter);
-            this.hardware.getBLMotor().setPower(BLSpeed*speedCounter);
-
-            //END Drive Code
-
-            telemetry.addData("Strafe", strafe);
-            telemetry.addData("forward", forward);
-            telemetry.addData("turn", turn);
-            telemetry.addData("Liftpos", liftPos);
-            telemetry.addData("Lift Bottom", this.hardware.getLiftBottom().isPressed());
-            telemetry.update();
-            lastRightTrigger = rightTrigger;
-            lastLeftTrigger = leftTrigger;
+        while(opModeIsActive()) {
+            customLoop();
         }
     }
+
+    public void customLoop() {
+        final float liftSpeed = 0.9f;
+        final float armPosLeft = 0.05f;
+        final float armPosCenter = 0.4f;
+        final float armPosRight = 0.75f;
+        final float clawOpenPos = 0.4f;
+        final float clawClosePos = 0.15f;
+
+        boolean raiseLift = this.gamepad2.y;
+        boolean lowerLift = this.gamepad2.a;
+        boolean armLeft = gamepad2.dpad_left;
+        boolean armCenter = gamepad2.dpad_up;
+        boolean armRight = gamepad2.dpad_right;
+        boolean openClaw = gamepad2.left_bumper;
+        boolean closeClaw = gamepad2.right_bumper;
+        boolean decreaseSpeed = gamepad1.left_trigger > 0.1;
+        boolean increaseSpeed = gamepad1.right_trigger > 0.1;
+
+        if(decreaseSpeed && !decreaseSpeedLast)  {
+            if(driveSpeedMultiplier > 0.201) driveSpeedMultiplier -= 0.2;
+        }
+        if(increaseSpeed && !increaseSpeedLast) {
+            if(driveSpeedMultiplier < 0.901) driveSpeedMultiplier += 0.2;
+        }
+
+        if(this.hardware.getLiftBottom().isPressed()) this.hardware.resetLift();
+
+        if(raiseLift && this.hardware.getLift().getCurrentPosition() > RobotInfo.liftTop){
+            this.hardware.getLift().setPower(-liftSpeed);
+        }
+        else if(lowerLift && this.hardware.getLift().getCurrentPosition() < 0
+                && (this.hardware.getClawRotator().getPosition() != 0.4 || this.hardware.getLift().getCurrentPosition() <= -1100)) {
+            this.hardware.getLift().setPower(liftSpeed);
+        }
+        else {
+            this.hardware.getLift().setPower(0);
+        }
+
+        if(armLeft && this.hardware.getLift().getCurrentPosition() <= -1100) {
+            while (this.hardware.getClawRotator().getPosition() != armPosLeft) {
+                this.hardware.getClawRotator().setPosition(armPosLeft);
+            }
+        }
+        if(armCenter && this.hardware.getLift().getCurrentPosition() <= -1100) {
+            while (this.hardware.getClawRotator().getPosition() != armPosCenter) {
+                this.hardware.getClawRotator().setPosition(armPosCenter);
+            }
+        }
+        if(armRight && this.hardware.getLift().getCurrentPosition() <= -1100) {
+            while(this.hardware.getClawRotator().getPosition() != armPosRight) {
+                this.hardware.getClawRotator().setPosition(armPosRight);
+            }
+        }
+
+        if(openClaw) {
+            this.hardware.getClaw().setPosition(clawOpenPos);
+        }
+        if(closeClaw) {
+            this.hardware.getClaw().setPosition(clawClosePos);
+        }
+
+        double forward = -this.gamepad1.left_stick_y;
+        double strafe = this.gamepad1.left_stick_x;
+        double turn = this.gamepad1.right_stick_x;
+
+        double flPower = forward + strafe + turn;
+        double frPower = forward - strafe - turn;
+        double blPower = forward - strafe + turn;
+        double brPower = forward + strafe - turn;
+
+        this.hardware.getFLMotor().setPower(flPower * driveSpeedMultiplier);
+        this.hardware.getBRMotor().setPower(brPower * driveSpeedMultiplier);
+        this.hardware.getFRMotor().setPower(frPower * driveSpeedMultiplier);
+        this.hardware.getBLMotor().setPower(blPower * driveSpeedMultiplier);
+
+        telemetry.addData("Lift Pos", this.hardware.getLift().getCurrentPosition());
+        telemetry.addData("Claw Pos", this.hardware.getClaw().getPosition());
+        telemetry.addData("Forward", forward);
+        telemetry.addData("Strafe", strafe);
+        telemetry.addData("Turn", turn);
+        telemetry.addData("Drive Speed Shifter", driveSpeedMultiplier);
+        telemetry.update();
+
+        decreaseSpeedLast = decreaseSpeed;
+        increaseSpeedLast = increaseSpeed;
+    }
+}
