@@ -44,9 +44,9 @@ public class ClawController {
         while(this.hardware.getLift().isBusy() && this.opMode.opModeIsActive()) {}
     }
     public void setClawRotation(ClawRotation rotation) {
-        if(rotation == ClawRotation.FRONT) this.hardware.getClawRotater().setPosition(0.05);
-        if(rotation == ClawRotation.SIDE) this.hardware.getClawRotater().setPosition(0.4);
-        if(rotation == ClawRotation.BACK) this.hardware.getClawRotater().setPosition(0.75);
+        if(rotation == ClawRotation.FRONT) this.hardware.getClawRotator().setPosition(0.05);
+        if(rotation == ClawRotation.SIDE) this.hardware.getClawRotator().setPosition(0.4);
+        if(rotation == ClawRotation.BACK) this.hardware.getClawRotator().setPosition(0.75);
     }
     public void setClawState(ClawState state) {
         if(state == ClawState.OPEN) this.hardware.getClaw().setPosition(0.4);

@@ -85,7 +85,7 @@ public class RobotHardware {
     public DcMotor getBRMotor() {return this.brMotor;}
     public DcMotor getLift() {return this.lift;}
 
-    public Servo getClawRotater() {return this.clawRotater;}
+    public Servo getClawRotator() {return this.clawRotater;}
     public Servo getClaw() {return this.claw;}
 
     public WebcamName getCamera() {return this.camera;}

@@ -39,7 +39,7 @@ public class ManipulaterBen extends LinearOpMode {
         telemetry.addData("liftpos", liftPos);
         telemetry.update();
 
-        this.hardware.getClawRotater().setPosition(.4);
+        this.hardware.getClawRotator().setPosition(.4);
 
         if (ArmPosC) {
             this.hardware.getLift().setTargetPosition(-1154);
@@ -48,8 +48,8 @@ public class ManipulaterBen extends LinearOpMode {
 
             while(this.hardware.getLift().isBusy()) {}
 
-            while(this.hardware.getClawRotater().getPosition() != 0.4) {
-                this.hardware.getClawRotater().setPosition(.4);
+            while(this.hardware.getClawRotator().getPosition() != 0.4) {
+                this.hardware.getClawRotator().setPosition(.4);
             }
 
             this.hardware.getLift().setTargetPosition(0);
@@ -63,8 +63,8 @@ public class ManipulaterBen extends LinearOpMode {
 
             while(this.hardware.getLift().isBusy()) {}
 
-            while(this.hardware.getClawRotater().getPosition() != 0.05) {
-                this.hardware.getClawRotater().setPosition(0.05);
+            while(this.hardware.getClawRotator().getPosition() != 0.05) {
+                this.hardware.getClawRotator().setPosition(0.05);
             }
             this.hardware.getLift().setTargetPosition(0);
             this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -77,9 +77,9 @@ public class ManipulaterBen extends LinearOpMode {
 
             while(this.hardware.getLift().isBusy()) {}
 
-            this.hardware.getClawRotater().setPosition(.8);
+            this.hardware.getClawRotator().setPosition(.8);
 
-            while(this.hardware.getClawRotater().getPosition() != .8) {}
+            while(this.hardware.getClawRotator().getPosition() != .8) {}
 
             this.hardware.getLift().setTargetPosition(0);
             this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);

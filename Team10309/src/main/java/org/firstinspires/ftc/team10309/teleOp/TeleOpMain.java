@@ -37,8 +37,8 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
             this.hardware.resetLift();
 
-            while(this.hardware.getClawRotater().getPosition() != 0.05) {
-                this.hardware.getClawRotater().setPosition(0.05);
+            while(this.hardware.getClawRotator().getPosition() != 0.05) {
+                this.hardware.getClawRotator().setPosition(0.05);
             }
 
             waitForStart();
@@ -47,9 +47,11 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
                 customLoop();
             }
         }
-
+        int speedCounter = 0;
+        boolean lastLeftTrigger;
+        boolean lastRightTrigger;
         public void customLoop() {
-
+            
             boolean Raise = this.gamepad2.y;
             boolean Lower = this.gamepad2.a;
             boolean ArmPosR = gamepad2.dpad_right;
@@ -57,6 +59,9 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
             boolean ArmPosL = gamepad2.dpad_left;
             boolean  grab = gamepad2.right_bumper;
             boolean release = gamepad2.left_bumper;
+            boolean leftTrigger = !lastLeftTrigger ? (gamepad1.left_trigger > 0.1 ? true : false) : false;
+            boolean rightTrigger = !lastRightTrigger ? (gamepad1.right_trigger > 0.1 ? true : false) : false;
+
             double liftPos = this.hardware.getLift().getCurrentPosition();
             final double liftSpeed = 0.65;
 
@@ -65,10 +70,16 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
             telemetry.addData("Lower", Lower);
 
             // Arm
+            if (leftTrigger) {
+                if (speedCounter > 0.2) speedCounter -= 0.2;
+            }
+            if (rightTrigger) {
+                if (speedCounter < 1) speedCounter += 0.2;
+            }
             if (ArmPosL) {
                 double leftDestinationPos = 0.05;
-                while(this.hardware.getClawRotater().getPosition() != leftDestinationPos) {
-                    this.hardware.getClawRotater().setPosition(leftDestinationPos);
+                while(this.hardware.getClawRotator().getPosition() != leftDestinationPos) {
+                    this.hardware.getClawRotator().setPosition(leftDestinationPos);
                 }
 
                 //Potential Slower Arm Code
@@ -84,14 +95,14 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 //                }
             }
             if (ArmPosC && this.hardware.getLift().getCurrentPosition() <= -1100) {
-                while (this.hardware.getClawRotater().getPosition() != 0.4) {
-                    this.hardware.getClawRotater().setPosition(.4);
+                while (this.hardware.getClawRotator().getPosition() != 0.4) {
+                    this.hardware.getClawRotator().setPosition(.4);
                 }
             }
             if (ArmPosR) {
                 double rightDestinationPos = .75;
-                while(this.hardware.getClawRotater().getPosition() != rightDestinationPos) {
-                    this.hardware.getClawRotater().setPosition(rightDestinationPos);
+                while(this.hardware.getClawRotator().getPosition() != rightDestinationPos) {
+                    this.hardware.getClawRotator().setPosition(rightDestinationPos);
                 }
 
                 //Potential Slower Arm Code,
@@ -124,7 +135,7 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
                 this.hardware.getLift().setPower(-liftSpeed);
             }
             else if(Lower && this.hardware.getLift().getCurrentPosition() < 0
-                    && (this.hardware.getClawRotater().getPosition() != 0.4 || this.hardware.getLift().getCurrentPosition() <= -1100)) {
+                    && (this.hardware.getClawRotator().getPosition() != 0.4 || this.hardware.getLift().getCurrentPosition() <= -1100)) {
                 this.hardware.getLift().setPower(liftSpeed);
             }
             else {
@@ -148,10 +159,10 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
             largest=Math.max(largest, Math.abs(BLSpeed));
             largest=Math.max(largest, Math.abs(BRSpeed));
 
-            this.hardware.getFLMotor().setPower(FLSpeed);
-            this.hardware.getBRMotor().setPower(BRSpeed);
-            this.hardware.getFRMotor().setPower(FRSpeed);
-            this.hardware.getBLMotor().setPower(BLSpeed);
+            this.hardware.getFLMotor().setPower(FLSpeed*speedCounter);
+            this.hardware.getBRMotor().setPower(BRSpeed*speedCounter);
+            this.hardware.getFRMotor().setPower(FRSpeed*speedCounter);
+            this.hardware.getBLMotor().setPower(BLSpeed*speedCounter);
 
             //END Drive Code
 
@@ -161,5 +172,7 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
             telemetry.addData("Liftpos", liftPos);
             telemetry.addData("Lift Bottom", this.hardware.getLiftBottom().isPressed());
             telemetry.update();
+            lastRightTrigger = rightTrigger;
+            lastLeftTrigger = leftTrigger;
         }
     }

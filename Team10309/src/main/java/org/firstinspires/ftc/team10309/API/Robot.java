@@ -31,10 +31,11 @@ public class Robot {
 
     public Robot(LinearOpMode opMode,
                  boolean isFinal) {
+        
         this.opMode = opMode;
         this.hardware = new RobotHardware(this.opMode, isFinal);
         this.isFinal = isFinal;
-
+        
         this.hardware.resetEncoders();
         this.hardware.resetIMU();
     }
@@ -87,7 +88,7 @@ public class Robot {
         this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+        
         this.hardware.getFLMotor().setPower(clampedSpeed);
         this.hardware.getFRMotor().setPower(clampedSpeed);
         this.hardware.getBLMotor().setPower(clampedSpeed);
@@ -143,7 +144,7 @@ public class Robot {
     /**
      * Helper method for public void turn.
      * ROBOBOBO: LEFT 2 NEGATE
-     * Final: ???
+     * Final: theoretically the same as robobobo...
      */
     private void turn(double degrees, double speed, double precision, double Kp,
                         double Ki, double Kd, double[] trend) {
@@ -188,6 +189,7 @@ public class Robot {
         double integral = DoubleStream.of(trend).sum() * Ki;
         double derivative = (err - trend[trend.length - 1]) * Kd;
         double total = -(proportional + integral + derivative) * speed;
+        
         // #nestedterneries r awesum.
         double basePower = 0.05;
         if (total > 0) {
@@ -217,7 +219,7 @@ public class Robot {
 
         turn(degrees, speed, precision, Kp, Ki, Kd, trendI);
     }
-
+    
     /**
      * Forces the program to wait until the motors are done moving
      */

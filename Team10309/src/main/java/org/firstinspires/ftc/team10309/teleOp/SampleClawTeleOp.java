@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.team10309.API.ClawController;
 import org.firstinspires.ftc.team10309.API.RobotHardware;
 
-@TeleOp(name="Testing TeleOp")
-public class TestingTeleOp extends LinearOpMode {
+@TeleOp(name="Sample Claw Tele Op")
+public class SampleClawTeleOp extends LinearOpMode {
 
     private RobotHardware hardware;
     private ClawController clawController;
@@ -32,7 +32,7 @@ public class TestingTeleOp extends LinearOpMode {
         else if(gamepad1.b) clawController.setLiftPosition(ClawController.LiftPosition.HIGH);
 
         telemetry.addData("Lift Pos", this.hardware.getLift().getCurrentPosition());
-        telemetry.addData("Arm Pos", this.hardware.getClawRotater().getPosition());
+        telemetry.addData("Arm Pos", this.hardware.getClawRotator().getPosition());
         telemetry.addData("Claw Pos", this.hardware.getClaw().getPosition());
         telemetry.update();
     }
