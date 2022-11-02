@@ -51,9 +51,11 @@ public class TeleOpMain extends LinearOpMode {
         boolean armRight = gamepad2.dpad_right;
         boolean openClaw = gamepad2.left_bumper;
         boolean closeClaw = gamepad2.right_bumper;
-        boolean decreaseSpeed = gamepad1.left_trigger > 0.1;
-        boolean increaseSpeed = gamepad1.right_trigger > 0.1;
-
+        boolean decreaseSpeed = gamepad1.left_trigger > 0.5;
+        boolean increaseSpeed = gamepad1.right_trigger > 0.5;
+        // siwtch maybe?
+        boolean goToTop = gamepad2.left_trigger > 0.5;
+        boolean goToBottom = gamepad2.right_trigger > 0.5;
         if(decreaseSpeed && !decreaseSpeedLast)  {
             if(driveSpeedMultiplier > 0.201) driveSpeedMultiplier -= 0.2;
         }
@@ -96,7 +98,14 @@ public class TeleOpMain extends LinearOpMode {
         if(closeClaw) {
             this.hardware.getClaw().setPosition(clawClosePos);
         }
-
+        if (goToTop) {
+            this.hardware.getLift().setTargetPosition(RobotInfo.liftTop);
+            this.hardware.getClawRotator().setPosition(armPosCenter);
+        }
+        if (goToBottom) {
+            this.hardware.getClawRotator().setPosition(armPosRight);
+            this.hardware.getLift().setTargetPosition(0);
+        }
         double forward = -this.gamepad1.left_stick_y;
         double strafe = this.gamepad1.left_stick_x;
         double turn = this.gamepad1.right_stick_x;
