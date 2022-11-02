@@ -30,11 +30,10 @@
             robot.turn(-90,.7f,1f);
             robot.strafe(21,.7f);
             robot.drive(32,.7f);
-
             robot .drive(2,.7f);
              clawController.setClawState(ClawController.ClawState.OPEN);
              robot.strafe(24,.7f);
-            //  place the cone on the pole.
+            clawController.setLiftPosition(ClawController.LiftPosition.valueOf());
             robot.strafe(2,.7f);
 
 
