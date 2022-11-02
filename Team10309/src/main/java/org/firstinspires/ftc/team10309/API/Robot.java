@@ -137,8 +137,8 @@ public class Robot {
         angles = this.hardware.getIMU().getAngularOrientation(
                         AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         turn(degrees, speed, precision, 0.1, 1/500, 1/50,
-                new double[] {angles.thirdAngle-degrees,
-                        angles.thirdAngle-degrees});
+                new double[] {angles.secondAngle-degrees,
+                        angles.secondAngle-degrees});
     }
 
     /**
@@ -158,7 +158,7 @@ public class Robot {
         // trend is misleading, it should be sumOfErrors or something. trend is just for abriviation.
         angles = this.hardware.getIMU().getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ,
                 AngleUnit.DEGREES);
-        double angle = angles.thirdAngle;
+        double angle = angles.secondAngle;
         //angle = degrees > 0 ? (angle > 0 ? angle : angle + 360) : (angle < 0 ? angle :
         //     angle - 360);
         if (degrees > 0 && angle < 0) {
