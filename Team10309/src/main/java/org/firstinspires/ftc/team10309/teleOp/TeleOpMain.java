@@ -21,10 +21,6 @@ public class TeleOpMain extends LinearOpMode {
     public void runOpMode() {
         this.hardware = new RobotHardware(this, true); //MEANT TO BE TRUE!!!
 
-        while(this.hardware.getClawRotator().getPosition() != 0.05) {
-            this.hardware.getClawRotator().setPosition(0.05);
-        }
-
         telemetry.addLine("Init completed");
         telemetry.update();
 

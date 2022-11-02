@@ -166,14 +166,8 @@ public class RobotHardware {
      * Recalibrates the lift
      */
     public void resetLift() {
-        if(this.clawRotater.getPosition() == 0.4) {
-            while(this.clawRotater.getPosition() != 0.05) {
-                this.clawRotater.setPosition(0.05);
-            }
-        }
-
         if(!this.liftBottom.isPressed()) {
-            this.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            this.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             this.lift.setPower(0.4);
         }
         while(!this.liftBottom.isPressed()) {}
@@ -185,6 +179,7 @@ public class RobotHardware {
         this.lift.setPower(0.2);
 
         while(this.lift.isBusy()) {}
+
         this.lift.setPower(0);
 
         this.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

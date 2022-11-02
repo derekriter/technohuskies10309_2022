@@ -34,8 +34,8 @@ public class ClawController {
 
     public void setLiftPosition(LiftPosition position) {
         if(position == LiftPosition.GROUND) this.hardware.getLift().setTargetPosition(0);
-        else if(position == LiftPosition.LOW) this.hardware.getLift().setTargetPosition(RobotInfo.liftTop / 3);
-        else if(position == LiftPosition.MIDDLE) this.hardware.getLift().setTargetPosition(RobotInfo.liftTop / 3 * 2);
+        else if(position == LiftPosition.LOW) this.hardware.getLift().setTargetPosition(-6200);
+        else if(position == LiftPosition.MIDDLE) this.hardware.getLift().setTargetPosition(-10300);
         else this.hardware.getLift().setTargetPosition(RobotInfo.liftTop);
 
         this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -44,12 +44,22 @@ public class ClawController {
         while(this.hardware.getLift().isBusy() && this.opMode.opModeIsActive()) {}
     }
     public void setClawRotation(ClawRotation rotation) {
-        if(rotation == ClawRotation.FRONT) this.hardware.getClawRotator().setPosition(0.05);
-        if(rotation == ClawRotation.SIDE) this.hardware.getClawRotator().setPosition(0.4);
-        if(rotation == ClawRotation.BACK) this.hardware.getClawRotator().setPosition(0.75);
+        float targetPosition;
+        if(rotation == ClawRotation.FRONT) targetPosition = 0.05f;
+        else if(rotation == ClawRotation.SIDE) targetPosition = 0.4f;
+        else targetPosition = 0.75f;
+
+        while(this.hardware.getClawRotator().getPosition() != targetPosition) {
+            this.hardware.getClawRotator().setPosition(targetPosition);
+        }
     }
     public void setClawState(ClawState state) {
-        if(state == ClawState.OPEN) this.hardware.getClaw().setPosition(0.4);
-        if(state == ClawState.CLOSED) this.hardware.getClaw().setPosition(0.15);
+        float targetPosition;
+        if(state == ClawState.OPEN) targetPosition = 0.4f;
+        else targetPosition = 0.15f;
+
+        while(this.hardware.getClawRotator().getPosition() != targetPosition) {
+            this.hardware.getClawRotator().setPosition(targetPosition);
+        }
     }
 }

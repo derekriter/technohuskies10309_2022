@@ -33,9 +33,7 @@
             robot.drive(-32,.7f);
             robot .drive(-2,.7f);
              clawController.setClawState(ClawController.ClawState.OPEN);
-             robot.strafe(-24,.7f);
-            clawController.setLiftPosition(ClawController.LiftPosition.valueOf());
-            robot.strafe(-2,.7f);
+             robot.strafe(-26,.7f);
 
 
         }
