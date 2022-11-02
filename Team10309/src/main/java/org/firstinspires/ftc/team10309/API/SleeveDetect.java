@@ -105,13 +105,12 @@ public class SleeveDetect {
                 telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
                 telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
                 telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-                switch (recognition.getLabel()) {
-                    case "Blue Triangle":
-                        return SignalState.BLUE_TRIANGLE;
-                    case "Red Square":
-                        return SignalState.RED_SQUARE;
-                    default:
-                        return SignalState.GREEN_CIRCLE;
+                if (recognition.getLabel() == "Blue Triangle") {
+                    return SignalState.BLUE_TRIANGLE;
+                } else if (recognition.getLabel() == "Red Square") {
+                    return SignalState.RED_SQUARE;
+                } else {
+                    return SignalState.GREEN_CIRCLE;
                 }
             }
             telemetry.update();
@@ -132,7 +131,7 @@ public class SleeveDetect {
     private void initTfod() {
         int tfodMonitorViewId = rh.getTfodMonitorViewID();
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.7f;
+        tfodParameters.minResultConfidence = 0.6f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 300;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
