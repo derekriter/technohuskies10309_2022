@@ -56,7 +56,7 @@ import java.util.List;
 public class SleeveDetect {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
-    private final Telemetry telemetry;
+    private Telemetry telemetry;
     private WebcamName camera;
     private RobotHardware rh;
     public SleeveDetect(Telemetry telemetry, WebcamName camera, RobotHardware rh) {
@@ -71,30 +71,46 @@ public class SleeveDetect {
             tfod.activate();
         }
     }
-    public SignalState scan() {
-
+    public SignalState scan() throws InterruptedException {
+        telemetry.addLine("In scan");
+        telemetry.addLine("Tfod?" + (tfod == null));
+        telemetry.update();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (tfod != null) {
+            telemetry.addLine("Zoom...");
+            telemetry.update();
             tfod.activate();
-            tfod.setZoom(1.0, 16.0 / 9.0);
+            tfod.setZoom(2, 16.0 / 9.0);
         } else {
             telemetry.addLine("tfod doesn't exist..?");
             telemetry.update();
         }
+        telemetry.addLine("Done with zooom");
+        telemetry.update();
+        Thread.sleep(1000);
         if (tfod != null) {
             int counter = 0;
-            while (tfod != null && counter != 20) {
+            while (tfod != null) {
+            telemetry.addLine("In detection loop.");
+            telemetry.update();
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             
             if (updatedRecognitions != null) {
                 if (updatedRecognitions.size() > 1) {
                     telemetry.addLine("More than one " +
                             "recogn.");
+                    Thread.sleep(1000);
                     telemetry.update();
-                    return SignalState.ERROR;
+                    continue;
                 } else if (updatedRecognitions.size() < 1) {
                     telemetry.addLine("no recogn.");
                     telemetry.update();
-                    return SignalState.ERROR;
+                    Thread.sleep(1000);
+                    continue;
                 }
                 
                 Recognition recognition = updatedRecognitions.get(0);
@@ -107,6 +123,8 @@ public class SleeveDetect {
                 telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
                 telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
                 telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
+                telemetry.update();
+                Thread.sleep(1000);
                 if (recognition.getLabel() == "Blue Triangle") {
                     return SignalState.BLUE_TRIANGLE;
                 } else if (recognition.getLabel() == "Red Square") {
@@ -114,13 +132,12 @@ public class SleeveDetect {
                 } else if (recognition.getLabel() == "Green Circle") {
                     return SignalState.GREEN_CIRCLE;
                 } else {
-                    counter ++;
-                    continue;
+                    counter++;
                 }
             }
+        }
             telemetry.update();
             tfod.deactivate();
-        }
         } else {
             return SignalState.ERROR;
         }

@@ -7,8 +7,8 @@
     import org.firstinspires.ftc.team10309.API.Robot;
     import org.firstinspires.ftc.team10309.API.SleeveDetect;
 
-    @Autonomous(name="RED PARK Auto Op | FINAL", group="Examples")
-    public class REDAutoOp extends LinearOpMode {
+    @Autonomous(name="RED CONE Auto Op | FINAL", group="Examples")
+    public class REDAutoOpCone extends LinearOpMode {
 
         private Robot robot;
         private ClawController clawController;
@@ -28,6 +28,13 @@
     
             waitForStart();
     
+            final float liftSpeed = 0.9f;
+            final float armPosLeft = 0.05f;
+            final float armPosCenter = 0.4f;
+            final float armPosRight = 0.75f;
+            final float clawOpenPos = 0.4f;
+            final float clawClosePos = 0.15f;
+            // constants, copied from TeleOpMain.
     
 //
 //            SleeveDetect.SignalState state = robot.scanSleeve();
@@ -41,19 +48,15 @@
 //            robot.drive(2,.7f);
 //            clawController.setClawState(ClawController.ClawState.OPEN);
 //            robot.strafe(26,.7f);
+            robot.strafeTiles(1, 0.5f, 3f);
+            robot.strafe(-3, 0.5f);
+            robot.driveTiles(1, 0.5f);
+            robot.strafeTiles(1, 0.5f);
+            robot.getHardware().getLift().setTargetPosition(-1100);// Lowest elevator height for
+            // moving claw rotator
+            robot.getHardware().getLift().setPower(liftSpeed);
+            clawController.setClawState(ClawController.ClawState.OPEN);
+            robot.getHardware().getClawRotator().setPosition(armPosLeft);
             
-            
-            if (state == SleeveDetect.SignalState.RED_SQUARE) {
-                robot.strafeTiles(1, 0.5f, 6.5f);
-                robot.strafe(-3f, 0.5f);
-                robot.driveTiles(1, 0.5f, 3f);
-            } else if (state == SleeveDetect.SignalState.GREEN_CIRCLE) {
-                robot.strafeTiles(1, 0.5f);
-                // done
-            } else {
-                robot.strafeTiles(1, 0.5f, 6.5f);
-                robot.strafe(-3f, 0.5f);
-                robot.driveTiles(-1, 0.5f, 4f);
-            }
         }
     }

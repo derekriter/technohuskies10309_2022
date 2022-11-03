@@ -106,6 +106,16 @@ public class Robot {
         this.drive(tiles * FieldInfo.tileSize, speed);
     }
     /**
+     * Drives the number of tiles
+     * @param tiles the number of tiles
+     * @param speed the speed (0 - 1)
+     * @param extraInches extra inchhes after driveTiles so it won't stop start stop start.
+     */
+    public void driveTiles(float tiles, float speed, float extraInches) {
+        this.drive(tiles * FieldInfo.tileSize + extraInches, speed);
+    }
+    
+    /**
      * strafes the number of tiles
      * @param tiles the number of tiles
      * @param speed the speed (0 - 1)
@@ -113,7 +123,16 @@ public class Robot {
     public void strafeTiles(float tiles, float speed) {
         this.strafe(tiles * FieldInfo.tileSize, speed);
     }
-
+    /**
+     * strafes the number of tiles
+     * @param tiles the number of tiles
+     * @param speed the speed (0 - 1)
+     * @param extraInches extra inchhes after strafTiles so it won't stop start stop start.
+     *
+     */
+    public void strafeTiles(float tiles, float speed, float extraInches) {
+        this.strafe(tiles * FieldInfo.tileSize + extraInches, speed);
+    }
     private Orientation angles;
     public void turn(float degrees, float speed, double precision) {
         this.hardware.resetIMU();
@@ -253,14 +272,14 @@ public class Robot {
                 this.hardware);
         sleeveDetect.init();
     }
-    public SleeveDetect.SignalState scanSleeve() {
+    public SleeveDetect.SignalState scanSleeve() throws InterruptedException {
 
         SleeveDetect.SignalState ss = sleeveDetect.scan();
 
         return ss;
     }
 
-    public SleeveDetect.SignalState initAndScan() {
+    public SleeveDetect.SignalState initAndScan() throws InterruptedException {
         initDetect();
         return scanSleeve();
     }
