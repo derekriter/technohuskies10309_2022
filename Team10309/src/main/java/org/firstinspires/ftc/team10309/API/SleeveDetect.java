@@ -81,6 +81,8 @@ public class SleeveDetect {
             telemetry.update();
         }
         if (tfod != null) {
+            int counter = 0;
+            while (tfod != null && counter != 20) {
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             
             if (updatedRecognitions != null) {
@@ -109,12 +111,16 @@ public class SleeveDetect {
                     return SignalState.BLUE_TRIANGLE;
                 } else if (recognition.getLabel() == "Red Square") {
                     return SignalState.RED_SQUARE;
-                } else {
+                } else if (recognition.getLabel() == "Green Circle") {
                     return SignalState.GREEN_CIRCLE;
+                } else {
+                    counter ++;
+                    continue;
                 }
             }
             telemetry.update();
             tfod.deactivate();
+        }
         } else {
             return SignalState.ERROR;
         }
