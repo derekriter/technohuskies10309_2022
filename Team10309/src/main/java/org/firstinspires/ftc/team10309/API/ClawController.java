@@ -26,8 +26,8 @@ public class ClawController {
     private RobotHardware hardware;
     private LinearOpMode opMode;
 
-    public ClawController(RobotHardware hardware, LinearOpMode opMode) {
-        this.hardware = hardware;
+    public ClawController(RobotHardware pHardware, LinearOpMode opMode) {
+        this.hardware = pHardware;
         this.opMode = opMode;
         this.hardware.resetLift();
     }
