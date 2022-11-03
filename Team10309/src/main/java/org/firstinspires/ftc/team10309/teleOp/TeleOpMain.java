@@ -33,7 +33,7 @@ public class TeleOpMain extends LinearOpMode {
     }
 
     public void customLoop() {
-        final float liftSpeed = 0.9f;
+        final float liftSpeed = 1f;
         final float armPosLeft = 0.05f;
         final float armPosCenter = 0.4f;
         final float armPosRight = 0.75f;
@@ -94,13 +94,26 @@ public class TeleOpMain extends LinearOpMode {
         if(closeClaw) {
             this.hardware.getClaw().setPosition(clawClosePos);
         }
-        if (goToTop) {
+
+        if(goToTop) {
             this.hardware.getLift().setTargetPosition(RobotInfo.liftTop);
-            this.hardware.getClawRotator().setPosition(armPosCenter);
+            this.hardware.getLift().setPower(liftSpeed);
+
+            while(this.hardware.getLift().isBusy() && opModeIsActive()) {}
+
+            while(this.hardware.getClawRotator().getPosition() != armPosCenter) {
+                this.hardware.getClawRotator().setPosition(armPosCenter);
+            }
         }
-        if (goToBottom) {
-            this.hardware.getClawRotator().setPosition(armPosRight);
+        if(goToBottom) {
+            while(this.hardware.getClawRotator().getPosition() != armPosRight) {
+                this.hardware.getClawRotator().setPosition(armPosRight);
+            }
+
             this.hardware.getLift().setTargetPosition(0);
+            this.hardware.getLift().setPower(liftSpeed);
+
+            while(this.hardware.getLift().isBusy() && opModeIsActive()) {}
         }
         double forward = -this.gamepad1.left_stick_y;
         double strafe = this.gamepad1.left_stick_x;
