@@ -7,8 +7,8 @@
     import org.firstinspires.ftc.team10309.API.Robot;
     import org.firstinspires.ftc.team10309.API.SleeveDetect;
 
-    @Autonomous(name="RED PARK Auto Op | FINAL", group="Examples")
-    public class REDAutoOp extends LinearOpMode {
+    @Autonomous(name="Purple PARK Auto Op | FINAL", group="Examples")
+    public class PURPLEAutoOpPark extends LinearOpMode {
 
         private Robot robot;
         private ClawController clawController;

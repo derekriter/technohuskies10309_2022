@@ -15,11 +15,14 @@ public class ExampleAutoOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //init
-        this.robot = new Robot(this, false);
+        this.robot = new Robot(this, true);
 
         waitForStart();
 
         //running
         //>> PUT AUTO OP CODE HERE <<
+//        robot.driveTiles(-1.25f, 0.5f);
+        robot.strafeTiles(-2f, 0.5f);
+//        robot.driveTiles(1.25f, 0.5f);
     }
 }

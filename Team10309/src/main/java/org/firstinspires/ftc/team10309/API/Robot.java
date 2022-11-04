@@ -29,10 +29,10 @@ public class Robot {
      */
     private boolean isFinal;
 
-    public Robot(LinearOpMode opMode,
+    public Robot(LinearOpMode pOpMode,
                  boolean isFinal) {
         
-        this.opMode = opMode;
+        this.opMode = pOpMode;
         this.hardware = new RobotHardware(this.opMode, isFinal);
         this.isFinal = isFinal;
         
@@ -251,7 +251,21 @@ public class Robot {
                 || this.hardware.getBRMotor().isBusy()
             )
             && this.opMode.opModeIsActive()
-        ) {}
+        ) {
+            this.opMode.telemetry.addData("Wait for motors FL",
+                    this.hardware.getFLMotor().isBusy());
+            this.opMode.telemetry.addData("Wait for motors FR",
+                    this.hardware.getFRMotor().isBusy());
+            this.opMode.telemetry.addData("Wait for motors BL",
+                    this.hardware.getBLMotor().isBusy());
+            this.opMode.telemetry.addData("Wait for motors BR",
+                    this.hardware.getBRMotor().isBusy());
+            this.opMode.telemetry.update();
+        }
+        
+        this.opMode.telemetry.addData("Out of Motor Waiting","Done");
+        this.opMode.telemetry.update();
+        
     }
     /**
      * Calculates the number of ticks needed to travel the specified distance
