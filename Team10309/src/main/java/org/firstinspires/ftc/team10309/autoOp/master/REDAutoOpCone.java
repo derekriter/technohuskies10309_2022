@@ -106,7 +106,7 @@
             };
             lowerLift.start();
             if (state == SleeveDetect.SignalState.RED_SQUARE) {
-                robot.driveTiles(1, 0.5f, -1);
+                robot.driveTiles(1, 0.5f, -4);
             } else if (state == SleeveDetect.SignalState.GREEN_CIRCLE) {
                 // done
             } else if (state == SleeveDetect.SignalState.BLUE_TRIANGLE) {

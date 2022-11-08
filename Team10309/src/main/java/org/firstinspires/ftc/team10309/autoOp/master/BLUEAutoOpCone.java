@@ -110,7 +110,7 @@
             } else if (state == SleeveDetect.SignalState.GREEN_CIRCLE) {
                 // done
             } else if (state == SleeveDetect.SignalState.BLUE_TRIANGLE) {
-                robot.driveTiles(-1.1f, 0.5f, 3f);
+                robot.driveTiles(-1.1f, 0.5f, 4f);
     
             } else {
                 // do same as green circle...
