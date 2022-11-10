@@ -65,11 +65,11 @@ public class RobotHardware {
     public DcMotor getFRMotor() {return this.frMotor;}
     public DcMotor getBLMotor() {return this.blMotor;}
     public DcMotor getBRMotor() {return this.brMotor;}
-
-    public DigitalChannelImpl getDOdometerA() {return this.dOdometerA;}
-    public DigitalChannelImpl getDOdometerB() {return this.dOdometerB;}
-    public DigitalChannelImpl getSOdometerA() {return this.sOdometerA;}
-    public DigitalChannelImpl getSOdometerB() {return this.sOdometerB;}
+//
+//    public DigitalChannelImpl getDOdometerA() {return this.dOdometerA;}
+//    public DigitalChannelImpl getDOdometerB() {return this.dOdometerB;}
+//    public DigitalChannelImpl getSOdometerA() {return this.sOdometerA;}
+//    public DigitalChannelImpl getSOdometerB() {return this.sOdometerB;}
 
     /**
      * Called to init all the values of the motors. Made a seperate function, so I don't have to
@@ -82,11 +82,11 @@ public class RobotHardware {
         this.blMotor = hardwareMap.get(DcMotor.class, RobotInfo.blMotorName);
         this.brMotor = hardwareMap.get(DcMotor.class, RobotInfo.brMotorName);
 
-        this.dOdometerA = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.dOdometerAName);
-        this.dOdometerB = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.dOdometerBName);
-        this.sOdometerA = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.sOdometerAName);
-        this.sOdometerB = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.sOdometerBName);
-    }
+//        this.dOdometerA = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.dOdometerAName);
+//        this.dOdometerB = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.dOdometerBName);
+//        this.sOdometerA = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.sOdometerAName);
+//        this.sOdometerB = hardwareMap.get(DigitalChannelImpl.class, RobotInfo.sOdometerBName);
+ }
 
     /**
      * Applies settings to the hardware (ex. setting the motor direction)
@@ -99,10 +99,10 @@ public class RobotHardware {
         this.frMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.blMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.brMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        this.dOdometerA.setMode(DigitalChannel.Mode.INPUT);
-        this.dOdometerB.setMode(DigitalChannel.Mode.INPUT);
-        this.sOdometerA.setMode(DigitalChannel.Mode.INPUT);
-        this.sOdometerB.setMode(DigitalChannel.Mode.INPUT);
+//
+//        this.dOdometerA.setMode(DigitalChannel.Mode.INPUT);
+//        this.dOdometerB.setMode(DigitalChannel.Mode.INPUT);
+//        this.sOdometerA.setMode(DigitalChannel.Mode.INPUT);
+//        this.sOdometerB.setMode(DigitalChannel.Mode.INPUT);
     }
 }

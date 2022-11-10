@@ -28,7 +28,7 @@ public class Robot implements Runnable {
     /**
      * Used for decoding encoder values into degrees
      */
-    private final RotaryDecoder decoder;
+//    private final RotaryDecoder decoder;
 
     /**
      * The thread running the update loop
@@ -41,7 +41,7 @@ public class Robot implements Runnable {
         this.rotation = 0;
 
         this.hardware = new RobotHardware(this.opMode);
-        this.decoder = new RotaryDecoder();
+//        this.decoder = new RotaryDecoder();
     }
 
     /**
@@ -104,12 +104,12 @@ public class Robot implements Runnable {
     }
 
     private void updateOdometry() {
-        float strafeDeg = this.decoder.decodeToDeg(this.hardware.getSOdometerA().getState(),
-                this.hardware.getSOdometerB().getState(), RotaryDecoder.OdoType.STRAFE, this.opMode);
+//        float strafeDeg = this.decoder.decodeToDeg(this.hardware.getSOdometerA().getState(),
+//                this.hardware.getSOdometerB().getState(), RotaryDecoder.OdoType.STRAFE, this.opMode);
 
-        this.opMode.telemetry.addData("Strafe Deg", strafeDeg);
-        this.opMode.telemetry.addData("Strafe A", this.hardware.getSOdometerA().getState());
-        this.opMode.telemetry.addData("Strafe B", this.hardware.getSOdometerB().getState());
+//        this.opMode.telemetry.addData("Strafe Deg", strafeDeg);
+//        this.opMode.telemetry.addData("Strafe A", this.hardware.getSOdometerA().getState());
+//        this.opMode.telemetry.addData("Strafe B", this.hardware.getSOdometerB().getState());
 
         this.opMode.telemetry.update();
     }
