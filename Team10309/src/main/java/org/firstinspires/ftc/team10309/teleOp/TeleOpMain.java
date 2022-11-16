@@ -2,8 +2,9 @@ package org.firstinspires.ftc.team10309.teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.team10309.API.Robot;
 import org.firstinspires.ftc.team10309.API.RobotHardware;
 
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
@@ -11,15 +12,28 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 @TeleOp(name="TeleOpMain", group="Test")
 public class TeleOpMain extends LinearOpMode {
 
-    public RobotHardware hardware;
+    private enum MotionDirection {
+        DRIVE,
+        STRAFE
+    }
 
-    private float driveSpeedMultiplier = 0.6f;
+    public RobotHardware hardware;
+    public Robot robot;
+
+    private float driveSpeedMultiplier = 0.4f;
+
     private boolean decreaseSpeedLast;
     private boolean increaseSpeedLast;
 
+    private boolean tileForwardLast;
+    private boolean tileBackwardLast;
+    private boolean tileLeftLast;
+    private boolean tileRightLast;
+
     @Override
     public void runOpMode() {
-        this.hardware = new RobotHardware(this, true); //MEANT TO BE TRUE!!!
+        this.robot = new Robot(this, true);
+        this.hardware = robot.getHardware();
 
         telemetry.addLine("Init completed");
         telemetry.update();
@@ -40,8 +54,8 @@ public class TeleOpMain extends LinearOpMode {
         final float clawOpenPos = 0.4f;
         final float clawClosePos = 0.15f;
 
-        boolean raiseLift = this.gamepad2.y;
-        boolean lowerLift = this.gamepad2.a;
+        boolean raiseLift = gamepad2.y;
+        boolean lowerLift = gamepad2.a;
         boolean armLeft = gamepad2.dpad_left;
         boolean armCenter = gamepad2.dpad_up;
         boolean armRight = gamepad2.dpad_right;
@@ -49,9 +63,7 @@ public class TeleOpMain extends LinearOpMode {
         boolean closeClaw = gamepad2.right_bumper;
         boolean decreaseSpeed = gamepad1.left_trigger > 0.5;
         boolean increaseSpeed = gamepad1.right_trigger > 0.5;
-        // siwtch maybe?
-        boolean goToTop = gamepad2.left_trigger > 0.5;
-        boolean goToBottom = gamepad2.right_trigger > 0.5;
+
         if(decreaseSpeed && !decreaseSpeedLast)  {
             if(driveSpeedMultiplier > 0.201) driveSpeedMultiplier -= 0.2;
         }
@@ -72,20 +84,26 @@ public class TeleOpMain extends LinearOpMode {
             this.hardware.getLift().setPower(0);
         }
 
-        if(armLeft && this.hardware.getLift().getCurrentPosition() <= -1100) {
-            while (this.hardware.getClawRotator().getPosition() != armPosLeft) {
+        if(
+            (this.hardware.getClawRotator().getPosition() == armPosLeft || this.hardware.getClawRotator().getPosition() == armPosRight)
+            &&
+            (armLeft || armRight)
+        ) {
+            if(this.hardware.getClawRotator().getPosition() == armPosLeft) {
+                this.hardware.getClawRotator().setPosition(armPosRight);
+            }
+            else {
                 this.hardware.getClawRotator().setPosition(armPosLeft);
             }
         }
-        if(armCenter && this.hardware.getLift().getCurrentPosition() <= -1100) {
-            while (this.hardware.getClawRotator().getPosition() != armPosCenter) {
-                this.hardware.getClawRotator().setPosition(armPosCenter);
-            }
+        else if(armLeft && this.hardware.getLift().getCurrentPosition() <= -1100) {
+            this.hardware.getClawRotator().setPosition(armPosLeft);
         }
-        if(armRight && this.hardware.getLift().getCurrentPosition() <= -1100) {
-            while(this.hardware.getClawRotator().getPosition() != armPosRight) {
-                this.hardware.getClawRotator().setPosition(armPosRight);
-            }
+        else if(armCenter && this.hardware.getLift().getCurrentPosition() <= -1100) {
+            this.hardware.getClawRotator().setPosition(armPosCenter);
+        }
+        else if(armRight && this.hardware.getLift().getCurrentPosition() <= -1100) {
+            this.hardware.getClawRotator().setPosition(armPosRight);
         }
 
         if(openClaw) {
@@ -95,26 +113,25 @@ public class TeleOpMain extends LinearOpMode {
             this.hardware.getClaw().setPosition(clawClosePos);
         }
 
-        if(goToTop) {
-            this.hardware.getLift().setTargetPosition(RobotInfo.liftTop);
-            this.hardware.getLift().setPower(liftSpeed);
+        boolean tileForward = this.gamepad1.dpad_up;
+        boolean tileBackward = this.gamepad1.dpad_down;
+        boolean tileLeft = this.gamepad1.dpad_left;
+        boolean tileRight = this.gamepad1.dpad_right;
+        boolean tileDownshift = this.gamepad1.left_bumper;
 
-            while(this.hardware.getLift().isBusy() && opModeIsActive()) {}
-
-            while(this.hardware.getClawRotator().getPosition() != armPosCenter) {
-                this.hardware.getClawRotator().setPosition(armPosCenter);
-            }
+        if(tileForward && !tileForwardLast) {
+            shiftDirection(MotionDirection.DRIVE, tileDownshift ? 0.5f : 1f);
         }
-        if(goToBottom) {
-            while(this.hardware.getClawRotator().getPosition() != armPosRight) {
-                this.hardware.getClawRotator().setPosition(armPosRight);
-            }
-
-            this.hardware.getLift().setTargetPosition(0);
-            this.hardware.getLift().setPower(liftSpeed);
-
-            while(this.hardware.getLift().isBusy() && opModeIsActive()) {}
+        if(tileBackward && !tileBackwardLast) {
+            shiftDirection(MotionDirection.DRIVE, tileDownshift ? -0.5f : -1f);
         }
+        if(tileLeft && !tileLeftLast) {
+            shiftDirection(MotionDirection.STRAFE, tileDownshift ? -0.5f : -1f);
+        }
+        if(tileRight && !tileRightLast) {
+            shiftDirection(MotionDirection.STRAFE, tileDownshift ? 0.5f : 1f);
+        }
+
         double forward = -this.gamepad1.left_stick_y;
         double strafe = this.gamepad1.left_stick_x;
         double turn = this.gamepad1.right_stick_x;
@@ -139,5 +156,22 @@ public class TeleOpMain extends LinearOpMode {
 
         decreaseSpeedLast = decreaseSpeed;
         increaseSpeedLast = increaseSpeed;
+
+        tileForwardLast = tileForward;
+        tileBackwardLast = tileBackward;
+        tileLeftLast = tileLeft;
+        tileRightLast = tileRight;
+    }
+
+    private void shiftDirection(MotionDirection direction, float distance) {
+        if(distance == 0) return;
+        float clampedDistance = Math.min(Math.max(distance, -1), 1);
+
+        if(direction == MotionDirection.DRIVE) {
+            robot.driveTiles(clampedDistance, driveSpeedMultiplier);
+        }
+        else {
+            robot.strafeTiles(clampedDistance, driveSpeedMultiplier);
+        }
     }
 }

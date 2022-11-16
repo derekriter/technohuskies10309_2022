@@ -88,10 +88,10 @@
             robot.drive(-4f, 0.2f);
             clawController.setClawRotation(ClawController.ClawRotation.BACK);
             Thread.sleep(1000);
-            clawController.setClawState(ClawController.ClawState.OPEN);
+            clawController.setClaw(ClawController.ClawPosition.OPEN);
             robot.drive(6f, 0.5f);
             robot.strafeTiles(-0.5f, 0.5f);
-            clawController.setClawState(ClawController.ClawState.CLOSED);
+            clawController.setClaw(ClawController.ClawPosition.CLOSED);
             clawController.setClawRotation(ClawController.ClawRotation.FRONT);
             Thread lowerLift = new Thread() {
                 @Override

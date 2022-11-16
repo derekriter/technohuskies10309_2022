@@ -34,7 +34,7 @@
             robot.strafe(-21,.7f);
             robot.drive(-32,.7f);
             robot .drive(-2,.7f);
-            clawController.setClawState(ClawController.ClawState.OPEN);
+            clawController.setClaw(ClawController.ClawPosition.OPEN);
             robot.strafe(-26,.7f);
         }
     }

@@ -18,13 +18,25 @@ public class ClawController {
         SIDE,
         BACK
     }
-    public enum ClawState {
+    public enum ClawPosition {
         OPEN,
         CLOSED
     }
 
     private RobotHardware hardware;
     private LinearOpMode opMode;
+
+    private final int liftGoundPos = 0;
+    private final int liftLowPos = -6200;
+    private final int liftMiddlePos = -10300;
+    private final int liftTopPos = RobotInfo.liftTop;
+
+    private final float clawRotatorFrontPos = 0.05f;
+    private final float clawRotatorSidePos = 0.4f;
+    private final float clawRotatorBackPos = 0.75f;
+
+    private final float clawOpenPos = 0.4f;
+    private final float clawClosedPos = 0.15f;
 
     public ClawController(RobotHardware pHardware, LinearOpMode opMode) {
         this.hardware = pHardware;
@@ -33,33 +45,57 @@ public class ClawController {
     }
 
     public void setLiftPosition(LiftPosition position) {
-        if(position == LiftPosition.GROUND) this.hardware.getLift().setTargetPosition(0);
-        else if(position == LiftPosition.LOW) this.hardware.getLift().setTargetPosition(-6200);
-        else if(position == LiftPosition.MIDDLE) this.hardware.getLift().setTargetPosition(-10300);
-        else this.hardware.getLift().setTargetPosition(RobotInfo.liftTop);
+        setLiftPosition(position, false);
+    }
+    public void setLiftPosition(LiftPosition position, boolean waitForLift) {
+        if(position == LiftPosition.GROUND) this.hardware.getLift().setTargetPosition(liftGoundPos);
+        else if(position == LiftPosition.LOW) this.hardware.getLift().setTargetPosition(liftLowPos);
+        else if(position == LiftPosition.MIDDLE) this.hardware.getLift().setTargetPosition(liftMiddlePos);
+        else this.hardware.getLift().setTargetPosition(liftTopPos);
 
         this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.hardware.getLift().setPower(0.7);
+        this.hardware.getLift().setPower(1);
 
-        while(this.hardware.getLift().isBusy() && this.opMode.opModeIsActive()) {}
+        while(this.hardware.getLift().isBusy() && this.opMode.opModeIsActive() && waitForLift) {}
     }
+    public void setLiftPosition(int position) {
+        setLiftPosition(position, false);
+    }
+    public void setLiftPosition(int position, boolean waitForLift) {
+        int clampedPos = Math.max(Math.min(position, 0), liftTopPos);
+
+        this.hardware.getLift().setTargetPosition(clampedPos);
+        this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.hardware.getLift().setPower(1);
+
+        while(this.hardware.getLift().isBusy() && this.opMode.opModeIsActive() && waitForLift) {}
+    }
+
     public void setClawRotation(ClawRotation rotation) {
         float targetPosition;
-        if(rotation == ClawRotation.FRONT) targetPosition = 0.05f;
-        else if(rotation == ClawRotation.SIDE) targetPosition = 0.4f;
-        else targetPosition = 0.75f;
+        if(rotation == ClawRotation.FRONT) targetPosition = clawRotatorFrontPos;
+        else if(rotation == ClawRotation.SIDE) targetPosition = clawRotatorSidePos;
+        else targetPosition = clawRotatorBackPos;
 
-        while(this.hardware.getClawRotator().getPosition() != targetPosition) {
-            this.hardware.getClawRotator().setPosition(targetPosition);
-        }
+        this.hardware.getClawRotator().setPosition(targetPosition);
     }
-    public void setClawState(ClawState state) {
-        float targetPosition;
-        if(state == ClawState.OPEN) targetPosition = 0.4f;
-        else targetPosition = 0.15f;
+    public void setClawRotation(float rotation) {
+        float clampedRotation = Math.max(Math.min(rotation, clawRotatorBackPos),
+                clawRotatorFrontPos);
 
-        while(this.hardware.getClaw().getPosition() != targetPosition) {
-            this.hardware.getClaw().setPosition(targetPosition);
-        }
+        this.hardware.getClawRotator().setPosition(clampedRotation);
+    }
+
+    public void setClaw(ClawPosition state) {
+        float targetPosition;
+        if(state == ClawPosition.OPEN) targetPosition = clawOpenPos;
+        else targetPosition = clawClosedPos;
+
+        this.hardware.getClaw().setPosition(targetPosition);
+    }
+    public void setClaw(float pos) {
+        float clampedPos = Math.max(Math.min(pos, clawOpenPos), clawClosedPos);
+
+        this.hardware.getClaw().setPosition(clampedPos);
     }
 }

@@ -31,13 +31,9 @@ public class Robot {
 
     public Robot(LinearOpMode pOpMode,
                  boolean isFinal) {
-        
         this.opMode = pOpMode;
         this.hardware = new RobotHardware(this.opMode, isFinal);
         this.isFinal = isFinal;
-        
-        this.hardware.resetEncoders();
-        this.hardware.resetIMU();
     }
 
     /**
@@ -99,7 +95,7 @@ public class Robot {
 
     /**
      * Drives the number of tiles
-     * @param tiles the number of tiles
+     * @param tiles the number of tiles (+: forward, -: backward)
      * @param speed the speed (0 - 1)
      */
     public void driveTiles(float tiles, float speed) {
@@ -107,33 +103,41 @@ public class Robot {
     }
     /**
      * Drives the number of tiles
-     * @param tiles the number of tiles
+     * @param tiles the number of tiles  (+: forward, -: backward)
      * @param speed the speed (0 - 1)
-     * @param extraInches extra inchhes after driveTiles so it won't stop start stop start.
+     * @param extraInches extra inches to add the distance.
      */
     public void driveTiles(float tiles, float speed, float extraInches) {
         this.drive(tiles * FieldInfo.tileSize + extraInches, speed);
     }
-    
+
     /**
-     * strafes the number of tiles
-     * @param tiles the number of tiles
+     * Drives the number of tiles
+     * @param tiles the number of tiles  (+: right, -: left)
      * @param speed the speed (0 - 1)
      */
     public void strafeTiles(float tiles, float speed) {
         this.strafe(tiles * FieldInfo.tileSize, speed);
     }
     /**
-     * strafes the number of tiles
-     * @param tiles the number of tiles
+     * Drives the number of tiles
+     * @param tiles the number of tiles  (+: right, -: left)
      * @param speed the speed (0 - 1)
-     * @param extraInches extra inchhes after strafTiles so it won't stop start stop start.
-     *
+     * @param extraInches extra inches to add the distance.
      */
     public void strafeTiles(float tiles, float speed, float extraInches) {
         this.strafe(tiles * FieldInfo.tileSize + extraInches, speed);
     }
+
     private Orientation angles;
+
+    /**
+     * turns using PID
+     * @param degrees target degrees (only use positive)
+     * @param speed the speed
+     * @param precision how close it has to be to the target degrees before it stops !! DON'T SET
+     *                 TO ZERO !!
+     */
     public void turn(float degrees, float speed, double precision) {
         this.hardware.resetIMU();
         this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -159,12 +163,6 @@ public class Robot {
                 new double[] {angles.secondAngle-degrees,
                         angles.secondAngle-degrees});
     }
-
-    /**
-     * Helper method for public void turn.
-     * ROBOBOBO: LEFT 2 NEGATE
-     * Final: theoretically the same as robobobo...
-     */
     private void turn(double degrees, double speed, double precision, double Kp,
                         double Ki, double Kd, double[] trend) {
         if (!opMode.opModeIsActive()) {

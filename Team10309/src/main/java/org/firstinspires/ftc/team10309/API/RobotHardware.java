@@ -167,7 +167,7 @@ public class RobotHardware {
      */
     public void resetLift() {
         if(!this.liftBottom.isPressed()) {
-            this.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            this.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             this.lift.setPower(0.4);
         }
         while(!this.liftBottom.isPressed()) {}
