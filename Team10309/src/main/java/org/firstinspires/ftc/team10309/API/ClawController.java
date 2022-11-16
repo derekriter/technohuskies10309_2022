@@ -45,7 +45,7 @@ public class ClawController {
     }
 
     public void setLiftPosition(LiftPosition position) {
-        setLiftPosition(position, false);
+        setLiftPosition(position, true);
     }
     public void setLiftPosition(LiftPosition position, boolean waitForLift) {
         if(position == LiftPosition.GROUND) this.hardware.getLift().setTargetPosition(liftGoundPos);
@@ -59,7 +59,7 @@ public class ClawController {
         while(this.hardware.getLift().isBusy() && this.opMode.opModeIsActive() && waitForLift) {}
     }
     public void setLiftPosition(int position) {
-        setLiftPosition(position, false);
+        setLiftPosition(position, true);
     }
     public void setLiftPosition(int position, boolean waitForLift) {
         int clampedPos = Math.max(Math.min(position, 0), liftTopPos);
