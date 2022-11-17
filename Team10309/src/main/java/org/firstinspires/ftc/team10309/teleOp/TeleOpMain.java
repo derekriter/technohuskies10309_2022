@@ -50,8 +50,8 @@ public class TeleOpMain extends LinearOpMode {
         final float liftSpeed = 1f;
         final float armPosLeft = 0.05f;
         final float armPosCenter = 0.4f;
-        final float armPosRight = 0.75f;
-        final float clawOpenPos = 0.4f;
+        final float armPosRight = 0.8f;
+        final float clawOpenPos = 0.35f;
         final float clawClosePos = 0.15f;
 
         boolean raiseLift = gamepad2.y;
@@ -65,10 +65,10 @@ public class TeleOpMain extends LinearOpMode {
         boolean increaseSpeed = gamepad1.right_trigger > 0.5;
 
         if(decreaseSpeed && !decreaseSpeedLast)  {
-            if(driveSpeedMultiplier > 0.201) driveSpeedMultiplier -= 0.2;
+            if(driveSpeedMultiplier > 0.21) driveSpeedMultiplier -= 0.2;
         }
         if(increaseSpeed && !increaseSpeedLast) {
-            if(driveSpeedMultiplier < 0.901) driveSpeedMultiplier += 0.2;
+            if(driveSpeedMultiplier < 0.61) driveSpeedMultiplier += 0.2;
         }
 
         if(this.hardware.getLiftBottom().isPressed()) this.hardware.resetLift();
@@ -84,19 +84,7 @@ public class TeleOpMain extends LinearOpMode {
             this.hardware.getLift().setPower(0);
         }
 
-        if(
-            (this.hardware.getClawRotator().getPosition() == armPosLeft || this.hardware.getClawRotator().getPosition() == armPosRight)
-            &&
-            (armLeft || armRight)
-        ) {
-            if(this.hardware.getClawRotator().getPosition() == armPosLeft) {
-                this.hardware.getClawRotator().setPosition(armPosRight);
-            }
-            else {
-                this.hardware.getClawRotator().setPosition(armPosLeft);
-            }
-        }
-        else if(armLeft && this.hardware.getLift().getCurrentPosition() <= -1100) {
+        if(armLeft && this.hardware.getLift().getCurrentPosition() <= -1100) {
             this.hardware.getClawRotator().setPosition(armPosLeft);
         }
         else if(armCenter && this.hardware.getLift().getCurrentPosition() <= -1100) {

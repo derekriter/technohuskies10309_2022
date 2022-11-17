@@ -34,11 +34,11 @@ public class ManipulatorJack extends LinearOpMode {
         double Liftpos = this.hardware.getLift().getCurrentPosition();
 
         if(Raise){
-            this.hardware.getLift().setPower(-0.45);
+            this.hardware.getLift().setPower(-1);
         }
 
         if(Lower){
-            this.hardware.getLift().setPower(0.45);
+            this.hardware.getLift().setPower(1);
         }
 
         telemetry.addData("Liftpos", Liftpos);
