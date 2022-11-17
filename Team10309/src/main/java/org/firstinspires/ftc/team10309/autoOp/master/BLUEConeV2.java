@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team10309.autoOp;
+package org.firstinspires.ftc.team10309.autoOp.master;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,8 +9,8 @@ import org.firstinspires.ftc.team10309.API.Robot;
 import org.firstinspires.ftc.team10309.API.SleeveDetect;
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
-@Autonomous(name="JackAutoOp", group="Examples")
-public class JackAutoOp extends LinearOpMode {
+@Autonomous(name="BLUEConeV2", group="Examples")
+public class BLUEConeV2 extends LinearOpMode {
 
     private Robot robot;
     private ClawController clawController;
@@ -83,47 +83,62 @@ public class JackAutoOp extends LinearOpMode {
         };
         moveElevator.start();
         robot.strafeTiles(.25f, 0.5f);
-        robot.driveTiles(1.2f, 0.5f);
+        robot.driveTiles(1.2f, 0.5f, -2);
         robot.strafeTiles(1.3f, 0.5f);
         while(robot.getHardware().getLift().isBusy() && opModeIsActive()) {
         }
-        robot.drive(2.75f, 0.2f);
+        robot.drive(4.75f, 0.2f);
 
 //          clawController.setClawRotation(ClawController.ClawRotation.BACK);
 //            Thread.sleep(1000);
         clawController.setClaw(ClawController.ClawPosition.OPEN);
         robot.drive(-4.5f, 0.2f);
-        robot.strafeTiles(0.4f, 0.4f);
-
-        Thread lowerLift = new Thread() {
-            @Override
-            public synchronized void start() {
-                super.start();
-            }
-
-            @Override
-            public void run() {
-                clawController.setClaw(ClawController.ClawPosition.CLOSED);
-                clawController.setClawRotation(ClawController.ClawRotation.BACK);
-                clawController.setClaw(ClawController.ClawPosition.OPEN);
-                clawController.setLiftPosition(-2390);
-            }
-        };
-        lowerLift.start();
-        robot.driveTiles(-2f, 0.2f);
-        while(lowerLift.isAlive()) {}
-        robot.drive(-4f, 0.2f);
-        clawController.setClaw(ClawController.ClawPosition.CLOSED);
-        clawController.setLiftPosition(-4895);
-        clawController.setClawRotation(ClawController.ClawRotation.FRONT);
-        clawController.setLiftPosition(ClawController.LiftPosition.GROUND);
-
+        robot.strafeTiles(0.4f, 0.4f, 2);
+        // LOWER LIFT HERE
+        clawController.setLiftPosition(ClawController.LiftPosition.GROUND, false);
+        clawController.setClawRotation(ClawController.ClawRotation.BACK);
         if (state == SleeveDetect.SignalState.RED_SQUARE) {
-            robot.driveTiles(2, 0.5f, 1);
+            // stay
+            
+        } else if (state == SleeveDetect.SignalState.GREEN_CIRCLE) {
+            // move back one tile
+            robot.driveTiles(-1, 0.4f, -1);
+        } else {
+            clawController.setClaw(ClawController.ClawPosition.CLOSED);
+            // move back two tiles
+            robot.driveTiles(-2, 0.4f,-1);
         }
-        else if (state == SleeveDetect.SignalState.GREEN_CIRCLE || state == SleeveDetect.SignalState.ERROR) {
-            robot.driveTiles(1, 0.5f, 1);
-        }
+        while (robot.getHardware().getLift().isBusy() && this.opModeIsActive()) {}
+//
+//        Thread lowerLift = new Thread() {
+//            @Override
+//            public synchronized void start() {
+//                super.start();
+//            }
+//
+//            @Override
+//            public void run() {
+//                clawController.setClaw(ClawController.ClawPosition.CLOSED);
+//                clawController.setClawRotation(ClawController.ClawRotation.BACK);
+//                clawController.setClaw(ClawController.ClawPosition.OPEN);
+//                clawController.setLiftPosition(-2390);
+//            }
+//        };
+//        lowerLift.start();
+//        robot.driveTiles(-2f, 0.2f);
+//        while(lowerLift.isAlive()) {}
+//        robot.drive(-4f, 0.2f);
+//        clawController.setClaw(ClawController.ClawPosition.CLOSED);
+//        clawController.setLiftPosition(-4895);
+//        clawController.setClawRotation(ClawController.ClawRotation.FRONT);
+//        clawController.setLiftPosition(ClawController.LiftPosition.GROUND);
+//
+//        if (state == SleeveDetect.SignalState.RED_SQUARE) {
+//            robot.driveTiles(2, 0.5f, 3);
+//        }
+//        else if (state == SleeveDetect.SignalState.GREEN_CIRCLE || state == SleeveDetect.SignalState.ERROR) {
+//            robot.driveTiles(1, 0.5f, 3);
+//        }
     }
 }
 
