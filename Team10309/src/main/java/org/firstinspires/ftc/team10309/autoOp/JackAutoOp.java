@@ -107,8 +107,6 @@ public class JackAutoOp extends LinearOpMode {
                 clawController.setClawRotation(ClawController.ClawRotation.BACK);
                 clawController.setClaw(ClawController.ClawPosition.OPEN);
                 clawController.setLiftPosition(-2390);
-                //-4895
-                //-24243
             }
         };
         lowerLift.start();
