@@ -42,16 +42,16 @@ public class RobotHardware {
     /**
      * The lift slider motor
      */
-    private DcMotor lift;
+//    private DcMotor lift;
 
     /**
      * The servo that rotates the claw on the lift
      */
-    private Servo clawRotater;
+//    private Servo clawRotater;
     /**
      * The servo that controls the claw
      */
-    private Servo claw;
+//    private Servo claw;
 
     /**
      * The IMU (Inertia Measurement Unit) sensor in the control hub
@@ -62,8 +62,8 @@ public class RobotHardware {
      */
     public BNO055IMU.Parameters imuParams;
     
-    public WebcamName camera;
-    private TouchSensor liftBottom;
+//    public WebcamName camera;
+//    private TouchSensor liftBottom;
 
     private HardwareMap hw;
     private LinearOpMode opMode;
@@ -83,14 +83,14 @@ public class RobotHardware {
     public DcMotor getFRMotor() {return this.frMotor;}
     public DcMotor getBLMotor() {return this.blMotor;}
     public DcMotor getBRMotor() {return this.brMotor;}
-    public DcMotor getLift() {return this.lift;}
+//    public DcMotor getLift() {return this.lift;}
 
-    public Servo getClawRotator() {return this.clawRotater;}
-    public Servo getClaw() {return this.claw;}
+//    public Servo getClawRotator() {return this.clawRotater;}
+//    public Servo getClaw() {return this.claw;}
 
-    public WebcamName getCamera() {return this.camera;}
+//    public WebcamName getCamera() {return this.camera;}
     public BNO055IMU getIMU() {return this.imu;}
-    public TouchSensor getLiftBottom() {return this.liftBottom;}
+//    public TouchSensor getLiftBottom() {return this.liftBottom;}
 
     /**
      * Called to init all the values mappings
@@ -106,14 +106,14 @@ public class RobotHardware {
         this.imuParams = new BNO055IMU.Parameters();
 
         if(this.isFinal) {
-            this.lift = hardwareMap.get(DcMotor.class, RobotInfo.liftName);
-            this.clawRotater = hardwareMap.get(Servo.class, RobotInfo.clawRotaterName);
-            this.claw = hardwareMap.get(Servo.class, RobotInfo.clawName);
+//            this.lift = hardwareMap.get(DcMotor.class, RobotInfo.liftName);
+//            this.clawRotater = hardwareMap.get(Servo.class, RobotInfo.clawRotaterName);
+//            this.claw = hardwareMap.get(Servo.class, RobotInfo.clawName);
 
-            this.liftBottom = hardwareMap.get(TouchSensor.class, RobotInfo.liftBottomName);
+//            this.liftBottom = hardwareMap.get(TouchSensor.class, RobotInfo.liftBottomName);
         }
 
-        this.camera = hardwareMap.get(WebcamName.class, RobotInfo.camera);
+//        this.camera = hardwareMap.get(WebcamName.class, RobotInfo.camera);
     }
 
     /**
@@ -123,8 +123,8 @@ public class RobotHardware {
         if(isFinal) {
             this.blMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             this.brMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-            this.claw.setDirection(Servo.Direction.REVERSE);
-            this.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            this.claw.setDirection(Servo.Direction.REVERSE);
+//            this.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         else {
             this.flMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -166,23 +166,23 @@ public class RobotHardware {
      * Recalibrates the lift
      */
     public void resetLift() {
-        if(!this.liftBottom.isPressed()) {
-            this.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            this.lift.setPower(0.4);
-        }
-        while(!this.liftBottom.isPressed()) {}
+//        if(!this.liftBottom.isPressed()) {
+//            this.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            this.lift.setPower(0.4);
+//        }
+//        while(!this.liftBottom.isPressed()) {}
 
-        this.lift.setPower(0);
+//        this.lift.setPower(0);
 
-        this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.lift.setTargetPosition(this.lift.getCurrentPosition() - 50);
-        this.lift.setPower(0.2);
+//        this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        this.lift.setTargetPosition(this.lift.getCurrentPosition() - 50);
+//        this.lift.setPower(0.2);
 
-        while(this.lift.isBusy()) {}
+//        while(this.lift.isBusy()) {}
 
-        this.lift.setPower(0);
+//        this.lift.setPower(0);
 
-        this.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        this.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        this.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }

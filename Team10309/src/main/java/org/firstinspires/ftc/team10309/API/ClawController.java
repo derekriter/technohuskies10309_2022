@@ -33,15 +33,15 @@ public class ClawController {
     }
 
     public void setLiftPosition(LiftPosition position) {
-        if(position == LiftPosition.GROUND) this.hardware.getLift().setTargetPosition(0);
-        else if(position == LiftPosition.LOW) this.hardware.getLift().setTargetPosition(-6200);
-        else if(position == LiftPosition.MIDDLE) this.hardware.getLift().setTargetPosition(-10300);
-        else this.hardware.getLift().setTargetPosition(RobotInfo.liftTop);
+//        if(position == LiftPosition.GROUND) this.hardware.getLift().setTargetPosition(0);
+//        else if(position == LiftPosition.LOW) this.hardware.getLift().setTargetPosition(-6200);
+//        else if(position == LiftPosition.MIDDLE) this.hardware.getLift().setTargetPosition(-10300);
+//        else this.hardware.getLift().setTargetPosition(RobotInfo.liftTop);
 
-        this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.hardware.getLift().setPower(0.7);
+//        this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        this.hardware.getLift().setPower(0.7);
 
-        while(this.hardware.getLift().isBusy() && this.opMode.opModeIsActive()) {}
+//        while(this.hardware.getLift().isBusy() && this.opMode.opModeIsActive()) {}
     }
     public void setClawRotation(ClawRotation rotation) {
         float targetPosition;
@@ -49,17 +49,17 @@ public class ClawController {
         else if(rotation == ClawRotation.SIDE) targetPosition = 0.4f;
         else targetPosition = 0.75f;
 
-        while(this.hardware.getClawRotator().getPosition() != targetPosition) {
-            this.hardware.getClawRotator().setPosition(targetPosition);
-        }
+//        while(this.hardware.getClawRotator().getPosition() != targetPosition) {
+//            this.hardware.getClawRotator().setPosition(targetPosition);
+//        }
     }
     public void setClawState(ClawState state) {
         float targetPosition;
         if(state == ClawState.OPEN) targetPosition = 0.4f;
         else targetPosition = 0.15f;
 
-        while(this.hardware.getClaw().getPosition() != targetPosition) {
-            this.hardware.getClaw().setPosition(targetPosition);
-        }
+//        while(this.hardware.getClaw().getPosition() != targetPosition) {
+//            this.hardware.getClaw().setPosition(targetPosition);
+//        }
     }
 }
