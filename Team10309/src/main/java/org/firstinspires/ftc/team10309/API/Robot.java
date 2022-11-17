@@ -36,12 +36,15 @@ public class Robot {
         this.isFinal = isFinal;
     }
 
+    public void drive(float inches, float speed) {
+        drive(inches, speed, true);
+    }
     /**
      * A function to move the robot forward and backward
      * @param inches the distance to move the robot (+: forward, -: backward)
      * @param speed the speed to drive at (min: 0, max: 1)
      */
-    public void drive(float inches, float speed) {
+    public void drive(float inches, float speed, boolean waitForMotors) {
         float clampedSpeed = Math.max(Math.min(speed, 1), 0);
         int ticks = this.calculateTicks(inches);
 
@@ -62,14 +65,18 @@ public class Robot {
         this.hardware.getBLMotor().setPower(clampedSpeed);
         this.hardware.getBRMotor().setPower(clampedSpeed);
 
-        this.waitForMotors();
+        if(waitForMotors) this.waitForMotors();
+    }
+
+    public void strafe(float inches, float speed) {
+        strafe(inches, speed, true);
     }
     /**
      * A function to move the robot left and right
      * @param inches the distance to move the robot (+: right, -: left)
      * @param speed the speed to drive at (min: 0, max: 1)
      */
-    public void strafe(float inches, float speed) {
+    public void strafe(float inches, float speed, boolean waitForMotors) {
         float clampedSpeed = Math.max(Math.min(speed, 1), 0);
         int ticks = Math.round(this.calculateTicks(inches) * 1.25f);
 
@@ -90,16 +97,23 @@ public class Robot {
         this.hardware.getBLMotor().setPower(clampedSpeed);
         this.hardware.getBRMotor().setPower(clampedSpeed);
 
-        this.waitForMotors();
+        if(waitForMotors) this.waitForMotors();
     }
 
+    public void driveTiles(float tiles, float speed) {
+        driveTiles(tiles, speed, true);
+    }
     /**
      * Drives the number of tiles
      * @param tiles the number of tiles (+: forward, -: backward)
      * @param speed the speed (0 - 1)
      */
-    public void driveTiles(float tiles, float speed) {
-        this.drive(tiles * FieldInfo.tileSize, speed);
+    public void driveTiles(float tiles, float speed, boolean waitForMotors) {
+        this.drive(tiles * FieldInfo.tileSize, speed, waitForMotors);
+    }
+
+    public void driveTiles(float tiles, float speed, float extraInches) {
+        driveTiles(tiles, speed, extraInches, true);
     }
     /**
      * Drives the number of tiles
@@ -107,17 +121,24 @@ public class Robot {
      * @param speed the speed (0 - 1)
      * @param extraInches extra inches to add the distance.
      */
-    public void driveTiles(float tiles, float speed, float extraInches) {
-        this.drive(tiles * FieldInfo.tileSize + extraInches, speed);
+    public void driveTiles(float tiles, float speed, float extraInches, boolean waitForMotors) {
+        this.drive(tiles * FieldInfo.tileSize + extraInches, speed, waitForMotors);
     }
 
+    public void strafeTiles(float tiles, float speed) {
+        strafeTiles(tiles, speed, true);
+    }
     /**
      * Drives the number of tiles
      * @param tiles the number of tiles  (+: right, -: left)
      * @param speed the speed (0 - 1)
      */
-    public void strafeTiles(float tiles, float speed) {
-        this.strafe(tiles * FieldInfo.tileSize, speed);
+    public void strafeTiles(float tiles, float speed, boolean waitForMotors) {
+        this.strafe(tiles * FieldInfo.tileSize, speed, waitForMotors);
+    }
+
+    public void strafeTiles(float tiles, float speed, float extraInches) {
+        strafeTiles(tiles, speed, extraInches, true);
     }
     /**
      * Drives the number of tiles
@@ -125,8 +146,8 @@ public class Robot {
      * @param speed the speed (0 - 1)
      * @param extraInches extra inches to add the distance.
      */
-    public void strafeTiles(float tiles, float speed, float extraInches) {
-        this.strafe(tiles * FieldInfo.tileSize + extraInches, speed);
+    public void strafeTiles(float tiles, float speed, float extraInches, boolean waitForMotors) {
+        this.strafe(tiles * FieldInfo.tileSize + extraInches, speed, waitForMotors);
     }
 
     private Orientation angles;
@@ -240,7 +261,7 @@ public class Robot {
     /**
      * Forces the program to wait until the motors are done moving
      */
-    private void waitForMotors() {
+    public void waitForMotors() {
         while(
             (
                 this.hardware.getFLMotor().isBusy()
@@ -249,21 +270,7 @@ public class Robot {
                 || this.hardware.getBRMotor().isBusy()
             )
             && this.opMode.opModeIsActive()
-        ) {
-            this.opMode.telemetry.addData("Wait for motors FL",
-                    this.hardware.getFLMotor().isBusy());
-            this.opMode.telemetry.addData("Wait for motors FR",
-                    this.hardware.getFRMotor().isBusy());
-            this.opMode.telemetry.addData("Wait for motors BL",
-                    this.hardware.getBLMotor().isBusy());
-            this.opMode.telemetry.addData("Wait for motors BR",
-                    this.hardware.getBRMotor().isBusy());
-            this.opMode.telemetry.update();
-        }
-        
-        this.opMode.telemetry.addData("Out of Motor Waiting","Done");
-        this.opMode.telemetry.update();
-        
+        );
     }
     /**
      * Calculates the number of ticks needed to travel the specified distance
@@ -277,7 +284,7 @@ public class Robot {
         return Math.round((targetDist / (float) (diameter * Math.PI)) * tpr);
     }
 
-    public SleeveDetect sleeveDetect;
+    private SleeveDetect sleeveDetect;
 
     public void initDetect() {
         sleeveDetect = new SleeveDetect(this.opMode.telemetry, this.hardware.getCamera(),
