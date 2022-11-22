@@ -1,4 +1,4 @@
-    package org.firstinspires.ftc.team10309.autoOp.master;
+    package org.firstinspires.ftc.team10309.autoOp;
 
     import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
     import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,7 +7,7 @@
     import org.firstinspires.ftc.team10309.API.Robot;
     import org.firstinspires.ftc.team10309.API.SleeveDetect;
 
-    @Autonomous(name="Purple PARK Auto Op | FINAL", group="Examples")
+    @Autonomous(name="Purple PARK Auto Op", group="Examples")
     public class PURPLEAutoOpPark extends LinearOpMode {
 
         private Robot robot;
@@ -20,14 +20,13 @@
             this.clawController = new ClawController(this.robot.getHardware(), this);
 
             robot.initDetect();
-            SleeveDetect.SignalState state = robot.scanSleeve();
             telemetry.addLine("Press Start");
-            telemetry.update();
-            telemetry.addData("Signal state", state.name());
             telemetry.update();
     
             waitForStart();
-    
+            SleeveDetect.SignalState state = robot.scanSleeve();
+            telemetry.addData("Signal state", state.name());
+            telemetry.update();
     
 //
 //            SleeveDetect.SignalState state = robot.scanSleeve();

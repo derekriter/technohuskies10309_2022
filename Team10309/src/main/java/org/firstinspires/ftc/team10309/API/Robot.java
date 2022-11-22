@@ -292,10 +292,7 @@ public class Robot {
         sleeveDetect.init();
     }
     public SleeveDetect.SignalState scanSleeve() throws InterruptedException {
-
-        SleeveDetect.SignalState ss = sleeveDetect.scan();
-
-        return ss;
+        return sleeveDetect.scan();
     }
 
     public SleeveDetect.SignalState initAndScan() throws InterruptedException {

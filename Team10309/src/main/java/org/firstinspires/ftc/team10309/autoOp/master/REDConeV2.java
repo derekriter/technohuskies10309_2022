@@ -9,8 +9,8 @@ import org.firstinspires.ftc.team10309.API.Robot;
 import org.firstinspires.ftc.team10309.API.SleeveDetect;
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
-@Autonomous(name="BLUEConeV2 | FINAL", group="Examples")
-public class BLUEConeV2 extends LinearOpMode {
+@Autonomous(name="REDConeV2 | FINAL", group="Examples")
+public class REDConeV2 extends LinearOpMode {
 
     private Robot robot;
     private ClawController clawController;
@@ -83,30 +83,33 @@ public class BLUEConeV2 extends LinearOpMode {
         };
         moveElevator.start();
         robot.strafeTiles(.25f, 0.5f);
-        robot.driveTiles(1.2f, 0.5f, -2);
-        robot.strafeTiles(1.3f, 0.5f);
+        robot.driveTiles(-1.2f, 0.5f, 5);
+        robot.strafeTiles(1.3f, 0.5f, 0.5f);
         while(robot.getHardware().getLift().isBusy() && opModeIsActive()) {
         }
-        robot.drive(4.75f, 0.2f);
-
+        robot.drive(-4f, 0.2f);
 //          clawController.setClawRotation(ClawController.ClawRotation.BACK);
 //            Thread.sleep(1000);
+//        Thread.sleep(3000);
+//        clawController.setClawRotation(backward);
+        Thread.sleep(1000);
         clawController.setClaw(ClawController.ClawPosition.OPEN);
-        robot.drive(-4.5f, 0.2f);
-        robot.strafeTiles(0.4f, 0.4f, 2);
+        robot.drive(4.5f, 0.2f);
+        robot.strafeTiles(0.4f, 0.4f);
         // LOWER LIFT HERE
         clawController.setLiftPosition(ClawController.LiftPosition.GROUND, false);
-        clawController.setClawRotation(ClawController.ClawRotation.BACK);
-        if (state == SleeveDetect.SignalState.RED_SQUARE) {
+        clawController.setClawRotation(ClawController.ClawRotation.FRONT);
+        clawController.setClaw(ClawController.ClawPosition.CLOSED);
+        if (state == SleeveDetect.SignalState.BLUE_TRIANGLE) {
             // stay
-            
+            robot.drive(-3, 0.3f);
         } else if (state == SleeveDetect.SignalState.GREEN_CIRCLE) {
             // move back one tile
-            robot.driveTiles(-1, 0.4f, -1);
+    
+            robot.driveTiles(1, 0.4f, -2);
         } else {
-            clawController.setClaw(ClawController.ClawPosition.CLOSED);
             // move back two tiles
-            robot.driveTiles(-2, 0.4f,-1);
+            robot.driveTiles(2, 0.4f, -2);
         }
         while (robot.getHardware().getLift().isBusy() && this.opModeIsActive()) {}
 //

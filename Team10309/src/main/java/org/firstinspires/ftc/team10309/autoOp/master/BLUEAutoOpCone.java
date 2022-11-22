@@ -33,13 +33,14 @@
             Thread.sleep(3000);
             robot.getHardware().getClaw().setPosition(clawClosePos);
             robot.initDetect();
-            SleeveDetect.SignalState state = robot.scanSleeve();
+            
             telemetry.addLine("Press Start");
     
-            telemetry.addData("Signal state", state.name());
             telemetry.update();
             waitForStart();
-   
+            SleeveDetect.SignalState state = robot.scanSleeve();
+            telemetry.addData("Signal state", state.name());
+            telemetry.update();
             // constants, copied from TeleOpMain.
     
 //

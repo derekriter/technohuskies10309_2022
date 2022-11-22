@@ -76,7 +76,7 @@ public class SleeveDetect {
         telemetry.addLine("Tfod?" + (tfod == null));
         telemetry.update();
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -91,10 +91,11 @@ public class SleeveDetect {
         }
         telemetry.addLine("Done with zooom");
         telemetry.update();
-        Thread.sleep(1000);
+        Thread.sleep(500);
         if (tfod != null) {
             int counter = 0;
-            while (tfod != null) {
+            int ii = 0;
+            while (tfod != null && ii < 5) {
             telemetry.addLine("In detection loop.");
             telemetry.update();
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -103,45 +104,53 @@ public class SleeveDetect {
                 if (updatedRecognitions.size() > 1) {
                     telemetry.addLine("More than one " +
                             "recogn.");
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                     telemetry.update();
-                    continue;
                 } else if (updatedRecognitions.size() < 1) {
                     telemetry.addLine("no recogn.");
                     telemetry.update();
-                    Thread.sleep(1000);
-                    continue;
+                    Thread.sleep(500);
                 }
-                
-                Recognition recognition = updatedRecognitions.get(0);
-                double col = (recognition.getLeft() + recognition.getRight()) / 2;
-                double row = (recognition.getTop() + recognition.getBottom()) / 2;
-                double width = Math.abs(recognition.getRight() - recognition.getLeft());
-                double height = Math.abs(recognition.getTop() - recognition.getBottom());
-                
-                telemetry.addData("", " ");
-                telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
-                telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-                telemetry.update();
-                Thread.sleep(1000);
-                if (recognition.getLabel() == "Blue Triangle") {
-                    return SignalState.BLUE_TRIANGLE;
-                } else if (recognition.getLabel() == "Red Square") {
-                    return SignalState.RED_SQUARE;
-                } else if (recognition.getLabel() == "Green Circle") {
-                    return SignalState.GREEN_CIRCLE;
-                } else {
-                    counter++;
+                else {
+                    Recognition recognition = updatedRecognitions.get(0);
+                    double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                    double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                    double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                    double height = Math.abs(recognition.getTop() - recognition.getBottom());
+    
+                    telemetry.addData("", " ");
+                    telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                    telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
+                    telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
+                    telemetry.update();
+                    Thread.sleep(500);
+                    if (recognition.getLabel() == "Blue Triangle") {
+                        return SignalState.BLUE_TRIANGLE;
+                    } else if (recognition.getLabel() == "Red Square") {
+                        return SignalState.RED_SQUARE;
+                    } else if (recognition.getLabel() == "Green Circle") {
+                        return SignalState.GREEN_CIRCLE;
+                    } else {
+                        counter++;
+                    }
                 }
             }
+            ii++;
+            telemetry.addData("IR Attempts", ii);
+            telemetry.update();
+            Thread.sleep(500);
         }
             telemetry.update();
             tfod.deactivate();
         } else {
-            return SignalState.ERROR;
+            return SignalState.GREEN_CIRCLE;
         }
-        return SignalState.ERROR;
+        
+        telemetry.addLine("Failed to recognize, defaulted to GREEN_CIRCLE");
+        telemetry.update();
+        Thread.sleep(500);
+        
+        return SignalState.GREEN_CIRCLE;
     }
     
     private void initVuforia() {

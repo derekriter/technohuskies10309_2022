@@ -1,4 +1,4 @@
-    package org.firstinspires.ftc.team10309.autoOp.master;
+    package org.firstinspires.ftc.team10309.autoOp;
 
     import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
     import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,7 +6,7 @@
     import org.firstinspires.ftc.team10309.API.ClawController;
     import org.firstinspires.ftc.team10309.API.Robot;
 
-    @Autonomous(name="BLUE Auto Op | FINAL", group="Examples")
+    @Autonomous(name="BLUE Auto Op", group="Examples")
     public class BLUEAutoOp extends LinearOpMode {
 
         private Robot robot;
