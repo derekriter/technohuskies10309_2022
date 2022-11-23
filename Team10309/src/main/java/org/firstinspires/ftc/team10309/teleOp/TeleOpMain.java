@@ -12,28 +12,16 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 @TeleOp(name="TeleOpMain", group="Test")
 public class TeleOpMain extends LinearOpMode {
 
-    private enum MotionDirection {
-        DRIVE,
-        STRAFE
-    }
-
     public RobotHardware hardware;
-    public Robot robot;
 
     private float driveSpeedMultiplier = 0.4f;
 
     private boolean decreaseSpeedLast;
     private boolean increaseSpeedLast;
 
-    private boolean tileForwardLast;
-    private boolean tileBackwardLast;
-    private boolean tileLeftLast;
-    private boolean tileRightLast;
-
     @Override
     public void runOpMode() {
-        this.robot = new Robot(this, true);
-        this.hardware = robot.getHardware();
+        this.hardware = new RobotHardware(this, true);
 
         telemetry.addLine("Init completed");
         telemetry.update();
@@ -107,19 +95,6 @@ public class TeleOpMain extends LinearOpMode {
         boolean tileRight = this.gamepad1.dpad_right;
         boolean tileDownshift = this.gamepad1.left_bumper;
 
-        if(tileForward && !tileForwardLast) {
-            shiftDirection(MotionDirection.DRIVE, tileDownshift ? 0.5f : 1f);
-        }
-        if(tileBackward && !tileBackwardLast) {
-            shiftDirection(MotionDirection.DRIVE, tileDownshift ? -0.5f : -1f);
-        }
-        if(tileLeft && !tileLeftLast) {
-            shiftDirection(MotionDirection.STRAFE, tileDownshift ? -0.5f : -1f);
-        }
-        if(tileRight && !tileRightLast) {
-            shiftDirection(MotionDirection.STRAFE, tileDownshift ? 0.5f : 1f);
-        }
-
         double forward = -this.gamepad1.left_stick_y;
         double strafe = this.gamepad1.left_stick_x;
         double turn = this.gamepad1.right_stick_x;
@@ -144,22 +119,5 @@ public class TeleOpMain extends LinearOpMode {
 
         decreaseSpeedLast = decreaseSpeed;
         increaseSpeedLast = increaseSpeed;
-
-        tileForwardLast = tileForward;
-        tileBackwardLast = tileBackward;
-        tileLeftLast = tileLeft;
-        tileRightLast = tileRight;
-    }
-
-    private void shiftDirection(MotionDirection direction, float distance) {
-        if(distance == 0) return;
-        float clampedDistance = Math.min(Math.max(distance, -1), 1);
-
-        if(direction == MotionDirection.DRIVE) {
-            robot.driveTiles(clampedDistance, driveSpeedMultiplier);
-        }
-        else {
-            robot.strafeTiles(clampedDistance, driveSpeedMultiplier);
-        }
     }
 }

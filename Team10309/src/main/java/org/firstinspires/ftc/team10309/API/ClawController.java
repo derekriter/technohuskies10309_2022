@@ -56,7 +56,7 @@ public class ClawController {
         this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.hardware.getLift().setPower(1);
 
-        while(this.hardware.getLift().isBusy() && this.opMode.opModeIsActive() && waitForLift) {}
+        if(waitForLift) waitForLift();
     }
     public void setLiftPosition(int position) {
         setLiftPosition(position, true);
@@ -68,7 +68,7 @@ public class ClawController {
         this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.hardware.getLift().setPower(1);
 
-        while(this.hardware.getLift().isBusy() && this.opMode.opModeIsActive() && waitForLift) {}
+        if(waitForLift) waitForLift();
     }
 
     public void setClawRotation(ClawRotation rotation) {
@@ -97,5 +97,9 @@ public class ClawController {
         float clampedPos = Math.max(Math.min(pos, clawOpenPos), clawClosedPos);
 
         this.hardware.getClaw().setPosition(clampedPos);
+    }
+
+    public void waitForLift() {
+        while(this.hardware.getLift().isBusy() && this.opMode.opModeIsActive());
     }
 }
