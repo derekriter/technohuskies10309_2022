@@ -27,8 +27,8 @@ public class ClawController {
     private LinearOpMode opMode;
 
     private final int liftGoundPos = 0;
-    private final int liftLowPos = -6200;
-    private final int liftMiddlePos = -10300;
+    private final int liftLowPos = -4133;
+    private final int liftMiddlePos = -6866;
     private final int liftTopPos = RobotInfo.liftTop;
 
     private final float clawRotatorFrontPos = 0.05f;
