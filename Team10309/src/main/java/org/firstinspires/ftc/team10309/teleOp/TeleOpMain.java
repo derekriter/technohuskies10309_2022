@@ -89,12 +89,6 @@ public class TeleOpMain extends LinearOpMode {
             this.hardware.getClaw().setPosition(clawClosePos);
         }
 
-        boolean tileForward = this.gamepad1.dpad_up;
-        boolean tileBackward = this.gamepad1.dpad_down;
-        boolean tileLeft = this.gamepad1.dpad_left;
-        boolean tileRight = this.gamepad1.dpad_right;
-        boolean tileDownshift = this.gamepad1.left_bumper;
-
         double forward = -this.gamepad1.left_stick_y;
         double strafe = this.gamepad1.left_stick_x;
         double turn = this.gamepad1.right_stick_x;
