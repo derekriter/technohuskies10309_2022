@@ -121,7 +121,6 @@ public class RobotHardware {
      */
     private void configHardware() {
         if(isFinal) {
-            this.blMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             this.brMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             this.claw.setDirection(Servo.Direction.REVERSE);
             this.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
