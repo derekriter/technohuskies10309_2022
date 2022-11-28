@@ -27,7 +27,7 @@ public class Robot {
     /**
      * Whether this is the final robot or robobobo
      */
-    private boolean isFinal;
+    private final boolean isFinal;
 
     public Robot(LinearOpMode pOpMode,
                  boolean isFinal) {
@@ -180,7 +180,7 @@ public class Robot {
         // Then negate each motor accordingly.
         angles = this.hardware.getIMU().getAngularOrientation(
                         AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-        turn(degrees, speed, precision, 0.1, 1/500, 1/50,
+        turn(degrees, speed, precision, 0.1, 1/500f, 1/50f,
                 new double[] {angles.secondAngle-degrees,
                         angles.secondAngle-degrees});
     }
@@ -247,7 +247,7 @@ public class Robot {
         this.opMode.telemetry.addData("Angle: ", "" + angles.firstAngle);
         this.opMode.telemetry.addData("Second Angle: ", "" + angles.secondAngle);
         this.opMode.telemetry.addData("Third Angle: ", "" + angles.thirdAngle);
-        this.opMode.telemetry.addData("I: ",  + integral + "D: " + derivative + "T: " + total);
+        this.opMode.telemetry.addData("I: ", integral + "D: " + derivative + "T: " + total);
         this.opMode.telemetry.update();
 
         // recursive updates

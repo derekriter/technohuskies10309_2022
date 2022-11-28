@@ -4,17 +4,17 @@
     import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
     import com.qualcomm.robotcore.hardware.DcMotor;
 
-    import org.firstinspires.ftc.team10309.API.ClawController;
+    import org.firstinspires.ftc.team10309.API.ManipulatorController;
     import org.firstinspires.ftc.team10309.API.Robot;
     import org.firstinspires.ftc.team10309.API.SleeveDetect;
     import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
     // Algin with a jenga block 1 jenga block from the right side edge of mat.
-    @Autonomous(name="BLUE CONE Auto Op | FINAL", group="Examples")
+    @Autonomous(name="BLUE CONE Auto Op | FINAL")
     public class BLUEAutoOpCone extends LinearOpMode {
 
         private Robot robot;
-        private ClawController clawController;
+        private ManipulatorController manipulatorController;
 
         @Override
         public void runOpMode() throws InterruptedException {
@@ -27,7 +27,7 @@
             final float clawClosePos = 0.15f;
             //init
             this.robot = new Robot(this, true);
-            this.clawController = new ClawController(this.robot.getHardware(), this);
+            this.manipulatorController = new ManipulatorController(this.robot.getHardware(), this);
             
             robot.getHardware().getClaw().setPosition(clawOpenPos);
             Thread.sleep(3000);
@@ -89,10 +89,10 @@
             robot.drive(3f, 0.2f);
           //  clawController.setClawRotation(ClawController.ClawRotation.BACK);
 //            Thread.sleep(1000);
-            clawController.setClaw(ClawController.ClawPosition.OPEN);
+            manipulatorController.setClaw(ManipulatorController.ClawPosition.OPEN);
             robot.drive(-6f, 0.5f);
             robot.strafeTiles(-0.5f, 0.5f);
-            clawController.setClaw(ClawController.ClawPosition.CLOSED);
+            manipulatorController.setClaw(ManipulatorController.ClawPosition.CLOSED);
 //            clawController.setClawRotation(ClawController.ClawRotation.FRONT);
             Thread lowerLift = new Thread() {
                 @Override
@@ -102,7 +102,7 @@
     
                 @Override
                 public void run() {
-                    clawController.setLiftPosition(ClawController.LiftPosition.GROUND);
+                    manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
                 }
             };
             lowerLift.start();

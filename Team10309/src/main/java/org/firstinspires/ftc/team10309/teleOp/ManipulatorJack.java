@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.team10309.API.RobotHardware;
 
-@TeleOp(name="ManipulatorJack", group="Examples")
+@TeleOp(name="ManipulatorJack")
 public class ManipulatorJack extends LinearOpMode {
 
     private RobotHardware hardware;

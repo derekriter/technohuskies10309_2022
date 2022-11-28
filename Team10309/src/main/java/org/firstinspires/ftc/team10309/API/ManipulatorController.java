@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
-public class ClawController {
+public class ManipulatorController {
 
     public enum LiftPosition {
         GROUND,
@@ -13,7 +13,7 @@ public class ClawController {
         MIDDLE,
         HIGH
     }
-    public enum ClawRotation {
+    public enum ArmRotation {
         FRONT,
         SIDE,
         BACK
@@ -23,8 +23,8 @@ public class ClawController {
         CLOSED
     }
 
-    private RobotHardware hardware;
-    private LinearOpMode opMode;
+    private final RobotHardware hardware;
+    private final LinearOpMode opMode;
 
     private final int liftGoundPos = 0;
     private final int liftLowPos = -4133;
@@ -38,7 +38,7 @@ public class ClawController {
     private final float clawOpenPos = 0.4f;
     private final float clawClosedPos = 0.15f;
 
-    public ClawController(RobotHardware pHardware, LinearOpMode opMode) {
+    public ManipulatorController(RobotHardware pHardware, LinearOpMode opMode) {
         this.hardware = pHardware;
         this.opMode = opMode;
         this.hardware.resetLift();
@@ -63,23 +63,23 @@ public class ClawController {
     }
     public void setLiftPosition(int position, boolean waitForLift) {
         int clampedPos = Math.max(Math.min(position, 0), liftTopPos);
-
         this.hardware.getLift().setTargetPosition(clampedPos);
+
         this.hardware.getLift().setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.hardware.getLift().setPower(1);
 
         if(waitForLift) waitForLift();
     }
 
-    public void setClawRotation(ClawRotation rotation) {
+    public void setArmPosition(ArmRotation rotation) {
         float targetPosition;
-        if(rotation == ClawRotation.FRONT) targetPosition = clawRotatorFrontPos;
-        else if(rotation == ClawRotation.SIDE) targetPosition = clawRotatorSidePos;
+        if(rotation == ArmRotation.FRONT) targetPosition = clawRotatorFrontPos;
+        else if(rotation == ArmRotation.SIDE) targetPosition = clawRotatorSidePos;
         else targetPosition = clawRotatorBackPos;
 
         this.hardware.getClawRotator().setPosition(targetPosition);
     }
-    public void setClawRotation(float rotation) {
+    public void setArmPosition(float rotation) {
         float clampedRotation = Math.max(Math.min(rotation, clawRotatorBackPos),
                 clawRotatorFrontPos);
 
