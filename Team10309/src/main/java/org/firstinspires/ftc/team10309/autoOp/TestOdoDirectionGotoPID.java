@@ -54,17 +54,22 @@ public class TestOdoDirectionGotoPID extends LinearOpMode {
         
         double angle = angles.thirdAngle;
         double a_err = 0 - angle;
-        double a_multiplier = 0.00017;
-        double a_precision = 10;
-        double a_Kp = 0.6;
+        double a_multiplier = 0.00005;
+        double a_precision = 1;
+        double a_Kp = 0.5;
         double a_Ki = 0.1;
         double a_Kd = 0.12;
         double a_speed = 0;
+        
         ArrayList<Double> a_trend = new ArrayList<>();
         a_trend.add(a_err);
         while (Math.abs(enc.getCurrentPosition()-target) > precision && opModeIsActive()) {
+            angles =
+                    this.hardwareMap.get(BNO055IMU.class, "imu").getAngularOrientation(AxesReference.INTRINSIC,
+                            AxesOrder.XYZ,
+                            AngleUnit.DEGREES);
             err = enc.getCurrentPosition()-target;
-            a_err = angles.thirdAngle;
+            a_err = 0-angles.thirdAngle;
             telemetry.addData("Angle Error", a_err);
             double sum = trend.stream().reduce(0d, Double::sum);
             double a_sum = a_trend.stream().reduce(0d, Double::sum);
@@ -87,21 +92,35 @@ public class TestOdoDirectionGotoPID extends LinearOpMode {
                 corr = speed;
             }
             
+            // lower limit: Math.abs(corr*0.2)
+            // upper limti: math.abs(corr*0.4)
             if (turnpid < 0 && turnpid > -0.1) {
-                turnpid = Math.abs(corr)*0.2 > 0.1 ? -0.1 : -Math.abs(corr*0.2);
-                // use math.min if it doesn't work
+                turnpid = -Math.abs(corr*0.2);
             } else if (turnpid > 0 && turnpid < 0.1) {
-                turnpid = Math.abs(corr) * 0.2 > 0.1 ? 0.1 : Math.abs(corr*0.2);
+                turnpid = Math.abs(corr*0.2);
             } else if (turnpid < 0 && turnpid < -a_speed) {
                 turnpid = -a_speed;
             } else if (turnpid > 0 && turnpid > a_speed) {
                 turnpid = a_speed;
             }
             telemetry.addData("Angle Correction", turnpid);
-            hardwareMap.get(DcMotor.class, "front left").setPower(corr+turnpid);
-            hardwareMap.get(DcMotor.class, "front right").setPower(-corr+turnpid);
-            hardwareMap.get(DcMotor.class, "back left").setPower(-corr-turnpid);
-            hardwareMap.get(DcMotor.class, "back right").setPower(corr-turnpid);
+            if (Math.abs(a_err) < a_precision) {
+                hardwareMap.get(DcMotor.class, "front left").setPower(corr);
+                hardwareMap.get(DcMotor.class, "front right").setPower(-corr);
+                hardwareMap.get(DcMotor.class, "back left").setPower(-corr);
+                hardwareMap.get(DcMotor.class, "back right").setPower(corr);
+            } else {
+                if (err > 0) {
+                    hardwareMap.get(DcMotor.class, "front left").setPower(corr-turnpid);
+                    hardwareMap.get(DcMotor.class, "front right").setPower(-corr-turnpid);
+                    hardwareMap.get(DcMotor.class, "back left").setPower(-corr+turnpid);
+                    hardwareMap.get(DcMotor.class, "back right").setPower(corr+turnpid);
+                }
+                hardwareMap.get(DcMotor.class, "front left").setPower(corr+turnpid);
+                hardwareMap.get(DcMotor.class, "front right").setPower(-corr+turnpid);
+                hardwareMap.get(DcMotor.class, "back left").setPower(-corr-turnpid);
+                hardwareMap.get(DcMotor.class, "back right").setPower(corr-turnpid);
+            }
             
             if (trend.size() <= 5) {
                 trend.add(err);
@@ -113,7 +132,7 @@ public class TestOdoDirectionGotoPID extends LinearOpMode {
                 trend.add(a_err);
             } else {
                 trend.remove(0);
-                trend.add(err);
+                trend.add(a_err);
             }
             telemetry.update();
         }
