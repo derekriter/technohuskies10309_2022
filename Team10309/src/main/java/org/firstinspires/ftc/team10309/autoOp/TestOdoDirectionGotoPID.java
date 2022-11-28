@@ -2,26 +2,23 @@ package org.firstinspires.ftc.team10309.autoOp;
 
 // CHANGE WHILE LOOP LOGIC; MAKE SURE ROBOT GOES BACKWARDS IF IT GOES PAST THE TARGET.
 //
-import android.widget.ArrayAdapter;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.team10309.API.ClawController;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.team10309.API.Robot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 
-@Autonomous(name="Test Odo Move")
-public class TestOdoMove extends LinearOpMode {
+@Autonomous(name="Test Odo Correction Goto Move PID")
+public class TestOdoDirectionGotoPID extends LinearOpMode {
     
     private Robot robot;
     
@@ -36,9 +33,11 @@ public class TestOdoMove extends LinearOpMode {
         hardwareMap.get(DcMotor.class, "front right").setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hardwareMap.get(DcMotor.class, "back left").setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hardwareMap.get(DcMotor.class, "back right").setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        double target = 40*360/1.2;
-        double err = -target;
+    
         double speed = 0.8;
+        double target = 40*360/1.2;
+        
+        double err = -target;
         double multiplier = 0.00017;
         double precision = 500;
         double Kp = 0.6;
@@ -47,19 +46,37 @@ public class TestOdoMove extends LinearOpMode {
         DcMotorEx enc = hardwareMap.get(DcMotorEx.class, "front left");
         ArrayList<Double> trend = new ArrayList<>();
         trend.add(err);
+        
+        Orientation angles =
+                this.hardwareMap.get(BNO055IMU.class, "imu").getAngularOrientation(AxesReference.INTRINSIC,
+                AxesOrder.XYZ,
+                AngleUnit.DEGREES);
+        
+        double angle = angles.thirdAngle;
+        double a_err = 0 - angle;
+        double a_multiplier = 0.00017;
+        double a_precision = 10;
+        double a_Kp = 0.6;
+        double a_Ki = 0.1;
+        double a_Kd = 0.12;
+        double a_speed = 0;
+        ArrayList<Double> a_trend = new ArrayList<>();
+        a_trend.add(a_err);
         while (Math.abs(enc.getCurrentPosition()-target) > precision && opModeIsActive()) {
-            telemetry.addLine("In loop");
-            telemetry.addData("Odo", enc.getCurrentPosition());
-            telemetry.addLine(enc.getMode().name());
             err = enc.getCurrentPosition()-target;
+            a_err = angles.thirdAngle;
+            telemetry.addData("Angle Error", a_err);
             double sum = trend.stream().reduce(0d, Double::sum);
+            double a_sum = a_trend.stream().reduce(0d, Double::sum);
             double corr =
                     Kp * err + Ki * sum + Kd * (-trend.get(trend.size()-1)+err);
-            telemetry.addData("Correction Raw", corr);
+            a_speed = 0.4 * corr;
+            double turnpid =
+                    a_Kp * a_err + a_Ki * a_sum + a_Kd * (-a_trend.get(a_trend.size()-1)+a_err);
+            
             
             corr *= multiplier;
-            telemetry.addData("Correction", corr);
-            telemetry.addData("D", Kd * (trend.get(trend.size()-1)-err));
+            turnpid *= a_multiplier;
             if (corr < 0 && corr > -0.1) {
                 corr = -0.1;
             } else if (corr > 0 && corr < 0.1) {
@@ -69,11 +86,22 @@ public class TestOdoMove extends LinearOpMode {
             } else if (corr > 0 && corr > speed) {
                 corr = speed;
             }
-            telemetry.addLine("before speed");
-            hardwareMap.get(DcMotor.class, "front left").setPower(corr);
-            hardwareMap.get(DcMotor.class, "front right").setPower(-corr);
-            hardwareMap.get(DcMotor.class, "back left").setPower(-corr);
-            hardwareMap.get(DcMotor.class, "back right").setPower(corr);
+            
+            if (turnpid < 0 && turnpid > -0.1) {
+                turnpid = Math.abs(corr)*0.2 > 0.1 ? -0.1 : -Math.abs(corr*0.2);
+                // use math.min if it doesn't work
+            } else if (turnpid > 0 && turnpid < 0.1) {
+                turnpid = Math.abs(corr) * 0.2 > 0.1 ? 0.1 : Math.abs(corr*0.2);
+            } else if (turnpid < 0 && turnpid < -a_speed) {
+                turnpid = -a_speed;
+            } else if (turnpid > 0 && turnpid > a_speed) {
+                turnpid = a_speed;
+            }
+            telemetry.addData("Angle Correction", turnpid);
+            hardwareMap.get(DcMotor.class, "front left").setPower(corr+turnpid);
+            hardwareMap.get(DcMotor.class, "front right").setPower(-corr+turnpid);
+            hardwareMap.get(DcMotor.class, "back left").setPower(-corr-turnpid);
+            hardwareMap.get(DcMotor.class, "back right").setPower(corr-turnpid);
             
             if (trend.size() <= 5) {
                 trend.add(err);
@@ -81,7 +109,12 @@ public class TestOdoMove extends LinearOpMode {
                 trend.remove(0);
                 trend.add(err);
             }
-            telemetry.addLine("after trend");
+            if (a_trend.size() <= 5) {
+                trend.add(a_err);
+            } else {
+                trend.remove(0);
+                trend.add(err);
+            }
             telemetry.update();
         }
         telemetry.addLine("end");
