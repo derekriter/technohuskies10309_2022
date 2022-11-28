@@ -40,29 +40,6 @@
             SleeveDetect.SignalState state = robot.scanSleeve();
             telemetry.addData("Signal state", state.name());
             telemetry.update();
-            // constants, copied from TeleOpMain.
-    
-//
-//            SleeveDetect.SignalState state = robot.scanSleeve();
-//            telemetry.addData("Signal state", state.name());
-//            telemetry.update();
-//
-//            Thread.sleep(1000);
-//            robot.turn(-90,.05f,1f); // FIx,  Plus move out before....
-//            robot.strafe(21,.7f);
-//            robot.drive(32,.7f); // a bit more?
-//            robot.drive(2,.7f);
-//            clawController.setClawState(ClawController.ClawState.OPEN);
-//            robot.strafe(26,.7f);
-//            robot.strafeTiles(1, 0.5f, 3f);
-//            robot.strafe(-3, 0.5f);
-//            robot.driveTiles(1, 0.5f);
-//            robot.strafeTiles(1, 0.5f);
-//            robot.getHardware().getLift().setTargetPosition(-1100);// Lowest elevator height for
-//            // moving claw rotator
-//            robot.getHardware().getLift().setPower(liftSpeed);
-//            clawController.setClawState(ClawController.ClawState.OPEN);
-//            robot.getHardware().getClawRotator().setPosition(armPosLeft);
 //
             Thread moveElevator = new Thread() {
                 @Override
@@ -88,6 +65,7 @@
             robot.drive(-4f, 0.2f);
             manipulatorController.setArmPosition(ManipulatorController.ArmRotation.BACK);
             Thread.sleep(1000);
+            manipulatorController.setLiftPosition(this.robot.getHardware().getLift().getCurrentPosition() + 500);
             manipulatorController.setClaw(ManipulatorController.ClawPosition.OPEN);
             robot.drive(6f, 0.5f);
             robot.strafeTiles(-0.5f, 0.5f);
