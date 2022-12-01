@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.team10309.API.ClawController;
+import org.firstinspires.ftc.team10309.API.ManipulatorController;
 import org.firstinspires.ftc.team10309.API.Robot;
 import org.firstinspires.ftc.team10309.API.SleeveDetect;
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
@@ -13,7 +13,7 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 public class REDConeV2 extends LinearOpMode {
 
     private Robot robot;
-    private ClawController clawController;
+    private ManipulatorController manipulatorController;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,7 +26,7 @@ public class REDConeV2 extends LinearOpMode {
         final float clawClosePos = 0.15f;
         //init
         this.robot = new Robot(this, true);
-        this.clawController = new ClawController(this.robot.getHardware(), this);
+        this.manipulatorController = new ManipulatorController(this.robot.getHardware(), this);
 
         robot.getHardware().getClaw().setPosition(clawOpenPos);
         Thread.sleep(3000);
@@ -93,13 +93,13 @@ public class REDConeV2 extends LinearOpMode {
 //        Thread.sleep(3000);
 //        clawController.setClawRotation(backward);
         Thread.sleep(1000);
-        clawController.setClaw(ClawController.ClawPosition.OPEN);
+        manipulatorController.setClaw(ManipulatorController.ClawPosition.OPEN);
         robot.drive(4.5f, 0.2f);
         robot.strafeTiles(0.4f, 0.4f);
         // LOWER LIFT HERE
-        clawController.setLiftPosition(ClawController.LiftPosition.GROUND, false);
-        clawController.setClawRotation(ClawController.ClawRotation.FRONT);
-        clawController.setClaw(ClawController.ClawPosition.CLOSED);
+        manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND, false);
+        manipulatorController.setArmPosition(ManipulatorController.ArmRotation.FRONT);
+        manipulatorController.setClaw(ManipulatorController.ClawPosition.CLOSED);
         if (state == SleeveDetect.SignalState.BLUE_TRIANGLE) {
             // stay
             robot.drive(-3, 0.3f);

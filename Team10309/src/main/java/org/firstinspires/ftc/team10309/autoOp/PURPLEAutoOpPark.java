@@ -3,7 +3,7 @@
     import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
     import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-    import org.firstinspires.ftc.team10309.API.ClawController;
+    import org.firstinspires.ftc.team10309.API.ManipulatorController;
     import org.firstinspires.ftc.team10309.API.Robot;
     import org.firstinspires.ftc.team10309.API.SleeveDetect;
 
@@ -11,13 +11,13 @@
     public class PURPLEAutoOpPark extends LinearOpMode {
 
         private Robot robot;
-        private ClawController clawController;
+        private ManipulatorController manipulatorController;
 
         @Override
         public void runOpMode() throws InterruptedException {
             //init
             this.robot = new Robot(this, true);
-            this.clawController = new ClawController(this.robot.getHardware(), this);
+            this.manipulatorController = new ManipulatorController(this.robot.getHardware(), this);
 
             robot.initDetect();
             telemetry.addLine("Press Start");

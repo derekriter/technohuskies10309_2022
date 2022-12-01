@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.team10309.API;
 
+import androidx.annotation.Nullable;
+
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -10,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.team10309.API.info.FieldInfo;
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
+import java.util.ArrayList;
 import java.util.stream.DoubleStream;
 
 /**
@@ -199,12 +204,12 @@ public class Robot {
         double angle = angles.secondAngle;
         //angle = degrees > 0 ? (angle > 0 ? angle : angle + 360) : (angle < 0 ? angle :
         //     angle - 360);
-        if (degrees > 0 && angle < 0) {
-            angle = angle + 360;
-        }
-        if (degrees < 0 && angle > 0) {
-            angle = angle - 360;
-        }
+//        if (degrees > 0 && angle < 0) {
+//            angle = angle + 360;
+//        }
+//        if (degrees < 0 && angle > 0) {
+//            angle = angle - 360;
+//        }
 
         double err = angle - degrees;
         if (Math.abs(err) <= precision) {
@@ -305,4 +310,162 @@ public class Robot {
      * @return RobotHardware for robot instance
      */
     public RobotHardware getHardware() {return this.hardware;}
+
+    /**
+     * Goes to absolute position, quickest way possible... discontinue
+     */
+//    private Location currentLocation;
+//    public void goToPosition(Location location, double speed) {
+//        if (location.equals(currentLocation)) {return;}
+//
+//        double clampedSpeed = Math.max(Math.min(speed, 1), 0);
+//        double inchesX = currentLocation.x - location.x;
+//        double inchesY = currentLocation.y - location.y;
+//        int distanceX = calculateTicks((float)inchesX);
+//        int distanceY = this.calculateTicks((float)inchesY);
+//        int distance =
+//                this.calculateTicks((float)Math.sqrt(distanceX*distanceX + distanceY*distanceY));
+//
+//
+//        this.hardware.resetEncoders();
+//
+//        this.hardware.getFLMotor().setTargetPosition(ticks);
+//        this.hardware.getFRMotor().setTargetPosition(ticks);
+//        this.hardware.getBLMotor().setTargetPosition(ticks);
+//        this.hardware.getBRMotor().setTargetPosition(ticks);
+//
+//        this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//        this.hardware.getFLMotor().setPower(clampedSpeed);
+//        this.hardware.getFRMotor().setPower(clampedSpeed);
+//        this.hardware.getBLMotor().setPower(clampedSpeed);
+//        this.hardware.getBRMotor().setPower(clampedSpeed);
+//
+//        this.waitForMotors();
+//
+//
+//        currentLocation = location;
+//    }
+
+    public void driveOdo(float inches, float speed) {
+        this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double target = inches * 360 / RobotInfo.odoDiameter;
+
+        double err = -target;
+        final double multiplier = 0.00017;
+        final double precision = 10;
+        final double Kp = 0.6;
+        final double Ki = 0.1;
+        final double Kd = 0.12;
+
+        DcMotorEx enc = this.hardware.getDriveOdo();
+
+        ArrayList<Double> trend = new ArrayList<>();
+        trend.add(err);
+
+        Orientation angles = this.hardware.getIMU().getAngularOrientation(
+                AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+        double angle = angles.secondAngle;
+        double aErr = 0 - angle;
+        double aMultiplier = 0.00005;
+        double aPrecision = 1;
+        double aKp = 0.5;
+        double aKi = 0.1;
+        double aKd = 0.12;
+        double aSpeed = 0;
+
+        ArrayList<Double> a_trend = new ArrayList<>();
+        a_trend.add(aErr);
+        while(Math.abs(enc.getCurrentPosition() - target) > precision && this.opMode.opModeIsActive()) {
+            angles = this.hardware.getIMU().getAngularOrientation(
+                    AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+            err = enc.getCurrentPosition() - target;
+            aErr = 0 - angles.secondAngle;
+
+            this.opMode.telemetry.addData("Angle Error", aErr);
+
+            double sum = trend.stream().reduce(0d, Double::sum);
+            double a_sum = a_trend.stream().reduce(0d, Double::sum);
+            double corr = Kp * err + Ki * sum + Kd * (-trend.get(trend.size() - 1) + err);
+            aSpeed = 0.4 * corr;
+            double turnpid = aKp * aErr + aKi * a_sum + aKd * (-a_trend.get(a_trend.size() - 1) + aErr);
+
+
+            corr *= multiplier;
+            turnpid *= aMultiplier;
+            if (corr < 0 && corr > -0.1) {
+                corr = -0.1;
+            }
+            else if (corr > 0 && corr < 0.1) {
+                corr = 0.1;
+            }
+            else if (corr < 0 && corr < -speed) {
+                corr = -speed;
+            }
+            else if (corr > 0 && corr > speed) {
+                corr = speed;
+            }
+
+            // lower limit: Math.abs(corr*0.2)
+            // upper limti: math.abs(corr*0.4)
+            if (turnpid < 0 && turnpid > -0.1) {
+                turnpid = -Math.abs(corr * 0.2);
+            }
+            else if (turnpid > 0 && turnpid < 0.1) {
+                turnpid = Math.abs(corr * 0.2);
+            }
+            else if (turnpid < 0 && turnpid < -aSpeed) {
+                turnpid = -aSpeed;
+            }
+            else if (turnpid > 0 && turnpid > aSpeed) {
+                turnpid = aSpeed;
+            }
+
+            this.opMode.telemetry.addData("Angle Correction", turnpid);
+            if(Math.abs(aErr) < aPrecision) {
+                this.hardware.getFLMotor().setPower(corr);
+                this.hardware.getFRMotor().setPower(corr);
+                this.hardware.getBLMotor().setPower(corr);
+                this.hardware.getBRMotor().setPower(corr);
+            }
+            else {
+                if (err > 0) {
+                    this.hardware.getFLMotor().setPower(corr - turnpid);
+                    this.hardware.getFRMotor().setPower(corr + turnpid);
+                    this.hardware.getBLMotor().setPower(corr - turnpid);
+                    this.hardware.getBRMotor().setPower(corr + turnpid);
+                }
+                else {
+                    this.hardware.getFLMotor().setPower(corr + turnpid);
+                    this.hardware.getFRMotor().setPower(corr - turnpid);
+                    this.hardware.getBLMotor().setPower(corr + turnpid);
+                    this.hardware.getBRMotor().setPower(corr - turnpid);
+                }
+            }
+
+            if (trend.size() <= 5) {
+                trend.add(err);
+            } else {
+                trend.remove(0);
+                trend.add(err);
+            }
+            if (a_trend.size() <= 5) {
+                trend.add(aErr);
+            } else {
+                trend.remove(0);
+                trend.add(aErr);
+            }
+            this.opMode.telemetry.update();
+        }
+
+        this.turn((float) -aErr, 0.1f, 1);
+    }
 }

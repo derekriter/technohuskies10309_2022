@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -21,7 +22,7 @@ public class RobotHardware {
     /**
      * Stores whether is configuration is for robobobo or the final robot
      */
-    private boolean isFinal;
+    private final boolean isFinal;
 
     /**
      * Represents the front left motor
@@ -62,18 +63,17 @@ public class RobotHardware {
      */
     public BNO055IMU.Parameters imuParams;
     
-    public WebcamName camera;
+    private WebcamName camera;
     private TouchSensor liftBottom;
 
-    private HardwareMap hw;
-    private LinearOpMode opMode;
-    //Constructors for AutoOp and TeleOp
+    private DcMotorEx driveOdo;
+    private DcMotorEx strafeOdo;
 
-    //AutoOp
+    private final HardwareMap hw;
+
     public RobotHardware(LinearOpMode opMode, boolean isFinal) {
         this.isFinal = isFinal;
         this.hw = opMode.hardwareMap;
-        this.opMode = opMode;
 
         this.mapHardware(opMode.hardwareMap);
         this.configHardware();
@@ -92,6 +92,9 @@ public class RobotHardware {
     public BNO055IMU getIMU() {return this.imu;}
     public TouchSensor getLiftBottom() {return this.liftBottom;}
 
+    public DcMotorEx getDriveOdo() {return this.driveOdo;}
+    public DcMotorEx getStrafeOdo() {return this.strafeOdo;}
+
     /**
      * Called to init all the values mappings
      * @param hardwareMap The hardware map of the inputed opmode
@@ -109,8 +112,10 @@ public class RobotHardware {
             this.lift = hardwareMap.get(DcMotor.class, RobotInfo.liftName);
             this.clawRotater = hardwareMap.get(Servo.class, RobotInfo.clawRotaterName);
             this.claw = hardwareMap.get(Servo.class, RobotInfo.clawName);
-
             this.liftBottom = hardwareMap.get(TouchSensor.class, RobotInfo.liftBottomName);
+
+            this.driveOdo = hardwareMap.get(DcMotorEx.class, RobotInfo.driveOdoName);
+            this.strafeOdo = hardwareMap.get(DcMotorEx.class, RobotInfo.strafeOdoName);
         }
 
         this.camera = hardwareMap.get(WebcamName.class, RobotInfo.camera);
@@ -124,6 +129,9 @@ public class RobotHardware {
             this.brMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             this.claw.setDirection(Servo.Direction.REVERSE);
             this.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            this.driveOdo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            this.strafeOdo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
         else {
             this.flMotor.setDirection(DcMotorSimple.Direction.REVERSE);
