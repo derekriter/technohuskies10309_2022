@@ -9,7 +9,7 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name="TeleOpMain")
+@TeleOp(name="TeleOp Main")
 public class TeleOpMain extends LinearOpMode {
 
     public RobotHardware hardware;
@@ -36,6 +36,7 @@ public class TeleOpMain extends LinearOpMode {
     private boolean shiftRightLast = false;
     private final List<Float[]> shiftSteps = new ArrayList<>();
     private boolean currentlyShifting = false;
+    private Thread tileShiftThread;
 
     @Override
     public void runOpMode() {
@@ -61,18 +62,24 @@ public class TeleOpMain extends LinearOpMode {
         decreaseSpeed = gamepad1.left_trigger > 0.5;
         increaseSpeed = gamepad1.right_trigger > 0.5;
 
-        changeDriverMode = gamepad1.start;
+        changeDriverMode = gamepad1.right_bumper;
+
+        double forward = -this.gamepad1.left_stick_y;
+        double strafe = this.gamepad1.left_stick_x;
+        double turn = this.gamepad1.right_stick_x;
 
         if(decreaseSpeed && !decreaseSpeedLast)  {
             if(driveSpeedMultiplier > 0.21) driveSpeedMultiplier -= 0.2;
         }
         if(increaseSpeed && !increaseSpeedLast) {
-            if(driveSpeedMultiplier < 0.61) driveSpeedMultiplier += 0.2;
+            if(driveSpeedMultiplier < 0.59) driveSpeedMultiplier += 0.2;
         }
 
         if(changeDriverMode && !changeDriverModeLast) driverMode = !driverMode;
 
-        if(currentlyShifting) return;
+        if((forward != 0 || strafe != 0 || turn != 0) && tileShiftThread != null) {
+            if(tileShiftThread.isAlive()) tileShiftThread.interrupt();
+        }
 
         shiftForward = gamepad1.dpad_up;
         shiftBackward = gamepad1.dpad_down;
@@ -92,19 +99,20 @@ public class TeleOpMain extends LinearOpMode {
             shiftSteps.add(new Float[] {0f, (gamepad1.left_bumper ? 0.5f : 1f)});
         }
 
+        if(currentlyShifting) return;
+
         if(shiftSteps.size() > 0) {
-            new Thread() {
+            tileShiftThread = new Thread() {
                 public void run() {
                     currentlyShifting = true;
 
                     Float[] shift = shiftSteps.get(0);
                     shiftSteps.remove(0);
 
-                    if(shift[0] != 0f) {
+                    if (shift[0] != 0f) {
                         robot.driveTiles(shift[0], driveSpeedMultiplier);
-                    }
-                    else {
-                        robot.strafeTiles(shift[0], driveSpeedMultiplier);
+                    } else {
+                        robot.strafeTiles(shift[1], driveSpeedMultiplier);
                     }
 
                     hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -113,12 +121,20 @@ public class TeleOpMain extends LinearOpMode {
                     hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     currentlyShifting = false;
                 }
-            }.start();
-        }
 
-        double forward = -this.gamepad1.left_stick_y;
-        double strafe = this.gamepad1.left_stick_x;
-        double turn = this.gamepad1.right_stick_x;
+                @Override
+                public void interrupt() {
+                    hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    currentlyShifting = false;
+
+                    super.interrupt();
+                }
+            };
+            tileShiftThread.start();
+        }
 
         double flPower, frPower, blPower, brPower;
 
