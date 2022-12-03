@@ -20,6 +20,6 @@ public class TestOdoMovePID extends LinearOpMode {
         telemetry.addLine("Init Completed");
         waitForStart();
 
-        robot.driveOdo(10, 0.8f);
+        robot.driveOdo(120, 0.2f);
     }
 }

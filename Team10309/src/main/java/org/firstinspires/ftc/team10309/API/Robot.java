@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.team10309.API;
 
+import android.sax.StartElementListener;
+
 import androidx.annotation.Nullable;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -356,16 +359,18 @@ public class Robot {
         this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        double target = inches * 360 / RobotInfo.odoDiameter;
+        double target = -inches * 360 / RobotInfo.odoDiameter;
 
         double err = -target;
         final double multiplier = 0.00017;
-        final double precision = 10;
+        final double precision = 500;
         final double Kp = 0.6;
         final double Ki = 0.1;
         final double Kd = 0.12;
 
         DcMotorEx enc = this.hardware.getDriveOdo();
+        enc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        enc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         ArrayList<Double> trend = new ArrayList<>();
         trend.add(err);
@@ -384,7 +389,11 @@ public class Robot {
 
         ArrayList<Double> a_trend = new ArrayList<>();
         a_trend.add(aErr);
+//        enc.setDirection(DcMotorSimple.Direction.REVERSE);
         while(Math.abs(enc.getCurrentPosition() - target) > precision && this.opMode.opModeIsActive()) {
+            this.opMode.telemetry.addData("Position", enc.getCurrentPosition());
+            this.opMode.telemetry.addData("Target", target);
+            this.opMode.telemetry.addData("Breakout", Math.abs(enc.getCurrentPosition() - target));
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             err = enc.getCurrentPosition() - target;
@@ -430,6 +439,8 @@ public class Robot {
             }
 
             this.opMode.telemetry.addData("Angle Correction", turnpid);
+//            corr *= -1;
+//            turnpid *= -1;
             if(Math.abs(aErr) < aPrecision) {
                 this.hardware.getFLMotor().setPower(corr);
                 this.hardware.getFRMotor().setPower(corr);
@@ -465,7 +476,7 @@ public class Robot {
             }
             this.opMode.telemetry.update();
         }
-
+        
         this.turn((float) -aErr, 0.1f, 1);
     }
 }
