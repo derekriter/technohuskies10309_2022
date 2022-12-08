@@ -19,6 +19,6 @@ public class TestOdoMovePIDStrafe extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        robot.strafeOdo(36, 0.6f);
+        robot.strafeOdo(60, 0.6f*1.25f);
     }
 }
