@@ -20,7 +20,7 @@ public class ManipulaterBen extends LinearOpMode {
     public void runOpMode() {
         // isFinal true for robot false for robobobo
         this.hardware = new RobotHardware(this, true);
-        this.hardware.getLift().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.hardware.resetLift();
 
         waitForStart();
 
