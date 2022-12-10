@@ -19,6 +19,6 @@ public class TestOdoMovePIDDrive extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        robot.driveOdo(72.75f, 0.6f);
+        robot.driveOdo(-72.75f, 0.6f);
     }
 }

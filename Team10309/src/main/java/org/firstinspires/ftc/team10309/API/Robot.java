@@ -352,9 +352,10 @@ public class Robot {
 //
 //        currentLocation = location;
 //    }
-    
+    private boolean clearI;
     public void driveOdo(float inches, float speed) {
         this.hardware.getIMU();
+        clearI = true;
         this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -364,7 +365,7 @@ public class Robot {
         
         double err = -target;
         final double multiplier = 0.00017;
-        final double precision = 15;
+        final double precision = 5;
         final double Kp = 0.6;
         final double Ki = 0.1;
         final double Kd = 0.12;
@@ -398,7 +399,7 @@ public class Robot {
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             err = enc.getCurrentPosition() - target;
-            aErr = 0 - angles.secondAngle;
+            aErr = 0 - angles.secondAngle;   //target is 0 degree for going straight
             this.opMode.telemetry.addData("IMU Angle", angles.secondAngle);
             this.opMode.telemetry.addData("aErr", aErr);
             
@@ -407,7 +408,6 @@ public class Robot {
             double sum = trend.stream().reduce(0d, Double::sum);
             double a_sum = a_trend.stream().reduce(0d, Double::sum);
             double corr = Kp * err + Ki * sum + Kd * (-trend.get(trend.size() - 1) + err);
-            aSpeed = 0.4 * corr;
             double turnpid = aKp * aErr + aKi * a_sum + aKd * (-a_trend.get(a_trend.size() - 1) + aErr);
             
             
@@ -425,7 +425,10 @@ public class Robot {
             else if (corr > 0 && corr > speed) {
                 corr = speed;
             }
-            
+    
+    
+            aSpeed = 0.4 * Math.abs(corr);
+    
             // lower limit: Math.abs(corr*0.2)
             // upper limti: math.abs(corr*0.4)
 //            if (turnpid < 0 && turnpid > -0.1) {
@@ -434,7 +437,7 @@ public class Robot {
 //            else if (turnpid > 0 && turnpid < 0.1) {
 //                turnpid = Math.abs(corr * 0.01);
 //            }
-            else if (turnpid < 0 && turnpid < -aSpeed) {
+            if (turnpid < 0 && turnpid < -aSpeed) {
                 turnpid = -aSpeed;
             }
             else if (turnpid > 0 && turnpid > aSpeed) {
@@ -451,18 +454,22 @@ public class Robot {
                 this.hardware.getBRMotor().setPower(corr);
             }
             else {
-//                if (err > 0) {
-//                    this.hardware.getFLMotor().setPower(corr - turnpid);
-//                    this.hardware.getFRMotor().setPower(corr + turnpid);
-//                    this.hardware.getBLMotor().setPower(corr - turnpid);
-//                    this.hardware.getBRMotor().setPower(corr + turnpid);
-//                }
+                if (err > 0) {
+                    this.hardware.getFLMotor().setPower(corr - turnpid);
+                    this.hardware.getFRMotor().setPower(corr + turnpid);
+                    this.hardware.getBLMotor().setPower(corr - turnpid);
+                    this.hardware.getBRMotor().setPower(corr + turnpid);
+                } else {
                     this.hardware.getFLMotor().setPower(corr + turnpid);
                     this.hardware.getFRMotor().setPower(corr - turnpid);
                     this.hardware.getBLMotor().setPower(corr + turnpid);
                     this.hardware.getBRMotor().setPower(corr - turnpid);
+                }
             }
-            
+            if (clearI && (target < 0 && err < 0) || (target > 0 && err > 0)) {
+                trend.clear();
+                clearI = false;
+            }
             if (trend.size() <= 5) {
                 trend.add(err);
             } else {
