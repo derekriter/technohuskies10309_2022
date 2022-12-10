@@ -19,9 +19,29 @@ public class TestOdoMovePIDDrive extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
+        robot.driveOdo(6.0f, 0.6f);
+        Thread.sleep(5000);
+        robot.driveOdo(-6.0f, 0.6f);
+        Thread.sleep(5000);
+        robot.driveOdo(12.0f, 0.6f);
+        Thread.sleep(5000);
+        robot.driveOdo(-12.0f, 0.6f);
+        Thread.sleep(5000);
+        robot.driveOdo(24.0f, 0.6f);
+        Thread.sleep(5000);
+        robot.driveOdo(-24.0f, 0.6f);
+        Thread.sleep(5000);
         robot.driveOdo(36.0f, 0.6f);
         Thread.sleep(5000);
         robot.driveOdo(-36.0f, 0.6f);
+        Thread.sleep(5000);
+        robot.driveOdo(72.0f, 0.6f);
+        Thread.sleep(5000);
+        robot.driveOdo(-72.0f, 0.6f);
+        Thread.sleep(5000);
+        robot.driveOdo(80.0f, 0.6f);
+        Thread.sleep(5000);
+        robot.driveOdo(-80.0f, 0.6f);
         Thread.sleep(5000);
     }
 }
