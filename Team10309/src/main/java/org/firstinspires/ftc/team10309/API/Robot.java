@@ -352,22 +352,28 @@ public class Robot {
 //
 //        currentLocation = location;
 //    }
-    
-    public void driveOdo(float inches, float speed) {
+    private boolean clearI;
+    public void driveOdo(float inches, float speed) throws InterruptedException {
         this.hardware.getIMU();
+        clearI = true;
         this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         
-        double target = -inches * 360 / RobotInfo.odoDiameter;
+//        double target = -inches / (RobotInfo.odoDiameter * Math.PI) * 360; // inches -> tick
+
+
+//        double target = -inches / (RobotInfo.odoDiameter * Math.PI) * 1440; // inches -> pulse
+        double target = -inches;
         
+        Double inchesPerTick = RobotInfo.odoDiameter * Math.PI / 1440;    //inch per tick
         double err = -target;
-        final double multiplier = 0.00017;
-        final double precision = 15;
-        final double Kp = 0.6;
-        final double Ki = 0.1;
-        final double Kd = 0.12;
+        final double multiplier = 0.05;
+        final double precision =0.1;   //inches
+        final double Kp = 1.0;
+        final double Ki = 0.02;
+        final double Kd = 65.0;
         
         DcMotorEx enc = this.hardware.getDriveOdo();
         enc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -380,105 +386,140 @@ public class Robot {
                 AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         
         double angle = angles.secondAngle;
-        double aErr = 0 - angle;
-        double aMultiplier = 0.2;
+        double aErr = angle - 0;   //target = 0 for going straight
+        double aMultiplier = 0.05;
         double aPrecision = 0.1;
-        double aKp = 0.1;    //0.5  0.4
+        double aKp = 0.4;    //0.5  0.4
         double aKi = 0.01;   //0.1  0.01
-        double aKd = 0;    //0.4  0.4
+        double aKd = 0.4;    //0.4  0.4
         double aSpeed = 0;
         
         ArrayList<Double> a_trend = new ArrayList<>();
         a_trend.add(aErr);
 //        enc.setDirection(DcMotorSimple.Direction.REVERSE);
-        while(Math.abs(enc.getCurrentPosition() - target) > precision && this.opMode.opModeIsActive()) {
-            this.opMode.telemetry.addData("Position", enc.getCurrentPosition());
-            this.opMode.telemetry.addData("Target", target);
-            this.opMode.telemetry.addData("Breakout", Math.abs(enc.getCurrentPosition() - target));
+        long start;
+        long end;
+        long timesum = 0;
+        int counter = 0;
+        long before = System.nanoTime();
+        while(Math.abs(enc.getCurrentPosition()*inchesPerTick - target) > precision && this.opMode.opModeIsActive()) {
+            start = System.nanoTime();
+//            this.opMode.telemetry.addData("Position", enc.getCurrentPosition());
+//            this.opMode.telemetry.addData("Target", target);
+//            this.opMode.telemetry.addData("Breakout", Math.abs(enc.getCurrentPosition() -
+//            target));
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-            err = enc.getCurrentPosition() - target;
-            aErr = 0 - angles.secondAngle;
-            this.opMode.telemetry.addData("IMU Angle", angles.secondAngle);
-            this.opMode.telemetry.addData("aErr", aErr);
+            err = enc.getCurrentPosition() * inchesPerTick - target;
+            aErr = angles.secondAngle - 0;   //target = 0 degree for going straight
+//            this.opMode.telemetry.addData("IMU Angle", angles.secondAngle);
+//            this.opMode.telemetry.addData("aErr", aErr);
+
+//            this.opMode.telemetry.addData("Angle Error", aErr);
             
-            this.opMode.telemetry.addData("Angle Error", aErr);
-            
+    
             double sum = trend.stream().reduce(0d, Double::sum);
             double a_sum = a_trend.stream().reduce(0d, Double::sum);
             double corr = Kp * err + Ki * sum + Kd * (-trend.get(trend.size() - 1) + err);
-            aSpeed = 0.4 * corr;
-            double turnpid = aKp * aErr + aKi * a_sum + aKd * (-a_trend.get(a_trend.size() - 1) + aErr);
-            
-            
+            double angleCorr = aKp * aErr + aKi * a_sum + aKd * (-a_trend.get(a_trend.size() - 1) + aErr);
+    
+    
+//            this.opMode.telemetry.addData("Correction P", Kp * err);
+//            this.opMode.telemetry.addData("Correction I", Ki * sum);
+//            this.opMode.telemetry.addData("Correction D",
+//                    Kd * (-trend.get(trend.size() - 1) + err));
+//            this.opMode.telemetry.addData("Correction Total", corr);
             corr *= multiplier;
-            turnpid *= aMultiplier;
+//            this.opMode.telemetry.addData("Scaled Correction", corr);
+//            this.opMode.telemetry.update();
+    
+    
+            angleCorr *= aMultiplier;
+            if (angleCorr > 0) {
+                angleCorr = Math.max(0.01, angleCorr);
+            } else if (angleCorr < 0) {
+                angleCorr = Math.min(angleCorr, -0.01);
+            }
+    
+    
             if (corr < 0 && corr > -0.1) {
                 corr = -0.1;
-            }
-            else if (corr > 0 && corr < 0.1) {
+            } else if (corr > 0 && corr < 0.1) {
                 corr = 0.1;
-            }
-            else if (corr < 0 && corr < -speed) {
+            } else if (corr < 0 && corr < -speed) {
                 corr = -speed;
-            }
-            else if (corr > 0 && corr > speed) {
+            } else if (corr > 0 && corr > speed) {
                 corr = speed;
             }
-            
+    
+    
+            aSpeed = 0.4 * Math.abs(corr);
+    
             // lower limit: Math.abs(corr*0.2)
             // upper limti: math.abs(corr*0.4)
-//            if (turnpid < 0 && turnpid > -0.1) {
-//                turnpid = -Math.abs(corr * 0.01);
+//            if (angleCorr < 0 && angleCorr > -0.1) {
+//                angleCorr = -Math.abs(corr * 0.01);
 //            }
-//            else if (turnpid > 0 && turnpid < 0.1) {
-//                turnpid = Math.abs(corr * 0.01);
+//            else if (angleCorr > 0 && angleCorr < 0.1) {
+//                angleCorr = Math.abs(corr * 0.01);
 //            }
-            else if (turnpid < 0 && turnpid < -aSpeed) {
-                turnpid = -aSpeed;
+            if (angleCorr < 0 && angleCorr < -aSpeed) {
+                angleCorr = -aSpeed;
+            } else if (angleCorr > 0 && angleCorr > aSpeed) {
+                angleCorr = aSpeed;
             }
-            else if (turnpid > 0 && turnpid > aSpeed) {
-                turnpid = aSpeed;
-            }
-            
-            this.opMode.telemetry.addData("Angle Correction", turnpid);
+
+//            this.opMode.telemetry.addData("Angle Correction", angleCorr);
 //            corr *= -1;
-//            turnpid *= -1;
-            if(Math.abs(aErr) < aPrecision) {
+//            angleCorr *= -1;
+            if (Math.abs(aErr) < aPrecision) {
                 this.hardware.getFLMotor().setPower(corr);
                 this.hardware.getFRMotor().setPower(corr);
                 this.hardware.getBLMotor().setPower(corr);
                 this.hardware.getBRMotor().setPower(corr);
-            }
-            else {
-//                if (err > 0) {
-//                    this.hardware.getFLMotor().setPower(corr - turnpid);
-//                    this.hardware.getFRMotor().setPower(corr + turnpid);
-//                    this.hardware.getBLMotor().setPower(corr - turnpid);
-//                    this.hardware.getBRMotor().setPower(corr + turnpid);
-//                }
-                    this.hardware.getFLMotor().setPower(corr + turnpid);
-                    this.hardware.getFRMotor().setPower(corr - turnpid);
-                    this.hardware.getBLMotor().setPower(corr + turnpid);
-                    this.hardware.getBRMotor().setPower(corr - turnpid);
-            }
-            
-            if (trend.size() <= 5) {
-                trend.add(err);
             } else {
-                trend.remove(0);
-                trend.add(err);
+                this.hardware.getFLMotor().setPower(corr + angleCorr);
+                this.hardware.getFRMotor().setPower(corr - angleCorr);
+                this.hardware.getBLMotor().setPower(corr + angleCorr);
+                this.hardware.getBRMotor().setPower(corr - angleCorr);
             }
+            trend.add(err);
+            a_trend.add(aErr);
+//
+//            if (clearI && (target < 0 && err < 0) || (target > 0 && err > 0)) {
+//                trend.clear();
+//                clearI = false;
+//            }
+//            if (trend.size() <= 5) {
+//                trend.add(err);
+//            } else {
+//                trend.remove(0);
+//                trend.add(err);
+//            }
 //            if (a_trend.size() <= 5) {
 //                trend.add(aErr);
 //            } else {
 //                trend.remove(0);
 //                trend.add(aErr);
 //            }
-            this.opMode.telemetry.update();
+//            this.opMode.telemetry.update();
+//        end = System.nanoTime();
+//        timesum += end-start;
+//        counter++;
         }
-
-        this.turn((float) aErr, 0.1f, aPrecision);
+        long after = System.nanoTime();
+        
+        this.hardware.getFLMotor().setPower(0);
+        this.hardware.getFRMotor().setPower(0);
+        this.hardware.getBLMotor().setPower(0);
+        this.hardware.getBRMotor().setPower(0);
+        
+        this.opMode.telemetry.addData("Final Tick Value", enc.getCurrentPosition());
+//        this.opMode.telemetry.addData("Avg Time", timesum/counter);
+//        this.opMode.telemetry.addData("Total Time", (after-before)/1_000_000_000l);
+        
+        this.opMode.telemetry.update();
+//        this.turn((float) aErr, 0.1f, aPrecision);
     }
     public void strafeOdo(float inches, float speed) {
         this.hardware.getIMU();
@@ -581,6 +622,7 @@ public class Robot {
                     this.hardware.getFRMotor().setPower(-corr + turnpid);
                     this.hardware.getBLMotor().setPower(-corr + turnpid);
                     this.hardware.getBRMotor().setPower(corr + turnpid);
+                    
                 }
                 else {
                     this.hardware.getFLMotor().setPower(corr - turnpid);
@@ -606,5 +648,20 @@ public class Robot {
         }
         
         this.turn((float) -aErr, 0.1f, 1);
+    }
+    public void teleValues() {
+        // IMU
+        // HORIZ &
+        // DRIVE odo
+        this.hardware.getDriveOdo().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.hardware.getStrafeOdo().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while (true) {
+            this.opMode.telemetry.addData("IMU", this.hardware.getIMU().getAngularOrientation(
+                    AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle);
+            
+            this.opMode.telemetry.addData("Drive ODO", this.hardware.getDriveOdo().getCurrentPosition());
+            this.opMode.telemetry.addData("Horiz ODO", this.hardware.getStrafeOdo().getCurrentPosition());
+            opMode.telemetry.update();
+        }
     }
 }
