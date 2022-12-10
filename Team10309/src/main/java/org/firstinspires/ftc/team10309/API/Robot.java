@@ -381,12 +381,13 @@ public class Robot {
                 AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         
         double angle = angles.secondAngle;
-        double aErr = 0 - angle;
         double aMultiplier = 0.2;
+        double aErr = 0 - angle;
+
         double aPrecision = 0.1;
         double aKp = 0.1;    //0.5  0.4
         double aKi = 0.01;   //0.1  0.01
-        double aKd = 0;    //0.4  0.4
+        double aKd = 0.1;    //0.4  0.4
         double aSpeed = 0;
         
         ArrayList<Double> a_trend = new ArrayList<>();
@@ -400,6 +401,9 @@ public class Robot {
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             err = enc.getCurrentPosition() - target;
             aErr = 0 - angles.secondAngle;   //target is 0 degree for going straight
+            if (inches < 0) {
+                aErr *= -1;
+            }
             this.opMode.telemetry.addData("IMU Angle", angles.secondAngle);
             this.opMode.telemetry.addData("aErr", aErr);
             
