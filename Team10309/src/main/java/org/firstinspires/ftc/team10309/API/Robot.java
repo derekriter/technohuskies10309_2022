@@ -353,7 +353,7 @@ public class Robot {
 //        currentLocation = location;
 //    }
     private boolean clearI;
-    public void driveOdo(float inches, float speed) {
+    public void driveOdo(float inches, float speed) throws InterruptedException {
         this.hardware.getIMU();
         clearI = true;
         this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -484,7 +484,8 @@ public class Robot {
 //            }
             this.opMode.telemetry.update();
         }
-
+        opMode.telemetry.addData("Final Tick Value", enc.getCurrentPosition());
+        opMode.telemetry.update();
         this.turn((float) aErr, 0.1f, aPrecision);
     }
     public void strafeOdo(float inches, float speed) {
@@ -588,6 +589,7 @@ public class Robot {
                     this.hardware.getFRMotor().setPower(-corr + turnpid);
                     this.hardware.getBLMotor().setPower(-corr + turnpid);
                     this.hardware.getBRMotor().setPower(corr + turnpid);
+    
                 }
                 else {
                     this.hardware.getFLMotor().setPower(corr - turnpid);
@@ -613,5 +615,20 @@ public class Robot {
         }
         
         this.turn((float) -aErr, 0.1f, 1);
+    }
+    public void teleValues() {
+        // IMU
+        // HORIZ &
+        // DRIVE odo
+        this.hardware.getDriveOdo().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.hardware.getStrafeOdo().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while (true) {
+            this.opMode.telemetry.addData("IMU", this.hardware.getIMU().getAngularOrientation(
+                    AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle);
+            
+            this.opMode.telemetry.addData("Drive ODO", this.hardware.getDriveOdo().getCurrentPosition());
+            this.opMode.telemetry.addData("Horiz ODO", this.hardware.getStrafeOdo().getCurrentPosition());
+            opMode.telemetry.update();
+        }
     }
 }
