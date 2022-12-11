@@ -19,6 +19,6 @@ public class SamplePIDTurn extends LinearOpMode {
         
         waitForStart();
         
-        robot.turn(90, 0.1f, 1f);
+        robot.turn(90, 1f);
     }
 }

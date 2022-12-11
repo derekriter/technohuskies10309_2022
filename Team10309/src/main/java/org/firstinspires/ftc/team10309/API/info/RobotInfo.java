@@ -72,7 +72,7 @@ public abstract class RobotInfo {
             "Red Square"
     };
 
-    public final static float odoDiameter = 1.2f;
+    public final static float odoDiameter = 1.464f;
     public final static String driveOdoName = "driveOdo";
     public final static String strafeOdoName = "strafeOdo";
 }

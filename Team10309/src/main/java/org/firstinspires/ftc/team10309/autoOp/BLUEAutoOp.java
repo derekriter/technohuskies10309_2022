@@ -30,7 +30,7 @@
             telemetry.update();
             Thread.sleep(1000);
             robot.strafe(4,.7f);
-            robot.turn(90,.05f,1f);
+            robot.turn(90,1f);
             robot.strafe(-21,.7f);
             robot.drive(-32,.7f);
             robot .drive(-2,.7f);
