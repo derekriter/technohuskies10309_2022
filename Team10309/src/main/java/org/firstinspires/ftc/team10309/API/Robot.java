@@ -639,6 +639,137 @@ public class Robot {
         
 //        this.turn((float) -aErr, 0.1f, 1);
     }
+    
+    public void turnPID(float degrees, double aPrecision) throws InterruptedException {
+        this.hardware.resetIMU();
+        
+        this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        
+        double target = - degrees;
+        
+        // PID controller parameters for angle correction
+        double aKp = 0;
+        double aKi = 0;
+        double aKd = 0;
+
+//        double k = Math.abs(target);
+//            Kp = 30/k;
+//            Ki = 0.6/k;
+//            Kd = k + 10;
+//            aKp = 0.014*k;
+//            aKi = 0.00035*k;
+//            aKd = 0.01*k;
+        
+        if(Math.abs(target)>130) {
+            aKp = 0.38;
+            aKi = 0.01;
+            aKd = 50;
+        }
+        else if(Math.abs(target)>110) {
+            aKp = 0.45;
+            aKi = 0.011;
+            aKd = 50;
+        }
+        else if(Math.abs(target)>90) {
+            aKp = 0.45;
+            aKi = 0.011;
+            aKd = 50;
+        }
+        else if(Math.abs(target)>75) {
+            aKp = 0.5;
+            aKi = 0.012;
+            aKd = 50;
+        }
+        else if(Math.abs(target)>60) {
+            aKp = 0.5;
+            aKi = 0.012;
+            aKd = 45;
+        }
+        else if(Math.abs(target)>45) {
+            aKp = 0.5;
+            aKi = 0.012;
+            aKd = 40;
+        }
+        else if(Math.abs(target)>30) {
+            aKp = 0.5;
+            aKi = 0.04;
+            aKd = 25;
+        }
+        else if(Math.abs(target)>15) {
+            aKp = 0.5;
+            aKi = 0.05;
+            aKd = 20;
+        }
+        else {
+            aKp = 0.5;
+            aKi = 0.05;
+            aKd = 10;
+        }
+        
+        Orientation angles = this.hardware.getIMU().getAngularOrientation(
+                AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+        
+        double angle = angles.secondAngle;
+        double aErr = angle - target;   //
+        double aMultiplier = 0.05; //power gain for angle correction
+//        double aPrecision = 0.1;   //angle precision in degrees
+        
+        
+        ArrayList<Double> a_trend = new ArrayList<>();
+        a_trend.add(aErr);
+        
+        boolean beforeTarget = true;
+
+ 
+            while (beforeTarget && this.opMode.opModeIsActive()) {
+                angles = this.hardware.getIMU().getAngularOrientation(
+                        AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+                aErr = angles.secondAngle - target;
+                double a_sum = a_trend.stream().reduce(0d, Double::sum);
+                double angleCorr = aKp * aErr + aKi * a_sum + aKd * (-a_trend.get(a_trend.size() - 1) + aErr);
+        
+                angleCorr *= aMultiplier;
+                if (angleCorr > 0) {
+                    angleCorr = Math.max(0.01, angleCorr);
+                } else if (angleCorr < 0) {
+                    angleCorr = Math.min(angleCorr, -0.01);
+                }
+    
+                double aSpeed = 0.3;
+                if (angleCorr < 0 && angleCorr < -aSpeed) {
+                    angleCorr = -aSpeed;
+                } else if (angleCorr > 0 && angleCorr > aSpeed) {
+                    angleCorr = aSpeed;
+                }
+                this.hardware.getFLMotor().setPower(angleCorr);
+                this.hardware.getFRMotor().setPower(-angleCorr);
+                this.hardware.getBLMotor().setPower(angleCorr);
+                this.hardware.getBRMotor().setPower(-angleCorr);
+        
+                a_trend.add(aErr);
+                if (target <0) {
+                    beforeTarget = (angles.secondAngle - target > aPrecision);
+                }
+                else {
+                    beforeTarget = (angles.secondAngle - target < -aPrecision);
+                }
+                
+            }
+        
+
+        
+        this.hardware.getFLMotor().setPower(0);
+        this.hardware.getFRMotor().setPower(0);
+        this.hardware.getBLMotor().setPower(0);
+        this.hardware.getBRMotor().setPower(0);
+        this.opMode.telemetry.addData("Final angle", angles.secondAngle);
+        this.opMode.telemetry.update();
+    }
+
+
     public void teleValues() {
         // IMU
         // HORIZ &
