@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team10309.API;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -252,7 +253,9 @@ public class Robot {
 //        turn(degrees, speed, precision, Kp, Ki, Kd, trendI);
 //    }
 
-    public void turn(float degrees, double aPrecision) {
+    public void turn(float degrees, double aPrecision) throws InterruptedException {
+        double batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
+
         //reset IMU, so the start angle is 0
         this.hardware.resetIMU();
 
@@ -340,6 +343,8 @@ public class Robot {
         boolean beforeTarget = true;
 
         while (beforeTarget && this.opMode.opModeIsActive()) {
+            batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
+
             //get angle from IMU
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
@@ -374,10 +379,11 @@ public class Robot {
             trend.add(err);
 
             //move motors
-            this.hardware.getFLMotor().setPower(correction);
-            this.hardware.getFRMotor().setPower(-correction);
-            this.hardware.getBLMotor().setPower(correction);
-            this.hardware.getBRMotor().setPower(-correction);
+            double powerAdjustment = 13f / batteryVoltage;
+            this.hardware.getFLMotor().setPower(correction * powerAdjustment);
+            this.hardware.getFRMotor().setPower(-correction * powerAdjustment);
+            this.hardware.getBLMotor().setPower(correction * powerAdjustment);
+            this.hardware.getBRMotor().setPower(-correction * powerAdjustment);
 
             //recalculator angles
             angles = this.hardware.getIMU().getAngularOrientation(

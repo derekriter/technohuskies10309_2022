@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
@@ -69,6 +70,8 @@ public class RobotHardware {
     private DcMotorEx driveOdo;
     private DcMotorEx strafeOdo;
 
+    private VoltageSensor voltageSensor;
+
     private final HardwareMap hw;
 
     public RobotHardware(LinearOpMode opMode, boolean isFinal) {
@@ -95,6 +98,8 @@ public class RobotHardware {
     public DcMotorEx getDriveOdo() {return this.driveOdo;}
     public DcMotorEx getStrafeOdo() {return this.strafeOdo;}
 
+    public VoltageSensor getVoltageSensor() {return this.voltageSensor;}
+
     /**
      * Called to init all the values mappings
      * @param hardwareMap The hardware map of the inputed opmode
@@ -107,6 +112,11 @@ public class RobotHardware {
 
         this.imu = hardwareMap.get(BNO055IMU.class, RobotInfo.imuName);
         this.imuParams = new BNO055IMU.Parameters();
+
+        for(VoltageSensor vs : hardwareMap.voltageSensor) {
+            this.voltageSensor = vs;
+            break;
+        }
 
         if(this.isFinal) {
             this.lift = hardwareMap.get(DcMotor.class, RobotInfo.liftName);
