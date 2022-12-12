@@ -255,6 +255,7 @@ public class Robot {
 
     public void turn(float degrees, double aPrecision) throws InterruptedException {
         double batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
+        double powerAdjustment = 13f / batteryVoltage;
 
         //reset IMU, so the start angle is 0
         this.hardware.resetIMU();
@@ -283,48 +284,48 @@ public class Robot {
 
         if(Math.abs(target) > 130) {
             aKp = 0.38;
-            aKi = 0.01;
-            aKd = 50;
+            aKi = 0.006;
+            aKd = 45;
         }
         else if(Math.abs(target) > 110) {
             aKp = 0.45;
-            aKi = 0.011;
-            aKd = 50;
+            aKi = 0.007;
+            aKd = 45;
         }
         else if(Math.abs(target) > 90) {
             aKp = 0.45;
-            aKi = 0.011;
-            aKd = 50;
+            aKi = 0.008;
+            aKd = 45;
         }
         else if(Math.abs(target) > 75) {
             aKp = 0.5;
-            aKi = 0.012;
-            aKd = 50;
+            aKi = 0.01;
+            aKd = 45;
         }
         else if(Math.abs(target) > 60) {
             aKp = 0.5;
-            aKi = 0.012;
-            aKd = 45;
+            aKi = 0.011;
+            aKd = 40;
         }
         else if(Math.abs(target) > 45) {
             aKp = 0.5;
             aKi = 0.012;
-            aKd = 40;
+            aKd = 25;
         }
         else if(Math.abs(target) > 30) {
             aKp = 0.5;
             aKi = 0.04;
-            aKd = 25;
+            aKd = 20;
         }
         else if(Math.abs(target) > 15) {
             aKp = 0.5;
             aKi = 0.05;
-            aKd = 20;
+            aKd = 15;
         }
         else {
             aKp = 0.5;
             aKi = 0.05;
-            aKd = 10;
+            aKd = 5;
         }
 
         Orientation angles = this.hardware.getIMU().getAngularOrientation(
@@ -343,8 +344,6 @@ public class Robot {
         boolean beforeTarget = true;
 
         while (beforeTarget && this.opMode.opModeIsActive()) {
-            batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
-
             //get angle from IMU
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
@@ -379,7 +378,6 @@ public class Robot {
             trend.add(err);
 
             //move motors
-            double powerAdjustment = 13f / batteryVoltage;
             this.hardware.getFLMotor().setPower(correction * powerAdjustment);
             this.hardware.getFRMotor().setPower(-correction * powerAdjustment);
             this.hardware.getBLMotor().setPower(correction * powerAdjustment);
