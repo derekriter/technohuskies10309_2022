@@ -2,13 +2,11 @@ package org.firstinspires.ftc.team10309.autoOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.team10309.API.Robot;
 
-@Autonomous(name="Test Odo Move1")
-public class TestOdoMovePID extends LinearOpMode {
+@Autonomous(name="Test Odo Move Strafe")
+public class TestOdoMovePIDStrafe extends LinearOpMode {
 
     private Robot robot;
 
@@ -18,8 +16,9 @@ public class TestOdoMovePID extends LinearOpMode {
         this.robot = new Robot(this, true);
 
         telemetry.addLine("Init Completed");
+        telemetry.update();
         waitForStart();
 
-        robot.driveOdo(120, 0.2f);
+        robot.strafeOdo(60, 0.6f*1.25f);
     }
 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team10309.API;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -252,20 +253,24 @@ public class Robot {
 //        turn(degrees, speed, precision, Kp, Ki, Kd, trendI);
 //    }
 
-    public void turn(float degrees, double aPrecision) {
+    public void turn(float degrees, double aPrecision) throws InterruptedException {
+        double batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
+        double powerAdjustment = 13f / batteryVoltage;
+
+        //reset IMU, so the start angle is 0
         this.hardware.resetIMU();
 
+        //make sure you are using RUN_USING_ENCODER, so you can control motors with power
         this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        double target = - degrees;
+        //the target angle is the inverse of the inputed target
+        double target = -degrees;
 
-        // PID controller parameters for angle correction
-        double aKp = 0;
-        double aKi = 0;
-        double aKd = 0;
+        //PID controller parameters for angle correction
+        double aKp, aKi, aKd;
 
 //        double k = Math.abs(target);
 //            Kp = 30/k;
@@ -275,108 +280,135 @@ public class Robot {
 //            aKi = 0.00035*k;
 //            aKd = 0.01*k;
 
+        //tune Kp, Ki, and Kd by the target degrees
+
         if(Math.abs(target) > 130) {
-            aKp = 0.38;
-            aKi = 0.01;
-            aKd = 50;
+            aKp = 0.3;
+            aKi = 0.001;
+            aKd = 7;
         }
         else if(Math.abs(target) > 110) {
-            aKp = 0.45;
-            aKi = 0.011;
-            aKd = 50;
+            aKp = 0.2;
+            aKi = 0.001;
+            aKd = 6;
         }
         else if(Math.abs(target) > 90) {
-            aKp = 0.45;
-            aKi = 0.011;
-            aKd = 50;
+            aKp = 0.3;
+            aKi = 0.001;
+            aKd = 7;
         }
         else if(Math.abs(target) > 75) {
-            aKp = 0.5;
-            aKi = 0.012;
-            aKd = 50;
+            aKp = 0.4;
+            aKi = 0.002;
+            aKd = 6;
         }
         else if(Math.abs(target) > 60) {
-            aKp = 0.5;
-            aKi = 0.012;
-            aKd = 45;
+            aKp = 0.4;
+            aKi = 0.004;
+            aKd = 6;
         }
         else if(Math.abs(target) > 45) {
-            aKp = 0.5;
-            aKi = 0.012;
-            aKd = 40;
+            aKp = 0.4;
+            aKi = 0.005;
+            aKd = 5;
         }
         else if(Math.abs(target) > 30) {
-            aKp = 0.5;
-            aKi = 0.04;
-            aKd = 25;
+            aKp = 0.4;
+            aKi = 0.005;
+            aKd = 4;
         }
         else if(Math.abs(target) > 15) {
-            aKp = 0.5;
-            aKi = 0.05;
-            aKd = 20;
+            aKp = 0.4;
+            aKi = 0.006;
+            aKd = 2;
         }
         else {
             aKp = 0.5;
-            aKi = 0.05;
-            aKd = 10;
+            aKi = 0.02;
+            aKd = 3;
         }
 
         Orientation angles = this.hardware.getIMU().getAngularOrientation(
                 AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
+        //calculate inital error
         double angle = angles.secondAngle;
-        double aErr = angle - target;   //
-        double aMultiplier = 0.05; //power gain for angle correction
-//        double aPrecision = 0.1;   //angle precision in degrees
+        double err = angle - target;   //
+        double multiplier = 0.05; //power gain for angle correction
 
+        //keeping track of trend for I and adding current start error
+        ArrayList<Double> trend = new ArrayList<>();
+        trend.add(err);
 
-        ArrayList<Double> a_trend = new ArrayList<>();
-        a_trend.add(aErr);
-
+        //keeps track of whether the robot can break out of the turn loop
         boolean beforeTarget = true;
 
-
         while (beforeTarget && this.opMode.opModeIsActive()) {
+            //get angle from IMU
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-            aErr = angles.secondAngle - target;
-            double a_sum = a_trend.stream().reduce(0d, Double::sum);
-            double angleCorr = aKp * aErr + aKi * a_sum + aKd * (-a_trend.get(a_trend.size() - 1) + aErr);
 
-            angleCorr *= aMultiplier;
-            if (angleCorr > 0) {
-                angleCorr = Math.max(0.01, angleCorr);
-            } else if (angleCorr < 0) {
-                angleCorr = Math.min(angleCorr, -0.01);
+            //calc PID
+            err = angles.secondAngle - target;
+            double P = err;
+            double I = trend.stream().reduce(0d, Double::sum);
+            double D = err - trend.get(trend.size() - 1);
+            double correction = (aKp * P) + (aKi * I) + (aKd * D);
+
+            //apply multiplier
+            correction *= multiplier;
+
+            //clamp minimum speed
+            if (correction > 0) {
+                correction = Math.max(0.01, correction);
+            }
+            else if (correction < 0) {
+                correction = Math.min(correction, -0.01);
             }
 
+            //clamp maximum speed
             double aSpeed = 0.3;
-            if (angleCorr < 0 && angleCorr < -aSpeed) {
-                angleCorr = -aSpeed;
-            } else if (angleCorr > 0 && angleCorr > aSpeed) {
-                angleCorr = aSpeed;
+            if (correction < 0 && correction < -aSpeed) {
+                correction = -aSpeed;
             }
-            this.hardware.getFLMotor().setPower(angleCorr);
-            this.hardware.getFRMotor().setPower(-angleCorr);
-            this.hardware.getBLMotor().setPower(angleCorr);
-            this.hardware.getBRMotor().setPower(-angleCorr);
+            else if (correction > 0 && correction > aSpeed) {
+                correction = aSpeed;
+            }
+            //add error to trend
+            trend.add(err);
 
-            a_trend.add(aErr);
-            if (target <0) {
-                beforeTarget = (angles.secondAngle - target > aPrecision);
+            //move motors
+            this.hardware.getFLMotor().setPower(correction * powerAdjustment);
+            this.hardware.getFRMotor().setPower(-correction * powerAdjustment);
+            this.hardware.getBLMotor().setPower(correction * powerAdjustment);
+            this.hardware.getBRMotor().setPower(-correction * powerAdjustment);
+
+            //recalculator angles
+            angles = this.hardware.getIMU().getAngularOrientation(
+                    AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+            //test for breakout condition
+            if(target < 0) {
+                beforeTarget = angles.secondAngle - target > aPrecision;
             }
             else {
-                beforeTarget = (angles.secondAngle - target < -aPrecision);
+                beforeTarget = angles.secondAngle - target < -aPrecision;
             }
 
         }
 
-
-
+        //stop motors
         this.hardware.getFLMotor().setPower(0);
         this.hardware.getFRMotor().setPower(0);
         this.hardware.getBLMotor().setPower(0);
         this.hardware.getBRMotor().setPower(0);
+
+        //recalculate angles for a final time
+        angles = this.hardware.getIMU().getAngularOrientation(
+                AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+        //output final telemetry
+        this.opMode.telemetry.addData("Target angle", degrees);
         this.opMode.telemetry.addData("Final angle", angles.secondAngle);
         this.opMode.telemetry.update();
     }

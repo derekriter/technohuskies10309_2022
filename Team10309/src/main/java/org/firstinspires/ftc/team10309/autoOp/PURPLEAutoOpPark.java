@@ -34,7 +34,7 @@
 //            telemetry.update();
 //
 //            Thread.sleep(1000);
-//            robot.turn(-90,.05f,1f); // FIx,  Plus move out before....
+//            robot.turn(-90,1f); // FIx,  Plus move out before....
 //            robot.strafe(21,.7f);
 //            robot.drive(32,.7f); // a bit more?
 //            robot.drive(2,.7f);
