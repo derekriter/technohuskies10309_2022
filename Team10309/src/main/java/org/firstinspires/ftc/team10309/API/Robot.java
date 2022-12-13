@@ -283,49 +283,49 @@ public class Robot {
         //tune Kp, Ki, and Kd by the target degrees
 
         if(Math.abs(target) > 130) {
-            aKp = 0.38;
-            aKi = 0.006;
-            aKd = 45;
+            aKp = 0.3;
+            aKi = 0.001;
+            aKd = 7;
         }
         else if(Math.abs(target) > 110) {
-            aKp = 0.45;
-            aKi = 0.007;
-            aKd = 45;
+            aKp = 0.2;
+            aKi = 0.001;
+            aKd = 6;
         }
         else if(Math.abs(target) > 90) {
-            aKp = 0.45;
-            aKi = 0.008;
-            aKd = 45;
+            aKp = 0.3;
+            aKi = 0.001;
+            aKd = 7;
         }
         else if(Math.abs(target) > 75) {
-            aKp = 0.5;
-            aKi = 0.01;
-            aKd = 45;
+            aKp = 0.4;
+            aKi = 0.002;
+            aKd = 6;
         }
         else if(Math.abs(target) > 60) {
-            aKp = 0.5;
-            aKi = 0.011;
-            aKd = 40;
+            aKp = 0.4;
+            aKi = 0.004;
+            aKd = 6;
         }
         else if(Math.abs(target) > 45) {
-            aKp = 0.5;
-            aKi = 0.012;
-            aKd = 25;
+            aKp = 0.4;
+            aKi = 0.005;
+            aKd = 5;
         }
         else if(Math.abs(target) > 30) {
-            aKp = 0.5;
-            aKi = 0.04;
-            aKd = 20;
+            aKp = 0.4;
+            aKi = 0.005;
+            aKd = 4;
         }
         else if(Math.abs(target) > 15) {
-            aKp = 0.5;
-            aKi = 0.05;
-            aKd = 15;
+            aKp = 0.4;
+            aKi = 0.006;
+            aKd = 2;
         }
         else {
             aKp = 0.5;
-            aKi = 0.05;
-            aKd = 5;
+            aKi = 0.02;
+            aKd = 3;
         }
 
         Orientation angles = this.hardware.getIMU().getAngularOrientation(
