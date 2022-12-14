@@ -300,8 +300,8 @@ public class Robot {
 //        }
         if(Math.abs(target) > 75) {
             aKp = 0.3;
-            aKi = 0.0002;
-            aKd = 5;
+            aKi = 0.0003;
+            aKd = 4;
         }
 //        else if(Math.abs(target) > 60) {
 //            aKp = 0.4;
@@ -344,7 +344,7 @@ public class Robot {
         //keeps track of whether the robot can break out of the turn loop
         boolean beforeTarget = true;
 
-        while (beforeTarget && this.opMode.opModeIsActive()) {
+        while (Math.abs(angles.secondAngle-target) > aPrecision && this.opMode.opModeIsActive()) {
             //get angle from IMU
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
@@ -360,14 +360,14 @@ public class Robot {
             
             
             //apply multiplier
-            correction *= multiplier;
+            correction *= multiplier*powerAdjustment;
 
             //clamp minimum speed
             if (correction > 0) {
-                correction = Math.max(0.00001, correction);
+                correction = Math.max(0.01, correction);
             }
             else if (correction < 0) {
-                correction = Math.min(correction, -0.00001);
+                correction = Math.min(correction, -0.01);
             }
 
             //clamp maximum speed
@@ -382,22 +382,28 @@ public class Robot {
             trend.add(err);
 
             //move motors
-            this.hardware.getFLMotor().setPower(correction * powerAdjustment);
-            this.hardware.getFRMotor().setPower(-correction * powerAdjustment);
-            this.hardware.getBLMotor().setPower(correction * powerAdjustment);
-            this.hardware.getBRMotor().setPower(-correction * powerAdjustment);
+            this.hardware.getFLMotor().setPower(correction);
+            this.hardware.getFRMotor().setPower(-correction);
+            this.hardware.getBLMotor().setPower(correction );
+            this.hardware.getBRMotor().setPower(-correction);
 
             //recalculator angles
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+    
+            //output final telemetry
+            this.opMode.telemetry.addData("Target angle", degrees);
+            this.opMode.telemetry.addData("Final angle", angles.secondAngle);
+            this.opMode.telemetry.update();
 
-            //test for breakout condition
-            if(target < 0) {
-                beforeTarget = angles.secondAngle - target > aPrecision;
-            }
-            else {
-                beforeTarget = angles.secondAngle - target < -aPrecision;
-            }
+
+//            //test for breakout condition
+//            if(target < 0) {
+//                beforeTarget = angles.secondAngle - target > aPrecision;
+//            }
+//            else {
+//                beforeTarget = angles.secondAngle - target < -aPrecision;
+//            }
 
         }
 
@@ -821,8 +827,8 @@ public class Robot {
             double corr = Kp * err + Ki * sum + Kd * (-trend.get(trend.size() - 1) + err);
             double angleCorr = aKp * aErr + aKi * a_sum + aKd * (-a_trend.get(a_trend.size() - 1) + aErr);
 
-            corr *= multiplier;
-            angleCorr *= aMultiplier;
+            corr *= multiplier*powerAdjustment;
+            angleCorr *= aMultiplier*powerAdjustment;
 
             if (angleCorr > 0) {
                 angleCorr = Math.max(0.01, angleCorr);
