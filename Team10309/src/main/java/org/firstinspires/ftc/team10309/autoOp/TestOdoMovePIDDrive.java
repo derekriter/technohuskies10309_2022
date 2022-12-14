@@ -23,13 +23,13 @@ public class TestOdoMovePIDDrive extends LinearOpMode {
 //        Thread.sleep(1000);
 //        robot.driveOdo(-72.75f, 0.6f);
 //        Thread.sleep(1000);
-        robot.driveOdo(20f, 0.6f);
+        robot.driveOdo(20f, 0.4f);
         Thread.sleep(1000);
-        robot.driveOdo(-20f, 0.6f);
+        robot.driveOdo(-20f, 0.4f);
         Thread.sleep(1000);
-        robot.driveOdo(6f, 0.6f);
+        robot.driveOdo(6f, 0.4f);
         Thread.sleep(1000);
-        robot.driveOdo(-6f, 0.6f);
+        robot.driveOdo(-6f, 0.4f);
         Thread.sleep(1000);
     }
 }

@@ -19,21 +19,21 @@ public class TestOdoMovePIDStrafe extends LinearOpMode {
         telemetry.update();
         waitForStart();
     
-        robot.strafeOdo(36f, 0.6f);
+        robot.strafeOdo(36f, 0.4f);
         Thread.sleep(2000);
-        robot.strafeOdo(-36f, 0.6f);
+        robot.strafeOdo(-36f, 0.4f);
         Thread.sleep(2000);
-        robot.strafeOdo(24f, 0.6f);
+        robot.strafeOdo(24f, 0.4f);
         Thread.sleep(2000);
-        robot.strafeOdo(-24f, 0.6f);
+        robot.strafeOdo(-24f, 0.4f);
         Thread.sleep(2000);
-        robot.strafeOdo(20f, 0.6f);
+        robot.strafeOdo(20f, 0.4f);
         Thread.sleep(2000);
-        robot.strafeOdo(-20f, 0.6f);
+        robot.strafeOdo(-20f, 0.4f);
         Thread.sleep(2000);
-        robot.strafeOdo(6f, 0.6f);
+        robot.strafeOdo(6f, 0.4f);
         Thread.sleep(2000);
-        robot.strafeOdo(-6f, 0.6f);
+        robot.strafeOdo(-6f, 0.4f);
         Thread.sleep(2000);
     }
 }
