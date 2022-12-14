@@ -256,6 +256,7 @@ public class Robot {
     public void turn(float degrees, double aPrecision) throws InterruptedException {
         double batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
         double powerAdjustment = 13f / batteryVoltage;
+//        double powerAdjustment = 1;
 
         //reset IMU, so the start angle is 0
         this.hardware.resetIMU();
@@ -282,39 +283,39 @@ public class Robot {
 
         //tune Kp, Ki, and Kd by the target degrees
 
-        if(Math.abs(target) > 130) {
+//        if(Math.abs(target) > 130) {
+//            aKp = 0.3;
+//            aKi = 0.001;
+//            aKd = 7;
+//        }
+//        else if(Math.abs(target) > 110) {
+//            aKp = 0.2;
+//            aKi = 0.001;
+//            aKd = 6;
+//        }
+//        else if(Math.abs(target) > 90) {
+//            aKp = 0.3;
+//            aKi = 0.001;
+//            aKd = 7;
+//        }
+        if(Math.abs(target) > 75) {
             aKp = 0.3;
-            aKi = 0.001;
-            aKd = 7;
-        }
-        else if(Math.abs(target) > 110) {
-            aKp = 0.2;
-            aKi = 0.001;
-            aKd = 6;
-        }
-        else if(Math.abs(target) > 90) {
-            aKp = 0.3;
-            aKi = 0.001;
-            aKd = 7;
-        }
-        else if(Math.abs(target) > 75) {
-            aKp = 0.4;
-            aKi = 0.002;
-            aKd = 6;
-        }
-        else if(Math.abs(target) > 60) {
-            aKp = 0.4;
-            aKi = 0.004;
-            aKd = 6;
-        }
-        else if(Math.abs(target) > 45) {
-            aKp = 0.4;
-            aKi = 0.005;
+            aKi = 0.0002;
             aKd = 5;
         }
+//        else if(Math.abs(target) > 60) {
+//            aKp = 0.4;
+//            aKi = 0.004;
+//            aKd = 6;
+//        }
+//        else if(Math.abs(target) > 45) {
+//            aKp = 0.4;
+//            aKi = 0.005;
+//            aKd = 5;
+//        }
         else if(Math.abs(target) > 30) {
             aKp = 0.4;
-            aKi = 0.005;
+            aKi = 0.0005;
             aKd = 4;
         }
         else if(Math.abs(target) > 15) {
@@ -334,7 +335,7 @@ public class Robot {
         //calculate inital error
         double angle = angles.secondAngle;
         double err = angle - target;   //
-        double multiplier = 0.05; //power gain for angle correction
+        double multiplier = 0.03; //power gain for angle correction
 
         //keeping track of trend for I and adding current start error
         ArrayList<Double> trend = new ArrayList<>();
@@ -355,15 +356,18 @@ public class Robot {
             double D = err - trend.get(trend.size() - 1);
             double correction = (aKp * P) + (aKi * I) + (aKd * D);
 
+            
+            
+            
             //apply multiplier
             correction *= multiplier;
 
             //clamp minimum speed
             if (correction > 0) {
-                correction = Math.max(0.01, correction);
+                correction = Math.max(0.00001, correction);
             }
             else if (correction < 0) {
-                correction = Math.min(correction, -0.01);
+                correction = Math.min(correction, -0.00001);
             }
 
             //clamp maximum speed
@@ -500,8 +504,12 @@ public class Robot {
 //        currentLocation = location;
 //    }
 
-    public void driveOdo(float inches, float speed) throws InterruptedException {
-        this.hardware.getIMU();
+    public void driveOdo(float inches, float speed) {
+        if(inches == 0) return;
+        
+        this.hardware.resetIMU();
+        double batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
+        double powerAdjustment = 12.6f / batteryVoltage;
 
         this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -541,9 +549,9 @@ public class Robot {
             aKd = 0.5;
         }
         else if(Math.abs(target)>70) {
-            Kp = 0.48;
-            Ki = 0.01;
-            Kd = 80.0;
+            Kp = 0.2;
+            Ki = 0.001;
+            Kd = 15.0;
             aKp = 0.5;
             aKi = 0.012;
             aKd = 0.5;
@@ -589,17 +597,17 @@ public class Robot {
             aKd = 0.4;
         }
         else if(Math.abs(target)>10) {
-            Kp = 1.6;
-            Ki = 0.035;
+            Kp = 1;
+            Ki = 0.01;
             Kd = 20.0;
             aKp = 0.2;
             aKi = 0.05;
             aKd = 0.2;
         }
         else {
-            Kp = 5.0;
-            Ki = 0.1;
-            Kd = 6.0;
+            Kp = 1.0;
+            Ki = 0.01;
+            Kd = 20.0;
             aKp = 0.1;
             aKi = 0.003;
             aKd = 0.1;
@@ -653,6 +661,8 @@ public class Robot {
                 corr = speed;
             }
 
+            
+            corr = corr* powerAdjustment;
             aSpeed = 0.4 * Math.abs(corr);
             if (angleCorr < 0 && angleCorr < -aSpeed) {
                 angleCorr = -aSpeed;
@@ -684,19 +694,100 @@ public class Robot {
         this.opMode.telemetry.update();
     }
     public void strafeOdo(float inches, float speed) {
-        this.hardware.getIMU();
+        this.hardware.resetIMU();
         this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        
+        double batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
+        double powerAdjustment = 12.6f / batteryVoltage;
 
         double target = - inches;
         double err = 0 - target;
         final double multiplier = 0.05; //motor power gain
-        final double precision = 0.1;  //distance precision in inches
-        final double Kp = 1;   //PID controller parameters Kp, Ki, Kd
-        final double Ki = 0.02;
-        final double Kd = 55;
+        double precision = 0.1;  //distance precision in inches
+        double Kp = 1;   //PID controller parameters Kp, Ki, Kd
+        double Ki = 0.02;
+        double Kd = 55;
+    
+        double aKp = 0.4;          // PID controller parameters for angle correction
+        double aKi = 0.01;
+        double aKd = 0.4;
+//
+//        if(Math.abs(target)>80) {
+//            Kp = 0.42;
+//            Ki = 0.009;
+//            Kd = 85.0;
+//            aKp = 0.5;
+//            aKi = 0.012;
+//            aKd = 0.5;
+//        }
+//        else if(Math.abs(target)>70) {
+//            Kp = 0.2;
+//            Ki = 0.001;
+//            Kd = 15.0;
+//            aKp = 0.5;
+//            aKi = 0.012;
+//            aKd = 0.5;
+//        }
+//        else if(Math.abs(target)>60) {
+//            Kp = 0.55;
+//            Ki = 0.011;
+//            Kd = 75.0;
+//            aKp = 0.5;
+//            aKi = 0.012;
+//            aKd = 0.5;
+//        }
+//        else if(Math.abs(target)>50) {
+//            Kp = 0.65;
+//            Ki = 0.013;
+//            Kd = 70.0;
+//            aKp = 0.5;
+//            aKi = 0.012;
+//            aKd = 0.5;
+//        }
+//        else if(Math.abs(target)>40) {
+//            Kp = 0.8;
+//            Ki = 0.016;
+//            Kd = 60.0;
+//            aKp = 0.5;
+//            aKi = 0.012;
+//            aKd = 0.5;
+//        }
+//        else
+        if(Math.abs(target)>30) {
+            Kp = 0.4;
+            Ki = 0.02;
+            Kd = 20.0;
+            aKp = 0.5;
+            aKi = 0.012;
+            aKd = 0.5;
+        }
+        else if(Math.abs(target)>20) {
+            Kp = 0.4;
+            Ki = 0.025;
+            Kd = 20.0;
+            aKp = 0.4;
+            aKi = 0.01;
+            aKd = 0.4;
+        }
+        else if(Math.abs(target)>10) {
+            Kp = 1;
+            Ki = 0.01;
+            Kd = 20.0;
+            aKp = 0.2;
+            aKi = 0.05;
+            aKd = 0.2;
+        }
+        else {
+            Kp = 1.0;
+            Ki = 0.01;
+            Kd = 20.0;
+            aKp = 0.1;
+            aKi = 0.003;
+            aKd = 0.1;
+        }
 
         double inchesPerTick = RobotInfo.odoDiameter * Math.PI / 1440;    //inch per tick
 
@@ -713,10 +804,7 @@ public class Robot {
         double angle = angles.secondAngle;
         double aErr = angle - 0;   //angle err = measured angle - target, target = 0
         double aMultiplier = 0.05; //power gain for angle correction
-        double aPrecision = 1;     //angle precision in degrees
-        double aKp = 0.4;          // PID controller parameters for angle correction
-        double aKi = 0.01;
-        double aKd = 0.4;
+        double aPrecision = 0.1;     //angle precision in degrees
         double aSpeed = 0;  // angle correction cap
 
         ArrayList<Double> a_trend = new ArrayList<>();
@@ -768,8 +856,8 @@ public class Robot {
             else {
                 this.hardware.getFLMotor().setPower(corr + angleCorr);
                 this.hardware.getFRMotor().setPower(-corr + angleCorr);
-                this.hardware.getBLMotor().setPower(-corr + angleCorr);
-                this.hardware.getBRMotor().setPower(corr + angleCorr);
+                this.hardware.getBLMotor().setPower(-corr - angleCorr);
+                this.hardware.getBRMotor().setPower(corr - angleCorr);
 
             }
 
