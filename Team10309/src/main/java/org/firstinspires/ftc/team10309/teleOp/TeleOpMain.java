@@ -72,7 +72,7 @@ public class TeleOpMain extends LinearOpMode {
             if(driveSpeedMultiplier > 0.21) driveSpeedMultiplier -= 0.2;
         }
         if(increaseSpeed && !increaseSpeedLast) {
-            if(driveSpeedMultiplier < 0.59) driveSpeedMultiplier += 0.2;
+            if(driveSpeedMultiplier < 0.39) driveSpeedMultiplier += 0.2;
         }
 
         if(changeDriverMode && !changeDriverModeLast) driverMode = !driverMode;
