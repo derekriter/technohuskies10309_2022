@@ -40,10 +40,40 @@ public class BenBLUEREDAutoOp extends LinearOpMode {
         telemetry.addData("Signal state", state.name());
         telemetry.update();
 
-        this.robot.driveTiles(0.5f, 0.5f);
-        this.robot.turn(-90f, 0.2f);
-        manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.HIGH);
-        this.robot.driveTiles(-1.5f, 0.5f);
+        manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.HIGH, false);
+        this.robot.driveTiles(2.0f,0.5f, -1f);
+        this.robot.turn(45f, 0.2f);
+        this.robot.turn(45f, 0.2f);
+        this.robot.drive(3f, 0.5f);
+        manipulatorController.setArmPosition(ManipulatorController.ArmRotation.FRONT);
+        manipulatorController.setClaw(ManipulatorController.ClawPosition.OPEN);
+        manipulatorController.setArmPosition(ManipulatorController.ArmRotation.SIDE);
+        manipulatorController.setLiftPosition(-1256);
+        this.robot.strafeTiles(2f, 0.5f, -3f);
+        manipulatorController.setClaw(ManipulatorController.ClawPosition.CLOSED);
+        manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.LOW);
+        manipulatorController.setArmPosition(ManipulatorController.ArmRotation.FRONT);
+
+        if (state == SleeveDetect.SignalState.RED_SQUARE) {
+            this.robot.strafeTiles(-1.5f, 0.5f);
+            manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
+        } else if (state == SleeveDetect.SignalState.GREEN_CIRCLE) {
+            this.robot.strafeTiles(-0.5f, 0.5f);
+            manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
+        } else if (state == SleeveDetect.SignalState.BLUE_TRIANGLE) {
+
+            manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
+        } else {
+            this.robot.strafeTiles(-0.5f, 0.5f);
+            manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
+
+        }
+
+
+
+
+
+
 
 
     }
