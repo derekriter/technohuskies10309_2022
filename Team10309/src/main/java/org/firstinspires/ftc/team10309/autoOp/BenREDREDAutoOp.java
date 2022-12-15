@@ -43,8 +43,8 @@ public class BenREDREDAutoOp extends LinearOpMode {
 
         //go to low junction
         manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.LOW, false);
-        this.robot.strafeTiles(0.7f, 0.5f, -0.5f);
-        this.robot.drive(-1.5f, 0.5f);
+        this.robot.strafeTilesOdo(0.7f, 0.5f, -0.5f);
+        this.robot.driveOdo(-1.5f, 0.5f);
         Thread.sleep(200);
 
         //drop cone on low junction
@@ -53,40 +53,40 @@ public class BenREDREDAutoOp extends LinearOpMode {
         manipulatorController.setLiftPosition(this.robot.getHardware().getLift().getCurrentPosition() - 500);
 
         //go to cone stack
-        this.robot.drive(1.5f, 0.5f);
-        this.robot.strafeTiles(1.5f, 0.5f, -3.5f);
+        this.robot.driveOdo(1.5f, 0.5f);
+        this.robot.strafeTilesOdo(1.5f, 0.5f, -3.5f);
         manipulatorController.setArmPosition(ManipulatorController.ArmRotation.FRONT);
 
         //pick up cone
         manipulatorController.setLiftPosition(-1256);
-        this.robot.driveTiles(1f, 0.5f);
+        this.robot.driveTilesOdo(1f, 0.5f);
         manipulatorController.setClaw(ManipulatorController.ClawPosition.CLOSED);
         manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.LOW);
         manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.HIGH, false);
 
         //go to tall junction
-        this.robot.drive(-6, 0.2f);
+        this.robot.driveOdo(-6, 0.2f);
         this.robot.turn(45f, .2 );
         this.robot.turn(45f, .2);
-        this.robot.strafeTiles(1.5f, 0.5f);
-        this.robot.drive(3f, 0.5f);
+        this.robot.strafeTilesOdo(1.5f, 0.5f);
+        this.robot.driveOdo(3f, 0.5f);
 
         // drop onto high junction
         manipulatorController.setClaw(ManipulatorController.ClawPosition.OPEN);
-        this.robot.drive(-3f, 0.5f);
+        this.robot.driveOdo(-3f, 0.5f);
 
         // detection stuff
         if (state == SleeveDetect.SignalState.RED_SQUARE) {
-            this.robot.strafeTiles(-1.5f, 0.5f);
+            this.robot.strafeTilesOdo(-1.5f, 0.5f);
             manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
         } else if (state == SleeveDetect.SignalState.GREEN_CIRCLE) {
-            this.robot.strafeTiles(-0.5f, 0.5f);
+            this.robot.strafeTilesOdo(-0.5f, 0.5f);
             manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
         } else if (state == SleeveDetect.SignalState.BLUE_TRIANGLE) {
-            this.robot.strafeTiles(0.5f, 0.5f);
+            this.robot.strafeTilesOdo(0.5f, 0.5f);
             manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
         } else {
-            this.robot.strafeTiles(-0.5f, 0.5f);
+            this.robot.strafeTilesOdo(-0.5f, 0.5f);
             manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
 
         }

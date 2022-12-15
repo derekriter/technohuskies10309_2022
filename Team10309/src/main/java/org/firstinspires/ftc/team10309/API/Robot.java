@@ -41,10 +41,12 @@ public class Robot {
     public void drive(float inches, float speed) {
         drive(inches, speed, true);
     }
+
     /**
      * A function to move the robot forward and backward
+     *
      * @param inches the distance to move the robot (+: forward, -: backward)
-     * @param speed the speed to drive at (min: 0, max: 1)
+     * @param speed  the speed to drive at (min: 0, max: 1)
      */
     public void drive(float inches, float speed, boolean waitForMotors) {
         float clampedSpeed = Math.max(Math.min(speed, 1), 0);
@@ -67,16 +69,18 @@ public class Robot {
         this.hardware.getBLMotor().setPower(clampedSpeed);
         this.hardware.getBRMotor().setPower(clampedSpeed);
 
-        if(waitForMotors) this.waitForMotors();
+        if (waitForMotors) this.waitForMotors();
     }
 
     public void strafe(float inches, float speed) {
         strafe(inches, speed, true);
     }
+
     /**
      * A function to move the robot left and right
+     *
      * @param inches the distance to move the robot (+: right, -: left)
-     * @param speed the speed to drive at (min: 0, max: 1)
+     * @param speed  the speed to drive at (min: 0, max: 1)
      */
     public void strafe(float inches, float speed, boolean waitForMotors) {
         float clampedSpeed = Math.max(Math.min(speed, 1), 0);
@@ -99,14 +103,16 @@ public class Robot {
         this.hardware.getBLMotor().setPower(clampedSpeed);
         this.hardware.getBRMotor().setPower(clampedSpeed);
 
-        if(waitForMotors) this.waitForMotors();
+        if (waitForMotors) this.waitForMotors();
     }
 
     public void driveTiles(float tiles, float speed) {
         driveTiles(tiles, speed, true);
     }
+
     /**
      * Drives the number of tiles
+     *
      * @param tiles the number of tiles (+: forward, -: backward)
      * @param speed the speed (0 - 1)
      */
@@ -117,21 +123,54 @@ public class Robot {
     public void driveTiles(float tiles, float speed, float extraInches) {
         driveTiles(tiles, speed, extraInches, true);
     }
+
     /**
      * Drives the number of tiles
-     * @param tiles the number of tiles  (+: forward, -: backward)
-     * @param speed the speed (0 - 1)
+     *
+     * @param tiles       the number of tiles  (+: forward, -: backward)
+     * @param speed       the speed (0 - 1)
      * @param extraInches extra inches to add the distance.
      */
     public void driveTiles(float tiles, float speed, float extraInches, boolean waitForMotors) {
         this.drive(tiles * FieldInfo.tileSize + extraInches, speed, waitForMotors);
     }
 
+    public void driveTilesOdo(float tiles, float speed) {
+        driveTilesOdo(tiles, speed, true);
+    }
+
+    /**
+     * Drives the number of tiles
+     *
+     * @param tiles the number of tiles (+: forward, -: backward)
+     * @param speed the speed (0 - 1)
+     */
+    public void driveTilesOdo(float tiles, float speed, boolean waitForMotors) {
+        this.driveOdo(tiles * FieldInfo.tileSize, speed, waitForMotors);
+    }
+
+    public void driveTilesOdo(float tiles, float speed, float extraInches) {
+        driveTilesOdo(tiles, speed, extraInches, true);
+    }
+
+    /**
+     * Drives the number of tiles
+     *
+     * @param tiles       the number of tiles  (+: forward, -: backward)
+     * @param speed       the speed (0 - 1)
+     * @param extraInches extra inches to add the distance.
+     */
+    public void driveTilesOdo(float tiles, float speed, float extraInches, boolean waitForMotors) {
+        this.driveOdo(tiles * FieldInfo.tileSize + extraInches, speed, waitForMotors);
+    }
+
     public void strafeTiles(float tiles, float speed) {
         strafeTiles(tiles, speed, true);
     }
+
     /**
      * Drives the number of tiles
+     *
      * @param tiles the number of tiles  (+: right, -: left)
      * @param speed the speed (0 - 1)
      */
@@ -142,14 +181,45 @@ public class Robot {
     public void strafeTiles(float tiles, float speed, float extraInches) {
         strafeTiles(tiles, speed, extraInches, true);
     }
+
     /**
      * Drives the number of tiles
-     * @param tiles the number of tiles  (+: right, -: left)
-     * @param speed the speed (0 - 1)
+     *
+     * @param tiles       the number of tiles  (+: right, -: left)
+     * @param speed       the speed (0 - 1)
      * @param extraInches extra inches to add the distance.
      */
     public void strafeTiles(float tiles, float speed, float extraInches, boolean waitForMotors) {
         this.strafe(tiles * FieldInfo.tileSize + extraInches, speed, waitForMotors);
+    }
+
+    public void strafeTilesOdo(float tiles, float speed) {
+        strafeTilesOdo(tiles, speed, true);
+    }
+
+    /**
+     * Drives the number of tiles
+     *
+     * @param tiles the number of tiles  (+: right, -: left)
+     * @param speed the speed (0 - 1)
+     */
+    public void strafeTilesOdo(float tiles, float speed, boolean waitForMotors) {
+        this.strafeOdo(tiles * FieldInfo.tileSize, speed, waitForMotors);
+    }
+
+    public void strafeTilesOdo(float tiles, float speed, float extraInches) {
+        strafeTilesOdo(tiles, speed, extraInches, true);
+    }
+
+    /**
+     * Drives the number of tiles
+     *
+     * @param tiles       the number of tiles  (+: right, -: left)
+     * @param speed       the speed (0 - 1)
+     * @param extraInches extra inches to add the distance.
+     */
+    public void strafeTilesOdo(float tiles, float speed, float extraInches, boolean waitForMotors) {
+        this.strafeOdo(tiles * FieldInfo.tileSize + extraInches, speed, waitForMotors);
     }
 
     private Orientation angles;
@@ -298,7 +368,7 @@ public class Robot {
 //            aKi = 0.001;
 //            aKd = 7;
 //        }
-        if(Math.abs(target) > 75) {
+        if (Math.abs(target) > 75) {
             aKp = 0.3;
             aKi = 0.0003;
             aKd = 4;
@@ -313,17 +383,15 @@ public class Robot {
 //            aKi = 0.005;
 //            aKd = 5;
 //        }
-        else if(Math.abs(target) > 30) {
+        else if (Math.abs(target) > 30) {
             aKp = 0.4;
             aKi = 0.0005;
             aKd = 4;
-        }
-        else if(Math.abs(target) > 15) {
+        } else if (Math.abs(target) > 15) {
             aKp = 0.4;
             aKi = 0.006;
             aKd = 2;
-        }
-        else {
+        } else {
             aKp = 0.5;
             aKi = 0.02;
             aKd = 3;
@@ -344,7 +412,7 @@ public class Robot {
         //keeps track of whether the robot can break out of the turn loop
         boolean beforeTarget = true;
 
-        while (Math.abs(angles.secondAngle-target) > aPrecision && this.opMode.opModeIsActive()) {
+        while (Math.abs(angles.secondAngle - target) > aPrecision && this.opMode.opModeIsActive()) {
             //get angle from IMU
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
@@ -356,17 +424,14 @@ public class Robot {
             double D = err - trend.get(trend.size() - 1);
             double correction = (aKp * P) + (aKi * I) + (aKd * D);
 
-            
-            
-            
+
             //apply multiplier
-            correction *= multiplier*powerAdjustment;
+            correction *= multiplier * powerAdjustment;
 
             //clamp minimum speed
             if (correction > 0) {
                 correction = Math.max(0.01, correction);
-            }
-            else if (correction < 0) {
+            } else if (correction < 0) {
                 correction = Math.min(correction, -0.01);
             }
 
@@ -374,8 +439,7 @@ public class Robot {
             double aSpeed = 0.3;
             if (correction < 0 && correction < -aSpeed) {
                 correction = -aSpeed;
-            }
-            else if (correction > 0 && correction > aSpeed) {
+            } else if (correction > 0 && correction > aSpeed) {
                 correction = aSpeed;
             }
             //add error to trend
@@ -384,13 +448,13 @@ public class Robot {
             //move motors
             this.hardware.getFLMotor().setPower(correction);
             this.hardware.getFRMotor().setPower(-correction);
-            this.hardware.getBLMotor().setPower(correction );
+            this.hardware.getBLMotor().setPower(correction);
             this.hardware.getBRMotor().setPower(-correction);
 
             //recalculator angles
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-    
+
             //output final telemetry
             this.opMode.telemetry.addData("Target angle", degrees);
             this.opMode.telemetry.addData("Final angle", angles.secondAngle);
@@ -427,7 +491,7 @@ public class Robot {
      * Forces the program to wait until the motors are done moving
      */
     public void waitForMotors() {
-        while(
+        while (
                 (
                         this.hardware.getFLMotor().isBusy()
                                 || this.hardware.getFRMotor().isBusy()
@@ -435,10 +499,12 @@ public class Robot {
                                 || this.hardware.getBRMotor().isBusy()
                 )
                         && this.opMode.opModeIsActive()
-        );
+        ) ;
     }
+
     /**
      * Calculates the number of ticks needed to travel the specified distance
+     *
      * @param targetDist the number of inches you want to travel
      * @return the number of ticks needed
      */
@@ -456,6 +522,7 @@ public class Robot {
                 this.hardware);
         sleeveDetect.init();
     }
+
     public SleeveDetect.SignalState scanSleeve() throws InterruptedException {
         return sleeveDetect.scan();
     }
@@ -467,9 +534,12 @@ public class Robot {
 
     /**
      * Returns the internally stored RobotHardware
+     *
      * @return RobotHardware for robot instance
      */
-    public RobotHardware getHardware() {return this.hardware;}
+    public RobotHardware getHardware() {
+        return this.hardware;
+    }
 
     /**
      * Goes to absolute position, quickest way possible... discontinue
@@ -509,10 +579,13 @@ public class Robot {
 //
 //        currentLocation = location;
 //    }
-
     public void driveOdo(float inches, float speed) {
-        if(inches == 0) return;
-        
+        driveOdo(inches, speed, true);
+    }
+
+    public void driveOdo(float inches, float speed, boolean waitForMotors) {
+        if (inches == 0) return;
+
         this.hardware.resetIMU();
         double batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
         double powerAdjustment = 12.6f / batteryVoltage;
@@ -546,71 +619,63 @@ public class Robot {
 //            aKi = 0.00035*k;
 //            aKd = 0.01*k;
 
-        if(Math.abs(target)>80) {
+        if (Math.abs(target) > 80) {
             Kp = 0.42;
             Ki = 0.009;
             Kd = 85.0;
             aKp = 0.5;
             aKi = 0.012;
             aKd = 0.5;
-        }
-        else if(Math.abs(target)>70) {
+        } else if (Math.abs(target) > 70) {
             Kp = 0.2;
             Ki = 0.001;
             Kd = 15.0;
             aKp = 0.5;
             aKi = 0.012;
             aKd = 0.5;
-        }
-        else if(Math.abs(target)>60) {
+        } else if (Math.abs(target) > 60) {
             Kp = 0.55;
             Ki = 0.011;
             Kd = 75.0;
             aKp = 0.5;
             aKi = 0.012;
             aKd = 0.5;
-        }
-        else if(Math.abs(target)>50) {
+        } else if (Math.abs(target) > 50) {
             Kp = 0.65;
             Ki = 0.013;
             Kd = 70.0;
             aKp = 0.5;
             aKi = 0.012;
             aKd = 0.5;
-        }
-        else if(Math.abs(target)>40) {
+        } else if (Math.abs(target) > 40) {
             Kp = 0.8;
             Ki = 0.016;
             Kd = 60.0;
             aKp = 0.5;
             aKi = 0.012;
             aKd = 0.5;
-        }
-        else if(Math.abs(target)>30) {
+        } else if (Math.abs(target) > 30) {
             Kp = 1;
             Ki = 0.02;
             Kd = 50.0;
             aKp = 0.5;
             aKi = 0.012;
             aKd = 0.5;
-        }
-        else if(Math.abs(target)>20) {
+        } else if (Math.abs(target) > 20) {
             Kp = 1.3;
             Ki = 0.025;
             Kd = 35.0;
             aKp = 0.4;
             aKi = 0.01;
             aKd = 0.4;
-        }
-        else if(Math.abs(target)>10) {
+        } else if (Math.abs(target) > 10) {
             Kp = 1;
             Ki = 0.01;
             Kd = 20.0;
             aKp = 0.2;
             aKi = 0.05;
             aKd = 0.2;
-        }
-        else {
+        } else {
             Kp = 1.0;
             Ki = 0.01;
             Kd = 20.0;
@@ -639,7 +704,7 @@ public class Robot {
         ArrayList<Double> a_trend = new ArrayList<>();
         a_trend.add(aErr);
 
-        while(Math.abs(enc.getCurrentPosition()*inchesPerTick - target) > precision && this.opMode.opModeIsActive()) {
+        while (Math.abs(enc.getCurrentPosition() * inchesPerTick - target) > precision && this.opMode.opModeIsActive()) {
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             err = enc.getCurrentPosition() * inchesPerTick - target;
@@ -667,8 +732,8 @@ public class Robot {
                 corr = speed;
             }
 
-            
-            corr = corr* powerAdjustment;
+
+            corr = corr * powerAdjustment;
             aSpeed = 0.4 * Math.abs(corr);
             if (angleCorr < 0 && angleCorr < -aSpeed) {
                 angleCorr = -aSpeed;
@@ -699,24 +764,29 @@ public class Robot {
         this.opMode.telemetry.addData("Final Tick Value", enc.getCurrentPosition());
         this.opMode.telemetry.update();
     }
+
     public void strafeOdo(float inches, float speed) {
+        strafeOdo(inches, speed, true);
+    }
+
+    public void strafeOdo(float inches, float speed, boolean waitForMotors) {
         this.hardware.resetIMU();
         this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        
+
         double batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
         double powerAdjustment = 12.6f / batteryVoltage;
 
-        double target = - inches;
+        double target = -inches;
         double err = 0 - target;
         final double multiplier = 0.05; //motor power gain
         double precision = 0.1;  //distance precision in inches
         double Kp = 1;   //PID controller parameters Kp, Ki, Kd
         double Ki = 0.02;
         double Kd = 55;
-    
+
         double aKp = 0.4;          // PID controller parameters for angle correction
         double aKi = 0.01;
         double aKd = 0.4;
@@ -762,31 +832,28 @@ public class Robot {
 //            aKd = 0.5;
 //        }
 //        else
-        if(Math.abs(target)>30) {
+        if (Math.abs(target) > 30) {
             Kp = 0.4;
             Ki = 0.02;
             Kd = 20.0;
             aKp = 0.5;
             aKi = 0.012;
             aKd = 0.5;
-        }
-        else if(Math.abs(target)>20) {
+        } else if (Math.abs(target) > 20) {
             Kp = 0.4;
             Ki = 0.025;
             Kd = 20.0;
             aKp = 0.4;
             aKi = 0.01;
             aKd = 0.4;
-        }
-        else if(Math.abs(target)>10) {
+        } else if (Math.abs(target) > 10) {
             Kp = 1;
             Ki = 0.01;
             Kd = 20.0;
             aKp = 0.2;
             aKi = 0.05;
             aKd = 0.2;
-        }
-        else {
+        } else {
             Kp = 1.0;
             Ki = 0.01;
             Kd = 20.0;
@@ -816,7 +883,7 @@ public class Robot {
         ArrayList<Double> a_trend = new ArrayList<>();
         a_trend.add(aErr);
 
-        while(Math.abs(enc.getCurrentPosition() * inchesPerTick - target) > precision && this.opMode.opModeIsActive()) {
+        while (Math.abs(enc.getCurrentPosition() * inchesPerTick - target) > precision && this.opMode.opModeIsActive()) {
             angles = this.hardware.getIMU().getAngularOrientation(
                     AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
             err = enc.getCurrentPosition() * inchesPerTick - target;
@@ -827,8 +894,8 @@ public class Robot {
             double corr = Kp * err + Ki * sum + Kd * (-trend.get(trend.size() - 1) + err);
             double angleCorr = aKp * aErr + aKi * a_sum + aKd * (-a_trend.get(a_trend.size() - 1) + aErr);
 
-            corr *= multiplier*powerAdjustment;
-            angleCorr *= aMultiplier*powerAdjustment;
+            corr *= multiplier * powerAdjustment;
+            angleCorr *= aMultiplier * powerAdjustment;
 
             if (angleCorr > 0) {
                 angleCorr = Math.max(0.01, angleCorr);
@@ -853,13 +920,12 @@ public class Robot {
                 angleCorr = aSpeed;
             }
 
-            if(Math.abs(aErr) < aPrecision) {
+            if (Math.abs(aErr) < aPrecision) {
                 this.hardware.getFLMotor().setPower(corr);
                 this.hardware.getFRMotor().setPower(-corr);
                 this.hardware.getBLMotor().setPower(-corr);
                 this.hardware.getBRMotor().setPower(corr);
-            }
-            else {
+            } else {
                 this.hardware.getFLMotor().setPower(corr + angleCorr);
                 this.hardware.getFRMotor().setPower(-corr + angleCorr);
                 this.hardware.getBLMotor().setPower(-corr - angleCorr);
