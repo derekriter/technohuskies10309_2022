@@ -15,6 +15,8 @@ public class IMUOdoValues extends LinearOpMode {
         //init
         this.robot = new Robot(this, true);
         waitForStart();
-        robot.teleValues();
+
+        while(opModeIsActive())
+            robot.showPositionData();
     }
 }

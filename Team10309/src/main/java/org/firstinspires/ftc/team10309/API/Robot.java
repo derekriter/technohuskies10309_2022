@@ -3,7 +3,6 @@ package org.firstinspires.ftc.team10309.API;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -14,21 +13,10 @@ import org.firstinspires.ftc.team10309.API.info.RobotInfo;
 
 import java.util.ArrayList;
 
-/**
- * A class representing the robot, all of its data, and its capabilities
- */
 public class Robot {
-    /**
-     * The op mode the robot is running
-     */
+
     private final LinearOpMode opMode;
-    /**
-     * The hardware of this robot instance
-     */
     private final RobotHardware hardware;
-    /**
-     * Whether this is the final robot or robobobo
-     */
     private final boolean isFinal;
 
     public Robot(LinearOpMode pOpMode,
@@ -38,16 +26,11 @@ public class Robot {
         this.isFinal = isFinal;
     }
 
+    //motor tick based movement, obsolete
+
     public void drive(float inches, float speed) {
         drive(inches, speed, true);
     }
-
-    /**
-     * A function to move the robot forward and backward
-     *
-     * @param inches the distance to move the robot (+: forward, -: backward)
-     * @param speed  the speed to drive at (min: 0, max: 1)
-     */
     public void drive(float inches, float speed, boolean waitForMotors) {
         float clampedSpeed = Math.max(Math.min(speed, 1), 0);
         int ticks = this.calculateTicks(inches);
@@ -72,16 +55,23 @@ public class Robot {
         if (waitForMotors) this.waitForMotors();
     }
 
+    public void driveTiles(float tiles, float speed) {
+        driveTiles(tiles, speed, true);
+    }
+    public void driveTiles(float tiles, float speed, boolean waitForMotors) {
+        this.drive(tiles * FieldInfo.tileSize, speed, waitForMotors);
+    }
+
+    public void driveTiles(float tiles, float speed, float extraInches) {
+        driveTiles(tiles, speed, extraInches, true);
+    }
+    public void driveTiles(float tiles, float speed, float extraInches, boolean waitForMotors) {
+        this.drive(tiles * FieldInfo.tileSize + extraInches, speed, waitForMotors);
+    }
+
     public void strafe(float inches, float speed) {
         strafe(inches, speed, true);
     }
-
-    /**
-     * A function to move the robot left and right
-     *
-     * @param inches the distance to move the robot (+: right, -: left)
-     * @param speed  the speed to drive at (min: 0, max: 1)
-     */
     public void strafe(float inches, float speed, boolean waitForMotors) {
         float clampedSpeed = Math.max(Math.min(speed, 1), 0);
         int ticks = Math.round(this.calculateTicks(inches) * 1.25f);
@@ -106,74 +96,9 @@ public class Robot {
         if (waitForMotors) this.waitForMotors();
     }
 
-    public void driveTiles(float tiles, float speed) {
-        driveTiles(tiles, speed, true);
-    }
-
-    /**
-     * Drives the number of tiles
-     *
-     * @param tiles the number of tiles (+: forward, -: backward)
-     * @param speed the speed (0 - 1)
-     */
-    public void driveTiles(float tiles, float speed, boolean waitForMotors) {
-        this.drive(tiles * FieldInfo.tileSize, speed, waitForMotors);
-    }
-
-    public void driveTiles(float tiles, float speed, float extraInches) {
-        driveTiles(tiles, speed, extraInches, true);
-    }
-
-    /**
-     * Drives the number of tiles
-     *
-     * @param tiles       the number of tiles  (+: forward, -: backward)
-     * @param speed       the speed (0 - 1)
-     * @param extraInches extra inches to add the distance.
-     */
-    public void driveTiles(float tiles, float speed, float extraInches, boolean waitForMotors) {
-        this.drive(tiles * FieldInfo.tileSize + extraInches, speed, waitForMotors);
-    }
-
-    public void driveTilesOdo(float tiles, float speed) {
-        driveTilesOdo(tiles, speed, true);
-    }
-
-    /**
-     * Drives the number of tiles
-     *
-     * @param tiles the number of tiles (+: forward, -: backward)
-     * @param speed the speed (0 - 1)
-     */
-    public void driveTilesOdo(float tiles, float speed, boolean waitForMotors) {
-        this.driveOdo(tiles * FieldInfo.tileSize, speed, waitForMotors);
-    }
-
-    public void driveTilesOdo(float tiles, float speed, float extraInches) {
-        driveTilesOdo(tiles, speed, extraInches, true);
-    }
-
-    /**
-     * Drives the number of tiles
-     *
-     * @param tiles       the number of tiles  (+: forward, -: backward)
-     * @param speed       the speed (0 - 1)
-     * @param extraInches extra inches to add the distance.
-     */
-    public void driveTilesOdo(float tiles, float speed, float extraInches, boolean waitForMotors) {
-        this.driveOdo(tiles * FieldInfo.tileSize + extraInches, speed, waitForMotors);
-    }
-
     public void strafeTiles(float tiles, float speed) {
         strafeTiles(tiles, speed, true);
     }
-
-    /**
-     * Drives the number of tiles
-     *
-     * @param tiles the number of tiles  (+: right, -: left)
-     * @param speed the speed (0 - 1)
-     */
     public void strafeTiles(float tiles, float speed, boolean waitForMotors) {
         this.strafe(tiles * FieldInfo.tileSize, speed, waitForMotors);
     }
@@ -181,409 +106,13 @@ public class Robot {
     public void strafeTiles(float tiles, float speed, float extraInches) {
         strafeTiles(tiles, speed, extraInches, true);
     }
-
-    /**
-     * Drives the number of tiles
-     *
-     * @param tiles       the number of tiles  (+: right, -: left)
-     * @param speed       the speed (0 - 1)
-     * @param extraInches extra inches to add the distance.
-     */
     public void strafeTiles(float tiles, float speed, float extraInches, boolean waitForMotors) {
         this.strafe(tiles * FieldInfo.tileSize + extraInches, speed, waitForMotors);
     }
 
-    public void strafeTilesOdo(float tiles, float speed) {
-        strafeTilesOdo(tiles, speed, true);
-    }
+    //dead-wheel odometry based driving, use instead of motor ticks
 
-    /**
-     * Drives the number of tiles
-     *
-     * @param tiles the number of tiles  (+: right, -: left)
-     * @param speed the speed (0 - 1)
-     */
-    public void strafeTilesOdo(float tiles, float speed, boolean waitForMotors) {
-        this.strafeOdo(tiles * FieldInfo.tileSize, speed, waitForMotors);
-    }
-
-    public void strafeTilesOdo(float tiles, float speed, float extraInches) {
-        strafeTilesOdo(tiles, speed, extraInches, true);
-    }
-
-    /**
-     * Drives the number of tiles
-     *
-     * @param tiles       the number of tiles  (+: right, -: left)
-     * @param speed       the speed (0 - 1)
-     * @param extraInches extra inches to add the distance.
-     */
-    public void strafeTilesOdo(float tiles, float speed, float extraInches, boolean waitForMotors) {
-        this.strafeOdo(tiles * FieldInfo.tileSize + extraInches, speed, waitForMotors);
-    }
-
-    private Orientation angles;
-
-//    public void turn(float degrees, float speed, double precision) {
-//        this.hardware.resetIMU();
-//        this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//
-//        this.hardware.getFLMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        this.hardware.getFRMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        this.hardware.getBRMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        this.hardware.getBLMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//
-////        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-////        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-////        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-////        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-//        // See which motors should be backwards, which should be forwards.
-//        // More compatible: make an array of each motor in an order in specified in a comment.
-//        // Then negate each motor accordingly.
-//        angles = this.hardware.getIMU().getAngularOrientation(
-//                AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-//        turn(degrees, speed, precision, 0.1, 1/500f, 1/50f,
-//                new double[] {angles.secondAngle-degrees,
-//                        angles.secondAngle-degrees});
-//    }
-//    private void turn(double degrees, double speed, double precision, double Kp,
-//                      double Ki, double Kd, double[] trend) {
-//        if (!opMode.opModeIsActive()) {
-//            return;
-//        }
-//        // angles.thirdAngle = detected angle
-//        // degrees = target angle
-//
-//        // "base case"
-//        // trend is misleading, it should be sumOfErrors or something. trend is just for abriviation.
-//        angles = this.hardware.getIMU().getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ,
-//                AngleUnit.DEGREES);
-//        double angle = angles.secondAngle;
-//        //angle = degrees > 0 ? (angle > 0 ? angle : angle + 360) : (angle < 0 ? angle :
-//        //     angle - 360);
-////        if (degrees > 0 && angle < 0) {
-////            angle = angle + 360;
-////        }
-////        if (degrees < 0 && angle > 0) {
-////            angle = angle - 360;
-////        }
-//
-//        double err = angle - degrees;
-//        if (Math.abs(err) <= precision) {
-//            this.hardware.getFLMotor().setPower(0);
-//            this.hardware.getFRMotor().setPower(0);
-//            this.hardware.getBRMotor().setPower(0);
-//            this.hardware.getBLMotor().setPower(0);
-//            // left side reverse on bobo
-//            // right side reverse on frank
-////            frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-////            backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-////            backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-////            frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-//            // see above coment on direction setting... (in prev. turn method and here)
-//            return;
-//        }
-//
-//        // logic - dont forget to multiply double final = -(p + i + d); bc we want to cancel out the final (var) error
-//        double proportional = err * Kp;
-//        double integral = DoubleStream.of(trend).sum() * Ki;
-//        double derivative = (err - trend[trend.length - 1]) * Kd;
-//        double total = -(proportional + integral + derivative) * speed;
-//
-//        // #nestedterneries r awesum.
-//        double basePower = 0.05;
-//        if (total > 0) {
-//            total = total < basePower ? total + basePower : total;
-//        }
-//        if (total < 0) {
-//            total = total > basePower ? total - basePower : total;
-//        }
-//
-//        // ROBOBOBO: LEFT 2 NEGATE
-//        // Final: ???
-//        hardware.getFRMotor().setPower(total);
-//        hardware.getFLMotor().setPower(-total);
-//        hardware.getBLMotor().setPower(-total);
-//        hardware.getBRMotor().setPower(total);
-//
-//        this.opMode.telemetry.addData("Angle: ", "" + angles.firstAngle);
-//        this.opMode.telemetry.addData("Second Angle: ", "" + angles.secondAngle);
-//        this.opMode.telemetry.addData("Third Angle: ", "" + angles.thirdAngle);
-//        this.opMode.telemetry.addData("I: ", integral + "D: " + derivative + "T: " + total);
-//        this.opMode.telemetry.update();
-//
-//        // recursive updates
-//        double[] trendI = new double[trend.length + 1];
-//        for (int i = 0; i < trend.length; i++) trendI[i] = trend[i];
-//        trendI[trendI.length - 1] = err;
-//
-//        turn(degrees, speed, precision, Kp, Ki, Kd, trendI);
-//    }
-
-    public void turn(float degrees, double aPrecision) throws InterruptedException {
-        double batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
-        double powerAdjustment = 13f / batteryVoltage;
-//        double powerAdjustment = 1;
-
-        //reset IMU, so the start angle is 0
-        this.hardware.resetIMU();
-
-        //make sure you are using RUN_USING_ENCODER, so you can control motors with power
-        this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //the target angle is the inverse of the inputed target
-        double target = -degrees;
-
-        //PID controller parameters for angle correction
-        double aKp, aKi, aKd;
-
-//        double k = Math.abs(target);
-//            Kp = 30/k;
-//            Ki = 0.6/k;
-//            Kd = k + 10;
-//            aKp = 0.014*k;
-//            aKi = 0.00035*k;
-//            aKd = 0.01*k;
-
-        //tune Kp, Ki, and Kd by the target degrees
-
-//        if(Math.abs(target) > 130) {
-//            aKp = 0.3;
-//            aKi = 0.001;
-//            aKd = 7;
-//        }
-//        else if(Math.abs(target) > 110) {
-//            aKp = 0.2;
-//            aKi = 0.001;
-//            aKd = 6;
-//        }
-//        else if(Math.abs(target) > 90) {
-//            aKp = 0.3;
-//            aKi = 0.001;
-//            aKd = 7;
-//        }
-        if (Math.abs(target) > 75) {
-            aKp = 0.3;
-            aKi = 0.0003;
-            aKd = 4;
-        }
-//        else if(Math.abs(target) > 60) {
-//            aKp = 0.4;
-//            aKi = 0.004;
-//            aKd = 6;
-//        }
-//        else if(Math.abs(target) > 45) {
-//            aKp = 0.4;
-//            aKi = 0.005;
-//            aKd = 5;
-//        }
-        else if (Math.abs(target) > 30) {
-            aKp = 0.4;
-            aKi = 0.0005;
-            aKd = 4;
-        } else if (Math.abs(target) > 15) {
-            aKp = 0.4;
-            aKi = 0.006;
-            aKd = 2;
-        } else {
-            aKp = 0.5;
-            aKi = 0.02;
-            aKd = 3;
-        }
-
-        Orientation angles = this.hardware.getIMU().getAngularOrientation(
-                AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-        //calculate inital error
-        double angle = angles.secondAngle;
-        double err = angle - target;   //
-        double multiplier = 0.03; //power gain for angle correction
-
-        //keeping track of trend for I and adding current start error
-        ArrayList<Double> trend = new ArrayList<>();
-        trend.add(err);
-
-        //keeps track of whether the robot can break out of the turn loop
-        boolean beforeTarget = true;
-
-        while (Math.abs(angles.secondAngle - target) > aPrecision && this.opMode.opModeIsActive()) {
-            //get angle from IMU
-            angles = this.hardware.getIMU().getAngularOrientation(
-                    AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-            //calc PID
-            err = angles.secondAngle - target;
-            double P = err;
-            double I = trend.stream().reduce(0d, Double::sum);
-            double D = err - trend.get(trend.size() - 1);
-            double correction = (aKp * P) + (aKi * I) + (aKd * D);
-
-
-            //apply multiplier
-            correction *= multiplier * powerAdjustment;
-
-            //clamp minimum speed
-            if (correction > 0) {
-                correction = Math.max(0.01, correction);
-            } else if (correction < 0) {
-                correction = Math.min(correction, -0.01);
-            }
-
-            //clamp maximum speed
-            double aSpeed = 0.3;
-            if (correction < 0 && correction < -aSpeed) {
-                correction = -aSpeed;
-            } else if (correction > 0 && correction > aSpeed) {
-                correction = aSpeed;
-            }
-            //add error to trend
-            trend.add(err);
-
-            //move motors
-            this.hardware.getFLMotor().setPower(correction);
-            this.hardware.getFRMotor().setPower(-correction);
-            this.hardware.getBLMotor().setPower(correction);
-            this.hardware.getBRMotor().setPower(-correction);
-
-            //recalculator angles
-            angles = this.hardware.getIMU().getAngularOrientation(
-                    AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-            //output final telemetry
-            this.opMode.telemetry.addData("Target angle", degrees);
-            this.opMode.telemetry.addData("Final angle", angles.secondAngle);
-            this.opMode.telemetry.update();
-
-
-//            //test for breakout condition
-//            if(target < 0) {
-//                beforeTarget = angles.secondAngle - target > aPrecision;
-//            }
-//            else {
-//                beforeTarget = angles.secondAngle - target < -aPrecision;
-//            }
-
-        }
-
-        //stop motors
-        this.hardware.getFLMotor().setPower(0);
-        this.hardware.getFRMotor().setPower(0);
-        this.hardware.getBLMotor().setPower(0);
-        this.hardware.getBRMotor().setPower(0);
-
-        //recalculate angles for a final time
-        angles = this.hardware.getIMU().getAngularOrientation(
-                AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-        //output final telemetry
-        this.opMode.telemetry.addData("Target angle", degrees);
-        this.opMode.telemetry.addData("Final angle", angles.secondAngle);
-        this.opMode.telemetry.update();
-    }
-
-    /**
-     * Forces the program to wait until the motors are done moving
-     */
-    public void waitForMotors() {
-        while (
-                (
-                        this.hardware.getFLMotor().isBusy()
-                                || this.hardware.getFRMotor().isBusy()
-                                || this.hardware.getBLMotor().isBusy()
-                                || this.hardware.getBRMotor().isBusy()
-                )
-                        && this.opMode.opModeIsActive()
-        ) ;
-    }
-
-    /**
-     * Calculates the number of ticks needed to travel the specified distance
-     *
-     * @param targetDist the number of inches you want to travel
-     * @return the number of ticks needed
-     */
-    private int calculateTicks(float targetDist) {
-        int tpr = this.isFinal ? RobotInfo.finalDriveTPR : RobotInfo.protoDriveTPR;
-        float diameter = this.isFinal ? RobotInfo.finalDriveDiameter : RobotInfo.protoDriveDiameter;
-
-        return Math.round((targetDist / (float) (diameter * Math.PI)) * tpr);
-    }
-
-    private SleeveDetect sleeveDetect;
-
-    public void initDetect() {
-        sleeveDetect = new SleeveDetect(this.opMode.telemetry, this.hardware.getCamera(),
-                this.hardware);
-        sleeveDetect.init();
-    }
-
-    public SleeveDetect.SignalState scanSleeve() throws InterruptedException {
-        return sleeveDetect.scan();
-    }
-
-    public SleeveDetect.SignalState initAndScan() throws InterruptedException {
-        initDetect();
-        return scanSleeve();
-    }
-
-    /**
-     * Returns the internally stored RobotHardware
-     *
-     * @return RobotHardware for robot instance
-     */
-    public RobotHardware getHardware() {
-        return this.hardware;
-    }
-
-    /**
-     * Goes to absolute position, quickest way possible... discontinue
-     */
-//    private Location currentLocation;
-//    public void goToPosition(Location location, double speed) {
-//        if (location.equals(currentLocation)) {return;}
-//
-//        double clampedSpeed = Math.max(Math.min(speed, 1), 0);
-//        double inchesX = currentLocation.x - location.x;
-//        double inchesY = currentLocation.y - location.y;
-//        int distanceX = calculateTicks((float)inchesX);
-//        int distanceY = this.calculateTicks((float)inchesY);
-//        int distance =
-//                this.calculateTicks((float)Math.sqrt(distanceX*distanceX + distanceY*distanceY));
-//
-//
-//        this.hardware.resetEncoders();
-//
-//        this.hardware.getFLMotor().setTargetPosition(ticks);
-//        this.hardware.getFRMotor().setTargetPosition(ticks);
-//        this.hardware.getBLMotor().setTargetPosition(ticks);
-//        this.hardware.getBRMotor().setTargetPosition(ticks);
-//
-//        this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//        this.hardware.getFLMotor().setPower(clampedSpeed);
-//        this.hardware.getFRMotor().setPower(clampedSpeed);
-//        this.hardware.getBLMotor().setPower(clampedSpeed);
-//        this.hardware.getBRMotor().setPower(clampedSpeed);
-//
-//        this.waitForMotors();
-//
-//
-//        currentLocation = location;
-//    }
     public void driveOdo(float inches, float speed) {
-        driveOdo(inches, speed, true);
-    }
-
-    public void driveOdo(float inches, float speed, boolean waitForMotors) {
         if (inches == 0) return;
 
         this.hardware.resetIMU();
@@ -764,12 +293,14 @@ public class Robot {
         this.opMode.telemetry.addData("Final Tick Value", enc.getCurrentPosition());
         this.opMode.telemetry.update();
     }
-
-    public void strafeOdo(float inches, float speed) {
-        strafeOdo(inches, speed, true);
+    public void driveTilesOdo(float tiles, float speed) {
+        this.driveOdo(tiles * FieldInfo.tileSize, speed);
+    }
+    public void driveTilesOdo(float tiles, float extraInches, float speed) {
+        this.driveOdo(tiles * FieldInfo.tileSize + extraInches, speed);
     }
 
-    public void strafeOdo(float inches, float speed, boolean waitForMotors) {
+    public void strafeOdo(float inches, float speed) {
         this.hardware.resetIMU();
         this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -946,21 +477,332 @@ public class Robot {
 
 //        this.turn((float) -aErr, 0.1f, 1);
     }
+    public void strafeTilesOdo(float tiles, float speed) {
+        this.strafeOdo(tiles * FieldInfo.tileSize, speed);
+    }
+    public void strafeTilesOdo(float tiles, float extraInches, float speed) {
+        this.strafeOdo(tiles * FieldInfo.tileSize + extraInches, speed);
+    }
+
+    //legacy turn code, don't use
+
+//    private Orientation angles;
+//
+//    public void turn(float degrees, float speed, double precision) {
+//        this.hardware.resetIMU();
+//        this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//
+//        this.hardware.getFLMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        this.hardware.getFRMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        this.hardware.getBRMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        this.hardware.getBLMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+////        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+////        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+////        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+////        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+//        // See which motors should be backwards, which should be forwards.
+//        // More compatible: make an array of each motor in an order in specified in a comment.
+//        // Then negate each motor accordingly.
+//        angles = this.hardware.getIMU().getAngularOrientation(
+//                AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+//        turn(degrees, speed, precision, 0.1, 1/500f, 1/50f,
+//                new double[] {angles.secondAngle-degrees,
+//                        angles.secondAngle-degrees});
+//    }
+//    private void turn(double degrees, double speed, double precision, double Kp,
+//                      double Ki, double Kd, double[] trend) {
+//        if (!opMode.opModeIsActive()) {
+//            return;
+//        }
+//        // angles.thirdAngle = detected angle
+//        // degrees = target angle
+//
+//        // "base case"
+//        // trend is misleading, it should be sumOfErrors or something. trend is just for abriviation.
+//        angles = this.hardware.getIMU().getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ,
+//                AngleUnit.DEGREES);
+//        double angle = angles.secondAngle;
+//        //angle = degrees > 0 ? (angle > 0 ? angle : angle + 360) : (angle < 0 ? angle :
+//        //     angle - 360);
+////        if (degrees > 0 && angle < 0) {
+////            angle = angle + 360;
+////        }
+////        if (degrees < 0 && angle > 0) {
+////            angle = angle - 360;
+////        }
+//
+//        double err = angle - degrees;
+//        if (Math.abs(err) <= precision) {
+//            this.hardware.getFLMotor().setPower(0);
+//            this.hardware.getFRMotor().setPower(0);
+//            this.hardware.getBRMotor().setPower(0);
+//            this.hardware.getBLMotor().setPower(0);
+//            // left side reverse on bobo
+//            // right side reverse on frank
+////            frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+////            backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+////            backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+////            frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+//            // see above coment on direction setting... (in prev. turn method and here)
+//            return;
+//        }
+//
+//        // logic - dont forget to multiply double final = -(p + i + d); bc we want to cancel out the final (var) error
+//        double proportional = err * Kp;
+//        double integral = DoubleStream.of(trend).sum() * Ki;
+//        double derivative = (err - trend[trend.length - 1]) * Kd;
+//        double total = -(proportional + integral + derivative) * speed;
+//
+//        // #nestedterneries r awesum.
+//        double basePower = 0.05;
+//        if (total > 0) {
+//            total = total < basePower ? total + basePower : total;
+//        }
+//        if (total < 0) {
+//            total = total > basePower ? total - basePower : total;
+//        }
+//
+//        // ROBOBOBO: LEFT 2 NEGATE
+//        // Final: ???
+//        hardware.getFRMotor().setPower(total);
+//        hardware.getFLMotor().setPower(-total);
+//        hardware.getBLMotor().setPower(-total);
+//        hardware.getBRMotor().setPower(total);
+//
+//        this.opMode.telemetry.addData("Angle: ", "" + angles.firstAngle);
+//        this.opMode.telemetry.addData("Second Angle: ", "" + angles.secondAngle);
+//        this.opMode.telemetry.addData("Third Angle: ", "" + angles.thirdAngle);
+//        this.opMode.telemetry.addData("I: ", integral + "D: " + derivative + "T: " + total);
+//        this.opMode.telemetry.update();
+//
+//        // recursive updates
+//        double[] trendI = new double[trend.length + 1];
+//        for (int i = 0; i < trend.length; i++) trendI[i] = trend[i];
+//        trendI[trendI.length - 1] = err;
+//
+//        turn(degrees, speed, precision, Kp, Ki, Kd, trendI);
+//    }
+
+    //new turn code
+    public void turn(float degrees, double aPrecision) throws InterruptedException {
+        double batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
+        double powerAdjustment = 13f / batteryVoltage;
+//        double powerAdjustment = 1;
+
+        //reset IMU, so the start angle is 0
+        this.hardware.resetIMU();
+
+        //make sure you are using RUN_USING_ENCODER, so you can control motors with power
+        this.hardware.getFLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getFRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getBLMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.hardware.getBRMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //the target angle is the inverse of the inputed target
+        double target = -degrees;
+
+        //PID controller parameters for angle correction
+        double aKp, aKi, aKd;
+
+//        double k = Math.abs(target);
+//            Kp = 30/k;
+//            Ki = 0.6/k;
+//            Kd = k + 10;
+//            aKp = 0.014*k;
+//            aKi = 0.00035*k;
+//            aKd = 0.01*k;
+
+        //tune Kp, Ki, and Kd by the target degrees
+
+//        if(Math.abs(target) > 130) {
+//            aKp = 0.3;
+//            aKi = 0.001;
+//            aKd = 7;
+//        }
+//        else if(Math.abs(target) > 110) {
+//            aKp = 0.2;
+//            aKi = 0.001;
+//            aKd = 6;
+//        }
+//        else if(Math.abs(target) > 90) {
+//            aKp = 0.3;
+//            aKi = 0.001;
+//            aKd = 7;
+//        }
+        if (Math.abs(target) > 75) {
+            aKp = 0.3;
+            aKi = 0.0003;
+            aKd = 4;
+        }
+//        else if(Math.abs(target) > 60) {
+//            aKp = 0.4;
+//            aKi = 0.004;
+//            aKd = 6;
+//        }
+//        else if(Math.abs(target) > 45) {
+//            aKp = 0.4;
+//            aKi = 0.005;
+//            aKd = 5;
+//        }
+        else if (Math.abs(target) > 30) {
+            aKp = 0.4;
+            aKi = 0.0005;
+            aKd = 4;
+        } else if (Math.abs(target) > 15) {
+            aKp = 0.4;
+            aKi = 0.006;
+            aKd = 2;
+        } else {
+            aKp = 0.5;
+            aKi = 0.02;
+            aKd = 3;
+        }
+
+        Orientation angles = this.hardware.getIMU().getAngularOrientation(
+                AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+        //calculate inital error
+        double angle = angles.secondAngle;
+        double err = angle - target;   //
+        double multiplier = 0.03; //power gain for angle correction
+
+        //keeping track of trend for I and adding current start error
+        ArrayList<Double> trend = new ArrayList<>();
+        trend.add(err);
+
+        //keeps track of whether the robot can break out of the turn loop
+        boolean beforeTarget = true;
+
+        while (Math.abs(angles.secondAngle - target) > aPrecision && this.opMode.opModeIsActive()) {
+            //get angle from IMU
+            angles = this.hardware.getIMU().getAngularOrientation(
+                    AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+            //calc PID
+            err = angles.secondAngle - target;
+            double P = err;
+            double I = trend.stream().reduce(0d, Double::sum);
+            double D = err - trend.get(trend.size() - 1);
+            double correction = (aKp * P) + (aKi * I) + (aKd * D);
 
 
-    public void teleValues() {
+            //apply multiplier
+            correction *= multiplier * powerAdjustment;
+
+            //clamp minimum speed
+            if (correction > 0) {
+                correction = Math.max(0.01, correction);
+            } else if (correction < 0) {
+                correction = Math.min(correction, -0.01);
+            }
+
+            //clamp maximum speed
+            double aSpeed = 0.3;
+            if (correction < 0 && correction < -aSpeed) {
+                correction = -aSpeed;
+            } else if (correction > 0 && correction > aSpeed) {
+                correction = aSpeed;
+            }
+            //add error to trend
+            trend.add(err);
+
+            //move motors
+            this.hardware.getFLMotor().setPower(correction);
+            this.hardware.getFRMotor().setPower(-correction);
+            this.hardware.getBLMotor().setPower(correction);
+            this.hardware.getBRMotor().setPower(-correction);
+
+            //recalculator angles
+            angles = this.hardware.getIMU().getAngularOrientation(
+                    AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+            //output final telemetry
+            this.opMode.telemetry.addData("Target angle", degrees);
+            this.opMode.telemetry.addData("Final angle", angles.secondAngle);
+            this.opMode.telemetry.update();
+
+
+//            //test for breakout condition
+//            if(target < 0) {
+//                beforeTarget = angles.secondAngle - target > aPrecision;
+//            }
+//            else {
+//                beforeTarget = angles.secondAngle - target < -aPrecision;
+//            }
+
+        }
+
+        //stop motors
+        this.hardware.getFLMotor().setPower(0);
+        this.hardware.getFRMotor().setPower(0);
+        this.hardware.getBLMotor().setPower(0);
+        this.hardware.getBRMotor().setPower(0);
+
+        //recalculate angles for a final time
+        angles = this.hardware.getIMU().getAngularOrientation(
+                AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+        //output final telemetry
+        this.opMode.telemetry.addData("Target angle", degrees);
+        this.opMode.telemetry.addData("Final angle", angles.secondAngle);
+        this.opMode.telemetry.update();
+    }
+
+    //image detection
+
+    private SleeveDetect sleeveDetect;
+
+    public void initDetect() {
+        sleeveDetect = new SleeveDetect(this.opMode.telemetry, this.hardware.getCamera(),
+                this.hardware);
+        sleeveDetect.init();
+    }
+    public SleeveDetect.SignalState scanSleeve() throws InterruptedException {
+        return sleeveDetect.scan();
+    }
+    public SleeveDetect.SignalState initAndScan() throws InterruptedException {
+        initDetect();
+        return scanSleeve();
+    }
+
+    //misc functions
+
+    public void waitForMotors() {
+        while (
+                (
+                        this.hardware.getFLMotor().isBusy()
+                                || this.hardware.getFRMotor().isBusy()
+                                || this.hardware.getBLMotor().isBusy()
+                                || this.hardware.getBRMotor().isBusy()
+                )
+                        && this.opMode.opModeIsActive()
+        ) ;
+    }
+    private int calculateTicks(float targetDist) {
+        int tpr = this.isFinal ? RobotInfo.finalDriveTPR : RobotInfo.protoDriveTPR;
+        float diameter = this.isFinal ? RobotInfo.finalDriveDiameter : RobotInfo.protoDriveDiameter;
+
+        return Math.round((targetDist / (float) (diameter * Math.PI)) * tpr);
+    }
+    public RobotHardware getHardware() {
+        return this.hardware;
+    }
+    public void showPositionData() {
         // IMU
         // HORIZ &
         // DRIVE odo
         this.hardware.getDriveOdo().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.hardware.getStrafeOdo().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        while (true) {
-            this.opMode.telemetry.addData("IMU", this.hardware.getIMU().getAngularOrientation(
-                    AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle);
 
-            this.opMode.telemetry.addData("Drive ODO", this.hardware.getDriveOdo().getCurrentPosition());
-            this.opMode.telemetry.addData("Horiz ODO", this.hardware.getStrafeOdo().getCurrentPosition());
-            opMode.telemetry.update();
-        }
+        this.opMode.telemetry.addData("IMU", this.hardware.getIMU().getAngularOrientation(
+                AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle);
+
+        this.opMode.telemetry.addData("Drive ODO", this.hardware.getDriveOdo().getCurrentPosition());
+        this.opMode.telemetry.addData("Horiz ODO", this.hardware.getStrafeOdo().getCurrentPosition());
+        opMode.telemetry.update();
     }
 }
