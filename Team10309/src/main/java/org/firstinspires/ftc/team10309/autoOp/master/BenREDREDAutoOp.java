@@ -43,7 +43,7 @@ public class BenREDREDAutoOp extends LinearOpMode {
 
         //go to low junction
         manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.LOW, false);
-        this.robot.strafeTilesOdo(0.7f, 0.5f, -0.5f);
+        this.robot.strafeTilesOdo(0.7f, -0.5f, 0.5f);
         this.robot.driveOdo(-1.5f, 0.5f);
         Thread.sleep(200);
 
@@ -54,17 +54,16 @@ public class BenREDREDAutoOp extends LinearOpMode {
 
         //go to cone stack
         this.robot.driveOdo(1.5f, 0.5f);
-        this.robot.strafeTilesOdo(1.5f, 0.5f, -3.5f);
+        this.robot.strafeTilesOdo(1.5f, -3.5f, 0.5f);
         manipulatorController.setArmPosition(ManipulatorController.ArmRotation.FRONT);
 
         //pick up cone
         manipulatorController.setLiftPosition(-1256);
-        this.robot.driveTilesOdo(1f, 0.5f);
+        this.robot.driveTilesOdo(0.9f, 0.5f);
         manipulatorController.setClaw(ManipulatorController.ClawPosition.CLOSED);
         manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.LOW);
-        manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.HIGH, false);
-
-        //go to tall junction
+       
+       /* //go to tall junction
         this.robot.driveOdo(-6, 0.2f);
         this.robot.turn(45f, .2 );
         this.robot.turn(45f, .2);
@@ -74,7 +73,7 @@ public class BenREDREDAutoOp extends LinearOpMode {
         // drop onto high junction
         manipulatorController.setClaw(ManipulatorController.ClawPosition.OPEN);
         this.robot.driveOdo(-3f, 0.5f);
-
+*/
         // detection stuff
         if (state == SleeveDetect.SignalState.RED_SQUARE) {
             this.robot.strafeTilesOdo(-1.5f, 0.5f);

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.team10309.API.Robot;
 import org.firstinspires.ftc.team10309.API.SleeveDetect;
 
 // Algin with a jenga block 1 jenga block from the right side edge of mat.
-@Autonomous(name="BenBlueRED")
+@Autonomous(name="BenBlueRed")
 public class BenBLUEREDAutoOp extends LinearOpMode {
 
     private Robot robot;

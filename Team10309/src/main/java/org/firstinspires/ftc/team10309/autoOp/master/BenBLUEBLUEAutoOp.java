@@ -45,7 +45,7 @@ public class BenBLUEBLUEAutoOp extends LinearOpMode {
         manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.LOW, false);
         this.robot.drive(2f, 0.5f);
         this.robot.strafeTiles(0.7f, 0.5f, -0.5f);
-        this.robot.drive(4f, 0.5f);
+        this.robot.drive(5f, 0.5f);
         Thread.sleep(200);
 
         //drop cone on low junction
@@ -54,41 +54,41 @@ public class BenBLUEBLUEAutoOp extends LinearOpMode {
         manipulatorController.setLiftPosition(this.robot.getHardware().getLift().getCurrentPosition() - 500);
 
         //go to cone stack
-        this.robot.drive(-3.5f, 0.5f);
-        this.robot.strafeTiles(1.5f, 0.5f, -3.5f);
-        manipulatorController.setArmPosition(ManipulatorController.ArmRotation.BACK);
+        this.robot.drive(-4f, 0.5f);
+        this.robot.strafeTiles(1.5f, 0.5f, -1.5f);
+        manipulatorController.setArmPosition(0.8f);
 
         //pick up cone
-        manipulatorController.setLiftPosition(-1256);
-        this.robot.driveTiles(-1f, 0.5f);
+        manipulatorController.setLiftPosition(-1250);
+        this.robot.driveTiles(-1f, 0.25f, -4f);
         manipulatorController.setClaw(ManipulatorController.ClawPosition.CLOSED);
         manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.LOW);
-        manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.HIGH, false);
 
-        //go to tall junction
+      /*  //go to tall junction
         this.robot.drive(6, 0.2f);
-        this.robot.turn(45f, .2 );
-        this.robot.turn(45f, .2);
-        this.robot.strafeTiles(-1.5f, 0.5f);
-        manipulatorController.setArmPosition(armPosLeft);
-        this.robot.drive(3f, 0.5f);
+        this.robot.turn(-45f, .2 );
+        this.robot.turn(-45f, .2);
+        this.robot.drive(-1f, 0.5f);
+        this.robot.strafeTiles(1.5f, 0.5f, -0.5f);
+        this.robot.drive(-4, 0.5f);
 
         // drop onto high junction
+    
+        manipulatorController.setLiftPosition(this.robot.getHardware().getLift().getCurrentPosition() + 500);
         manipulatorController.setClaw(ManipulatorController.ClawPosition.OPEN);
-        this.robot.drive(-3f, 0.5f);
-
+        manipulatorController.setLiftPosition(this.robot.getHardware().getLift().getCurrentPosition() - 500);
+        this.robot.drive(3f, 0.5f);
+*/
         // detection stuff
         if (state == SleeveDetect.SignalState.RED_SQUARE) {
-            this.robot.strafeTiles(-0.5f, 0.5f);
+            this.robot.driveTiles(2f, 0.5f, 1.5f);
             manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
         } else if (state == SleeveDetect.SignalState.GREEN_CIRCLE) {
-            this.robot.strafeTiles(0.5f, 0.5f);
+            this.robot.driveTiles(1f, 0.5f, 1.5f);
             manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
-        } else if (state == SleeveDetect.SignalState.BLUE_TRIANGLE) {
-            this.robot.strafeTiles(1.5f, 0.5f);
-            manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
-        } else {
-            this.robot.strafeTiles(0.5f, 0.5f);
+        } else if (state == SleeveDetect.SignalState.BLUE_TRIANGLE) {}
+        else {
+            this.robot.strafeTiles(1f, 0.5f, 1.5f);
             manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.GROUND);
 
         }
