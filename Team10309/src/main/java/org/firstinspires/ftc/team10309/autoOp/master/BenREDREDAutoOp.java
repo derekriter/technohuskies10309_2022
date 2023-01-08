@@ -53,17 +53,18 @@ public class BenREDREDAutoOp extends LinearOpMode {
         manipulatorController.setLiftPosition(this.robot.getHardware().getLift().getCurrentPosition() - 500);
 
         //go to cone stack
-        this.robot.driveOdo(1.5f, 0.5f);
+        this.robot.driveOdo(2f, 0.5f);
         this.robot.strafeTilesOdo(1.5f, -3.5f, 0.5f);
         manipulatorController.setArmPosition(ManipulatorController.ArmRotation.FRONT);
 
         //pick up cone
+        Thread.sleep(500);
         manipulatorController.setLiftPosition(-1256);
-        this.robot.driveTilesOdo(0.9f, 0.5f);
+        this.robot.driveTilesOdo(0.9f, 1f, 0.5f);
         manipulatorController.setClaw(ManipulatorController.ClawPosition.CLOSED);
         manipulatorController.setLiftPosition(ManipulatorController.LiftPosition.LOW);
        
-       /* //go to tall junction
+       /* //go to tall junction 1
         this.robot.driveOdo(-6, 0.2f);
         this.robot.turn(45f, .2 );
         this.robot.turn(45f, .2);

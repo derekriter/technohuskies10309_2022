@@ -113,8 +113,6 @@ public class Robot {
     //dead-wheel odometry based driving, use instead of motor ticks
 
     public void driveOdo(float inches, float speed) {
-        if (inches == 0) return;
-
         this.hardware.resetIMU();
         double batteryVoltage = this.hardware.getVoltageSensor().getVoltage();
         double powerAdjustment = 12.6f / batteryVoltage;
@@ -634,9 +632,9 @@ public class Robot {
 //            aKd = 7;
 //        }
         if (Math.abs(target) > 75) {
-            aKp = 0.3;
-            aKi = 0.0003;
-            aKd = 4;
+            aKp = 0.2;
+            aKi = 0.0002;
+            aKd = 1.5;
         }
 //        else if(Math.abs(target) > 60) {
 //            aKp = 0.4;
@@ -695,9 +693,9 @@ public class Robot {
 
             //clamp minimum speed
             if (correction > 0) {
-                correction = Math.max(0.01, correction);
+                correction = Math.max(0.02, correction);
             } else if (correction < 0) {
-                correction = Math.min(correction, -0.01);
+                correction = Math.min(correction, -0.02);
             }
 
             //clamp maximum speed

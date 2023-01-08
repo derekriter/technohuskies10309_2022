@@ -165,7 +165,7 @@ public class TeleOpMain extends LinearOpMode {
         final float armPosLeft = 0.05f;
         final float armPosCenter = 0.4f;
         final float armPosRight = 0.8f;
-        final float clawOpenPos = 0.35f;
+        final float clawOpenPos = 0.4f;
         final float clawClosePos = 0.15f;
 
         float lift = -gamepad2.right_stick_y;
