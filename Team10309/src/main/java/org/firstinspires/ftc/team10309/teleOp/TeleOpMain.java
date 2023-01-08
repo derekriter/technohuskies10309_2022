@@ -37,6 +37,8 @@ public class TeleOpMain extends LinearOpMode {
     private final List<Float[]> shiftSteps = new ArrayList<>();
     private boolean currentlyShifting = false;
     private Thread tileShiftThread;
+    private float maxSpeed = 1f;
+    private float minSpeed = 0.2f;
 
     @Override
     public void runOpMode() {
@@ -69,10 +71,10 @@ public class TeleOpMain extends LinearOpMode {
         double turn = this.gamepad1.right_stick_x;
 
         if(decreaseSpeed && !decreaseSpeedLast)  {
-            if(driveSpeedMultiplier > 0.21) driveSpeedMultiplier -= 0.2;
+            if(driveSpeedMultiplier > this.minSpeed + 0.01f) driveSpeedMultiplier -= 0.2;
         }
         if(increaseSpeed && !increaseSpeedLast) {
-            if(driveSpeedMultiplier < 0.39) driveSpeedMultiplier += 0.2;
+            if(driveSpeedMultiplier < this.maxSpeed - 0.01f) driveSpeedMultiplier += 0.2;
         }
 
         if(changeDriverMode && !changeDriverModeLast) driverMode = !driverMode;
